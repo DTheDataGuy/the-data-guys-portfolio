@@ -1,0 +1,10 @@
+output/
+spark-warehouse/
+metastore_db/
+derby.log
+scala_job/target/
+scala_job/project/target/
+scala_job/classes/
+*.jar
+__pycache__/
+.pytest_cache/

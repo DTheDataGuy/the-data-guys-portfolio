@@ -1,0 +1,2302 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FIFA World Cup 26 Seattle — Verified Economic Evidence Dashboard</title>
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800&f[]=general-sans@300,400,500,600,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* === DESIGN TOKENS === */
+:root, [data-theme='dark'] {
+  --bg: #0d1117;
+  --surface: #161b22;
+  --surface-2: #1c2128;
+  --surface-3: #22272e;
+  --border: #30363d;
+  --divider: #21262d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --text-faint: #484f58;
+  --accent: #2f81f7;
+  --accent-hover: #1f6feb;
+  --accent-glow: rgba(47, 129, 247, 0.15);
+  --success: #3fb950;
+  --success-bg: rgba(63, 185, 80, 0.1);
+  --danger: #f85149;
+  --danger-bg: rgba(248, 81, 73, 0.1);
+  --warning: #d29922;
+  --warning-bg: rgba(210, 153, 34, 0.1);
+  --gold: #e3b341;
+  --purple: #bc8cff;
+  --purple-bg: rgba(188, 140, 255, 0.1);
+  --teal: #2dd4bf;
+  --teal-bg: rgba(45, 212, 191, 0.1);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.5);
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --font-display: 'Cabinet Grotesk', sans-serif;
+  --font-body: 'General Sans', sans-serif;
+  --font-mono: 'SF Mono', 'Cascadia Code', monospace;
+}
+[data-theme='light'] {
+  --bg: #f6f8fa;
+  --surface: #ffffff;
+  --surface-2: #f6f8fa;
+  --surface-3: #eaeef2;
+  --border: #d0d7de;
+  --divider: #d8dee4;
+  --text: #1f2328;
+  --text-muted: #636c76;
+  --text-faint: #afb8c1;
+  --accent: #0969da;
+  --accent-hover: #0550ae;
+  --accent-glow: rgba(9, 105, 218, 0.1);
+  --success: #1a7f37;
+  --success-bg: rgba(26, 127, 55, 0.1);
+  --danger: #cf222e;
+  --danger-bg: rgba(207, 34, 46, 0.1);
+  --warning: #9a6700;
+  --warning-bg: rgba(154, 103, 0, 0.1);
+  --gold: #bf8700;
+  --purple: #8250df;
+  --purple-bg: rgba(130, 80, 223, 0.1);
+  --teal: #0d9488;
+  --teal-bg: rgba(13, 148, 136, 0.1);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
+  --shadow-lg: 0 12px 32px rgba(0,0,0,0.15);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+body { font-family: var(--font-body); font-size: 15px; line-height: 1.55; color: var(--text); background: var(--bg); overflow: hidden; height: 100vh; }
+
+/* === LAYOUT === */
+.dashboard { display: grid; grid-template-columns: 260px 1fr; grid-template-rows: auto 1fr; height: 100vh; }
+.header { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; padding: 12px 24px; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 20; }
+.header-left { display: flex; align-items: center; gap: 14px; }
+.logo { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, var(--accent), var(--purple)); border-radius: var(--radius-md); flex-shrink: 0; }
+.logo svg { width: 22px; height: 22px; }
+.header h1 { font-family: var(--font-display); font-size: 18px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; }
+.header h1 span { color: var(--text-muted); font-weight: 400; }
+.header-right { display: flex; align-items: center; gap: 16px; }
+.header-meta { display: flex; flex-direction: column; align-items: flex-end; font-size: 12px; color: var(--text-muted); }
+.header-meta strong { color: var(--text); font-weight: 600; }
+.theme-toggle { width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-md); cursor: pointer; color: var(--text-muted); transition: all 180ms ease; }
+.theme-toggle:hover { color: var(--text); border-color: var(--accent); }
+.theme-toggle svg { width: 18px; height: 18px; }
+
+/* === SIDEBAR === */
+.sidebar { grid-row: 2; background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; overscroll-behavior: contain; padding: 16px 0; }
+.nav-section { margin-bottom: 24px; }
+.nav-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-faint); padding: 0 20px 8px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 20px; font-size: 14px; color: var(--text-muted); cursor: pointer; transition: all 150ms ease; border-left: 2px solid transparent; text-decoration: none; }
+.nav-item:hover { color: var(--text); background: var(--surface-2); }
+.nav-item.active { color: var(--accent); border-left-color: var(--accent); background: var(--accent-glow); }
+.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; }
+.nav-badge { margin-left: auto; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; background: var(--danger-bg); color: var(--danger); }
+.nav-badge.green { background: var(--success-bg); color: var(--success); }
+.nav-badge.gold { background: var(--warning-bg); color: var(--warning); }
+
+/* === MAIN === */
+.main { grid-column: 2; overflow-y: auto; overscroll-behavior: contain; padding: 24px; }
+.main::-webkit-scrollbar { width: 8px; }
+.main::-webkit-scrollbar-track { background: transparent; }
+.main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+.main::-webkit-scrollbar-thumb:hover { background: var(--text-faint); }
+
+/* === SECTIONS === */
+.section { margin-bottom: 32px; }
+.section.hidden { display: none; }
+.section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.section-title { font-family: var(--font-display); font-size: 20px; font-weight: 700; letter-spacing: -0.02em; }
+.section-subtitle { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
+
+/* === BANNER === */
+.banner { background: var(--danger-bg); border: 1px solid var(--danger); border-radius: var(--radius-lg); padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 12px; }
+.banner svg { width: 20px; height: 20px; color: var(--danger); flex-shrink: 0; margin-top: 2px; }
+.banner-content { font-size: 13px; line-height: 1.5; }
+.banner-content strong { color: var(--danger); }
+.banner.info { background: var(--accent-glow); border-color: var(--accent); }
+.banner.info svg { color: var(--accent); }
+.banner.info .banner-content strong { color: var(--accent); }
+
+/* === KPI CARDS === */
+.kpi-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+.kpi-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; position: relative; overflow: hidden; transition: transform 200ms ease, box-shadow 200ms ease; }
+.kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+.kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; background: var(--accent); }
+.kpi-card.danger::before { background: var(--danger); }
+.kpi-card.success::before { background: var(--success); }
+.kpi-card.warning::before { background: var(--warning); }
+.kpi-card.purple::before { background: var(--purple); }
+.kpi-card.teal::before { background: var(--teal); }
+.kpi-label { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 8px; }
+.kpi-value { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+.kpi-delta { font-size: 13px; font-weight: 600; margin-top: 6px; }
+.kpi-delta.positive { color: var(--success); }
+.kpi-delta.negative { color: var(--danger); }
+.kpi-delta.neutral { color: var(--text-muted); }
+.kpi-class { display: inline-block; font-size: 10px; font-weight: 600; padding: 2px 6px; border-radius: 4px; margin-top: 8px; }
+.class-a { background: var(--success-bg); color: var(--success); }
+.class-b { background: var(--accent-glow); color: var(--accent); }
+.class-c { background: var(--warning-bg); color: var(--warning); }
+.class-d { background: var(--purple-bg); color: var(--purple); }
+.class-e { background: var(--danger-bg); color: var(--danger); }
+.class-ab { background: var(--teal-bg); color: var(--teal); }
+
+/* === CHARTS === */
+.chart-container { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 24px; }
+.chart-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+.chart-subtitle { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; }
+.chart-wrapper { position: relative; height: 320px; }
+.chart-wrapper.tall { height: 400px; }
+.chart-wrapper.short { height: 240px; }
+.chart-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+/* === TABLES === */
+.table-container { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow-x: auto; margin-bottom: 24px; }
+.table-toolbar { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+.table-search { flex: 1; min-width: 200px; padding: 8px 12px; background: var(--surface-2); border: 1px solid var(--border); border-radius: var(--radius-sm); color: var(--text); font-size: 13px; font-family: var(--font-body); }
+.table-search:focus { outline: none; border-color: var(--accent); }
+.table-search::placeholder { color: var(--text-faint); }
+.filter-chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.filter-chip { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border); background: var(--surface-2); color: var(--text-muted); cursor: pointer; transition: all 150ms ease; white-space: nowrap; }
+.filter-chip:hover { color: var(--text); border-color: var(--text-muted); }
+.filter-chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table thead { background: var(--surface-2); }
+.data-table th { text-align: left; padding: 10px 16px; font-weight: 600; color: var(--text-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; border-bottom: 1px solid var(--border); white-space: nowrap; cursor: pointer; user-select: none; }
+.data-table th:hover { color: var(--text); }
+.data-table th.sorted-asc::after { content: ' \25B2'; font-size: 10px; }
+.data-table th.sorted-desc::after { content: ' \25BC'; font-size: 10px; }
+.data-table td { padding: 10px 16px; border-bottom: 1px solid var(--divider); }
+.data-table tbody tr:hover { background: var(--surface-2); }
+.data-table tbody tr:last-child td { border-bottom: none; }
+.data-table .num { font-family: var(--font-mono); text-align: right; }
+.data-table .pos { color: var(--success); font-weight: 600; }
+.data-table .neg { color: var(--danger); font-weight: 600; }
+.data-table .highlight { background: var(--accent-glow); }
+.data-table a { color: var(--accent); text-decoration: none; }
+.data-table a:hover { text-decoration: underline; }
+.evidence-badge { display: inline-block; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; }
+
+/* === PILLAR TABS === */
+.pillar-tabs { display: flex; gap: 4px; margin-bottom: 20px; flex-wrap: wrap; }
+.pillar-tab { padding: 10px 18px; font-size: 13px; font-weight: 600; border-radius: var(--radius-md); background: var(--surface); border: 1px solid var(--border); color: var(--text-muted); cursor: pointer; transition: all 150ms ease; display: flex; align-items: center; gap: 8px; }
+.pillar-tab:hover { color: var(--text); border-color: var(--text-muted); }
+.pillar-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+.pillar-tab .badge { font-size: 10px; padding: 1px 5px; border-radius: 3px; background: var(--surface-3); color: var(--text-muted); }
+.pillar-tab.active .badge { background: rgba(255,255,255,0.2); color: #fff; }
+.pillar-content { display: none; }
+.pillar-content.active { display: block; }
+
+/* === CARDS === */
+.info-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; }
+.info-card-title { font-family: var(--font-display); font-size: 15px; font-weight: 700; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+.info-card-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+.info-card-body strong { color: var(--text); }
+.callout { border-radius: var(--radius-md); padding: 14px 16px; margin: 12px 0; font-size: 13px; line-height: 1.5; }
+.callout-title { font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 6px; }
+.callout.warning { background: var(--warning-bg); border-left: 3px solid var(--warning); }
+.callout.warning .callout-title { color: var(--warning); }
+.callout.danger { background: var(--danger-bg); border-left: 3px solid var(--danger); }
+.callout.danger .callout-title { color: var(--danger); }
+.callout.success { background: var(--success-bg); border-left: 3px solid var(--success); }
+.callout.success .callout-title { color: var(--success); }
+.callout.info { background: var(--accent-glow); border-left: 3px solid var(--accent); }
+.callout.info .callout-title { color: var(--accent); }
+
+/* === ACCORDION === */
+.accordion-item { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px; overflow: hidden; }
+.accordion-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; cursor: pointer; font-weight: 600; font-size: 14px; transition: background 150ms ease; }
+.accordion-header:hover { background: var(--surface-2); }
+.accordion-header .chevron { transition: transform 200ms ease; color: var(--text-muted); }
+.accordion-item.open .accordion-header .chevron { transform: rotate(90deg); }
+.accordion-body { display: none; padding: 0 16px 16px; }
+.accordion-item.open .accordion-body { display: block; }
+
+/* === MISC === */
+.match-list { display: flex; flex-direction: column; gap: 8px; }
+.match-item { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--surface-2); border-radius: var(--radius-md); border: 1px solid var(--border); }
+.match-date { font-family: var(--font-mono); font-size: 12px; color: var(--text-muted); min-width: 100px; }
+.match-teams { font-weight: 600; font-size: 13px; }
+.match-type { font-size: 11px; color: var(--text-faint); margin-left: auto; }
+.progress-bar { height: 6px; background: var(--surface-3); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.progress-bar-fill { height: 100%; border-radius: 3px; transition: width 600ms ease; }
+.tag { display: inline-block; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; background: var(--surface-3); color: var(--text-muted); }
+.tag.green { background: var(--success-bg); color: var(--success); }
+.tag.red { background: var(--danger-bg); color: var(--danger); }
+.tag.blue { background: var(--accent-glow); color: var(--accent); }
+.tag.gold { background: var(--warning-bg); color: var(--warning); }
+.source-link { font-size: 12px; color: var(--text-muted); }
+.source-link a { color: var(--accent); text-decoration: none; }
+.source-link a:hover { text-decoration: underline; }
+.footer { padding: 24px 0; border-top: 1px solid var(--border); text-align: center; font-size: 12px; color: var(--text-faint); }
+@media (max-width: 768px) {
+  .dashboard { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .kpi-grid { grid-template-columns: 1fr 1fr; }
+  .chart-row { grid-template-columns: 1fr; }
+  .header h1 { font-size: 14px; }
+  .header-meta { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="dashboard">
+  <header class="header">
+    <div class="header-left">
+      <div class="logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20M12 2a14.5 14.5 0 0 1 0 20M2 12h20"/></svg>
+      </div>
+      <h1>FIFA World Cup 26 Seattle <span>— Verified Economic Evidence</span></h1>
+    </div>
+    <div class="header-right">
+      <div class="header-meta">
+        <strong>Seattle Sports Commission</strong>
+        <span>Verified through Sep 2, 2026 · Updated Sep 13, 2026</span>
+      </div>
+      <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+        <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Overview</div>
+      <a class="nav-item active" data-nav="command">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        Command Center
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Analysis</div>
+      <a class="nav-item" data-nav="cities">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V8l7-5 7 5v13M9 21v-6h6v6"/></svg>
+        11-City Comparison
+        <span class="nav-badge gold">HVS</span>
+      </a>
+      <a class="nav-item" data-nav="seattle">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        Seattle Deep Dive
+        <span class="nav-badge green">6 Pillars</span>
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Public Sector</div>
+      <a class="nav-item" data-nav="public">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v3M12 14v3M16 14v3"/></svg>
+        Public Investment & Ops
+      </a>
+      <a class="nav-item" data-nav="community">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Community & Legacy
+      </a>
+      <a class="nav-item" data-nav="statewide">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20M2 12c0-5.5 4.5-10 10-10s10 4.5 10 10-4.5 10-10 10S2 17.5 2 12z"/><path d="M12 2a14 14 0 0 1 0 20M12 2a14 14 0 0 0 0 20"/></svg>
+        WA Statewide Footprint
+      </a>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Data Integrity</div>
+      <a class="nav-item" data-nav="gaps">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
+        Data Gaps & Requests
+        <span class="nav-badge">17</span>
+      </a>
+      <a class="nav-item" data-nav="register">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></svg>
+        Core Metric Register
+      </a>
+      <a class="nav-item" data-nav="sources">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        Sources & Methodology
+      </a>
+    </div>
+  </nav>
+
+  <main class="main" id="main">
+    <!-- COMMAND CENTER -->
+    <div class="section" id="section-command">
+      <div class="banner">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        <div class="banner-content">
+          <strong>SSC MODELED ECONOMIC IMPACT ESTIMATE: ~$489M (5-Method Triangulation)</strong><br>
+          Tourism Economics has not published a post-event reconciliation for Seattle/King County as of September 13, 2026. The SSC models a <strong>central estimate of ~$489M</strong> (range: $350M–$650M) using the 6-Pillar Framework with 5-method triangulation and displacement adjustment. This is <strong>42% below</strong> the revised $845.6M forecast. Calculated direct spending: ~$391M. Calculated tax estimate: ~$15.5M (4-method from actual KC/Seattle receipts). NY/NJ post-event: $3.5B (+6% above forecast).
+        </div>
+      </div>
+
+      <div class="section-header">
+        <div>
+          <div class="section-title">Command Center</div>
+          <div class="section-subtitle">Verified public evidence through September 2, 2026 · Updated September 13, 2026</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card success">
+          <div class="kpi-label">Stadium Attendance</div>
+          <div class="kpi-value">401,500</div>
+          <div class="kpi-delta positive">6 matches · 100% occupancy</div>
+          <span class="kpi-class class-a">Class A · FIFA</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Downtown Match-Day Visits</div>
+          <div class="kpi-value">&gt;3M</div>
+          <div class="kpi-delta positive">+17% vs same 2025 days</div>
+          <span class="kpi-class class-b">Class B · DSA/Placer.ai</span>
+        </div>
+        <div class="kpi-card teal">
+          <div class="kpi-label">June Link Boardings</div>
+          <div class="kpi-value">5.4M</div>
+          <div class="kpi-delta positive">All-time monthly record</div>
+          <span class="kpi-class class-a">Class A · Sound Transit</span>
+        </div>
+        <div class="kpi-card purple">
+          <div class="kpi-label">Forecast vs Calculated</div>
+          <div class="kpi-value">$845.6M → $489M</div>
+          <div class="kpi-delta negative">-42% actual vs forecast</div>
+          <span class="kpi-class class-b">Class B · SSC Triangulation</span>
+        </div>
+        <div class="kpi-card danger">
+          <div class="kpi-label">Hotel Occupancy Gap</div>
+          <div class="kpi-value">-6.3pp</div>
+          <div class="kpi-delta negative">Largest among 11 host cities</div>
+          <span class="kpi-class class-b">Class B · HVS</span>
+        </div>
+        <div class="kpi-card success">
+          <div class="kpi-label">Hotel ADR Peak</div>
+          <div class="kpi-value">$271.80</div>
+          <div class="kpi-delta positive">+30.5% YoY (week ending Jun 20)</div>
+          <span class="kpi-class class-b">Class B · CoStar/STR</span>
+        </div>
+        <div class="kpi-card">
+          <div class="kpi-label">Combined Transit (6 Match Days)</div>
+          <div class="kpi-value">~3.4M</div>
+          <div class="kpi-delta positive">Metro + Sound Transit</div>
+          <span class="kpi-class class-a">Class A/B · Metro/ST</span>
+        </div>
+        <div class="kpi-card warning">
+          <div class="kpi-label">WA Public Investment</div>
+          <div class="kpi-value">~$120M</div>
+          <div class="kpi-delta neutral">KUOW estimate · appropriations</div>
+          <span class="kpi-class class-c">Class C · KUOW</span>
+        </div>
+      </div>
+
+      <div class="chart-row">
+        <div class="chart-container">
+          <div class="chart-title">$80B Global Projection vs $40B Reality</div>
+          <div class="chart-subtitle">FIFA's global gross output projection vs Bank of America's confirmed actual · Source: FIFA, Bank of America</div>
+          <div class="chart-wrapper short"><canvas id="chartGlobalGap"></canvas></div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">Seattle Forecast vs Actual Evidence</div>
+          <div class="chart-subtitle">Forecast vs SSC triangulated calculation · 5-method triangulation with displacement adjustment</div>
+          <div class="chart-wrapper short"><canvas id="chartSeattleForecast"></canvas></div>
+        </div>
+      </div>
+
+      <!-- FORECAST vs ACTUAL COMPARISON -->
+      <div class="chart-container" style="margin-top:24px">
+        <div class="chart-title">Forecast vs Calculated Actual: The Gap</div>
+        <div class="chart-subtitle">Every headline metric: pre-event forecast vs SSC post-event calculated estimate · showing the delta</div>
+        <table class="data-table" style="margin-top:16px;font-size:13px">
+          <thead><tr><th>Metric</th><th>Pre-Event Forecast</th><th>Post-Event Calculated</th><th>Variance</th><th>Source</th></tr></thead>
+          <tbody>
+            <tr style="font-weight:700;background:rgba(79,70,229,0.1)"><td>Total Economic Impact</td><td class="num">$845.6M</td><td class="num">$489M</td><td class="num neg">-42.1%</td><td>SSC 5-method triangulation</td></tr>
+            <tr><td>Direct Visitor Spending</td><td class="num">~$600M (implied)</td><td class="num">$391M</td><td class="num neg">-34.8%</td><td>SSC weighted triangulation</td></tr>
+            <tr><td>Tax Revenue (Direct)</td><td class="num">$96M</td><td class="num">$15.5M</td><td class="num neg">-83.9%</td><td>SSC 4-method from actual receipts</td></tr>
+            <tr><td>Tax Revenue (w/ Multiplier)</td><td class="num">$96M</td><td class="num">$22M</td><td class="num neg">-77.1%</td><td>SSC 4-method × 1.42x IMPLAN</td></tr>
+            <tr><td>Hotel Occupancy</td><td class="num">~85% (expected)</td><td class="num">76.8%</td><td class="num neg">-8.2pp</td><td>HVS actual</td></tr>
+            <tr><td>Hotel ADR</td><td class="num">~$208 (baseline)</td><td class="num">$271.80</td><td class="num pos">+30.5%</td><td>CoStar/STR actual</td></tr>
+            <tr><td>International Visitors</td><td class="num">~225K (forecast)</td><td class="num">180K</td><td class="num neg">-20.0%</td><td>KUOW/Visit Seattle</td></tr>
+            <tr><td>CID Sales</td><td class="num">+10% (expected)</td><td class="num">-22%</td><td class="num neg">-32pp</td><td>NW Asian Weekly actual</td></tr>
+            <tr><td>Pioneer Square Sales</td><td class="num">Baseline</td><td class="num">3-10x typical</td><td class="num pos">+200-900%</td><td>DSA/Placer.ai actual</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:16px;padding:12px;background:rgba(239,68,68,0.1);border-radius:8px;font-size:13px">
+          <strong>Key finding:</strong> The gap between forecast and calculated actual is driven by: (1) hotel occupancy flat vs expected surge (-6.3pp gap, largest of 11 host cities), (2) CID displacement (-22% sales despite +10% foot traffic), (3) lower international visitors than forecast (-20%), (4) >60% of dollars captured by FIFA/airlines/hotels before reaching local merchants (Facteus). The ADR surge (+30.5%) was real but didn't translate to proportional economic impact because occupancy was flat.
+        </div>
+      </div>
+
+      <!-- SCENARIO TABLE -->
+      <div class="chart-container" style="margin-top:24px">
+        <div class="chart-title">Scenario Analysis: Conservative / Base / High</div>
+        <div class="chart-subtitle">Wider range reflects genuine uncertainty in visitor spend, displacement, and multiplier assumptions</div>
+        <table class="data-table" style="margin-top:16px;font-size:13px">
+          <thead><tr><th>Scenario</th><th>Direct Spending</th><th>Multiplier</th><th>Displacement</th><th>Total Impact</th><th>vs Forecast</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Conservative</strong></td><td class="num">$280M</td><td class="num">1.35x</td><td class="num">15%</td><td class="num">$321M</td><td class="num neg">-62%</td></tr>
+            <tr style="font-weight:700;background:rgba(79,70,229,0.1)"><td>Base (Central)</td><td class="num">$391M</td><td class="num">1.42x</td><td class="num">12%</td><td class="num">$489M</td><td class="num neg">-42%</td></tr>
+            <tr><td><strong>High</strong></td><td class="num">$520M</td><td class="num">1.50x</td><td class="num">8%</td><td class="num">$718M</td><td class="num neg">-15%</td></tr>
+          </tbody>
+        </table>
+        <div style="margin-top:12px;font-size:12px;color:var(--text-muted)">
+          <strong>Conservative:</strong> Bottom-up Method B only ($118M × 1.35 after displacement) + partial Method D uplift. Assumes high displacement (15%), low multiplier (1.35x), low visitor spend.<br>
+          <strong>Base:</strong> 5-method weighted triangulation ($391M direct) × 1.42x IMPLAN multiplier × 12% displacement. Central scenario.<br>
+          <strong>High:</strong> Top-down Method A adjusted ($650M × 1.50 after displacement). Assumes low displacement (8%), high multiplier (1.50x), higher visitor spend, minimal leakage. Still below forecast due to flat occupancy and CID displacement.
+        </div>
+      </div>
+
+      <!-- CALCULATION WORKBENCH -->
+      <div class="chart-container" style="margin-top:24px">
+        <div class="chart-title">Post-Event Calculation Workbench</div>
+        <div class="chart-subtitle">Transparent methodology: inputs, formulas, and sensitivity drivers</div>
+        <div style="margin-top:16px">
+          <h4 style="color:var(--accent);margin-bottom:8px;font-size:14px">Formulas Used</h4>
+          <table class="data-table" style="font-size:12px">
+            <thead><tr><th>Formula</th><th>Calculation</th><th>Result</th></tr></thead>
+            <tbody>
+              <tr><td>Direct Spending (Weighted)</td><td>0.30×A + 0.30×B + 0.15×C + 0.15×D + 0.10×E</td><td class="num">$391M</td></tr>
+              <tr><td>Total Impact</td><td>Direct × Multiplier × (1 - Displacement)</td><td class="num">$489M</td></tr>
+              <tr><td>Tax (Direct)</td><td>Lodging×15.70% + Restaurants×10.25% + Retail×10.25% + Transport×8% + B&O×1.5%</td><td class="num">$15.5M</td></tr>
+              <tr><td>Tax (w/ Multiplier)</td><td>Direct Tax × 1.42x IMPLAN</td><td class="num">$22M</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:16px">
+          <h4 style="color:var(--accent);margin-bottom:8px;font-size:14px">5-Method Inputs</h4>
+          <table class="data-table" style="font-size:12px">
+            <thead><tr><th>Method</th><th>Approach</th><th>Input Value</th><th>Weight</th></tr></thead>
+            <tbody>
+              <tr><td>A: Top-Down</td><td>180K intl × 12d × $350 + 225K dom × 6d × $250</td><td class="num">$1,094M</td><td class="num">30%</td></tr>
+              <tr><td>B: Bottom-Up</td><td>HVS $44M + Toast $25M + Square $11M + Transit $18M + Events $10M</td><td class="num">$118M</td><td class="num">30%</td></tr>
+              <tr><td>C: BofA Macro</td><td>+5% of Seattle GDP × 35 days</td><td class="num">$81M</td><td class="num">15%</td></tr>
+              <tr><td>D: DSA/Datafy</td><td>$821.6M × 6.89% × 40% WC portion</td><td class="num">$21M</td><td class="num">15%</td></tr>
+              <tr><td>E: Tax Implied</td><td>Tax receipts / 10% blended rate</td><td class="num">$126M</td><td class="num">10%</td></tr>
+              <tr style="font-weight:700"><td>Triangulated</td><td>Weighted average</td><td class="num">$391M</td><td class="num">100%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div style="margin-top:16px">
+          <h4 style="color:var(--danger);margin-bottom:8px;font-size:14px">What Would Change the Answer Most</h4>
+          <table class="data-table" style="font-size:12px">
+            <thead><tr><th>#</th><th>Sensitivity Driver</th><th>Current Assumption</th><th>If Changed</th><th>Impact</th></tr></thead>
+            <tbody>
+              <tr><td>1</td><td>Visitor home ZIP / nonlocal share</td><td>405K visitors, 180K intl</td><td>If 250K intl: +$100M direct</td><td class="num">±$100M</td></tr>
+              <tr><td>2</td><td>Merchant NAICS + ZIP card spend</td><td>Not public (gap)</td><td>Would replace Method D with actuals</td><td class="num">±$50M</td></tr>
+              <tr><td>3</td><td>Final KC/Seattle tax collections (after Jul lag)</td><td>Through Jun only</td><td>Q3 data would validate Method E</td><td class="num">±$30M</td></tr>
+              <tr><td>4</td><td>Hotel + STR displacement rate</td><td>12% (mid)</td><td>If 5%: +$40M; if 20%: -$40M</td><td class="num">±$40M</td></tr>
+              <tr><td>5</td><td>FIFA/venue/vendor local procurement</td><td>Not measured</td><td>Would add B2B spending</td><td class="num">+$50-100M</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-title">Seattle's Six Matches at Lumen Field</div>
+        <div class="chart-subtitle">100% occupancy across all six matches · Source: FIFA</div>
+        <div class="match-list" id="matchList"></div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Evidence Classification System
+        </div>
+        <div class="info-card-body">
+          <p style="margin-bottom:8px"><strong>Class A</strong> — Official measured data from government/agency sources (FIFA, Sound Transit, ESD, SPU)</p>
+          <p style="margin-bottom:8px"><strong>Class B</strong> — Provider sample data from commercial platforms (CoStar/STR, Placer.ai, Square, Toast, Datafy, AirDNA, HVS)</p>
+          <p style="margin-bottom:8px"><strong>Class C</strong> — Appropriation/authorization data from legislative sources (WA Session Law, Seattle ordinances, King County budget)</p>
+          <p style="margin-bottom:8px"><strong>Class D</strong> — Published forecast/model, not realized outcome (Tourism Economics $929M / $845.6M projections)</p>
+          <p><strong>Class E</strong> — Not publicly available; requires direct data-owner access (DOR tax receipts, FIFA ticket origin, granular ZIP spending)</p>
+        </div>
+      </div>
+
+      <div class="callout danger">
+        <div class="callout-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+          PUBLICATION RULE
+        </div>
+        Forecasts are "verified" only in the sense that a named source really published the forecast. They are not verified realized outcomes. They must not appear in a headline that says "FIFA generated $X" until the post-event model is reconciled to actual visitor, spend, tax, labor and public-cost data.
+      </div>
+    </div>
+
+    <!-- 11-CITY COMPARISON -->
+    <div class="section hidden" id="section-cities">
+      <div class="section-header">
+        <div>
+          <div class="section-title">11-City Comparison</div>
+          <div class="section-subtitle">HVS hotel impact, FIFA projected impact, Placer.ai retail, Travel and Tour World Aug momentum · Seattle highlighted · “Not public” = not publicly disclosed as of Sep 13, 2026 · Aug decline = pp drop from Jun-Jul avg to projected Aug YoY</div>
+        </div>
+      </div>
+
+      <div class="chart-container">
+        <div class="chart-title">Incremental Hotel Room Revenue — Top Reported Cities</div>
+        <div class="chart-subtitle">HVS post-tournament analysis · Only cities with publicly disclosed revenue shown · Total: ~$680M across 11 U.S. host cities</div>
+        <div class="chart-wrapper"><canvas id="chartHotelRevenue"></canvas></div>
+      </div>
+
+      <div class="chart-row">
+        <div class="chart-container">
+          <div class="chart-title">Hotel Occupancy Change vs Baseline (pp)</div>
+          <div class="chart-subtitle">HVS counterfactual model · Negative = occupancy underperformed · Only cities with published data</div>
+          <div class="chart-wrapper"><canvas id="chartOccChange"></canvas></div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">Seattle Hotel ADR Performance</div>
+          <div class="chart-subtitle">CoStar/STR verified data · ADR $ and YoY % change</div>
+          <div class="chart-wrapper"><canvas id="chartADRChange"></canvas></div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-toolbar">
+          <input type="text" class="table-search" id="citySearch" placeholder="Search cities...">
+          <div class="filter-chips">
+            <span class="filter-chip active" data-filter="all">All</span>
+            <span class="filter-chip" data-filter="west">West Coast</span>
+            <span class="filter-chip" data-filter="east">East Coast</span>
+            <span class="filter-chip" data-filter="central">Central</span>
+          </div>
+        </div>
+        <table class="data-table" id="cityTable">
+          <thead>
+            <tr>
+              <th data-sort="city">City</th>
+              <th data-sort="matches">Matches</th>
+              <th data-sort="projImpact">Proj. Impact ($M)</th>
+              <th data-sort="rev">HVS Hotel Rev.</th>
+              <th data-sort="occChange">Occ. Gap</th>
+              <th data-sort="revparPct">RevPAR %</th>
+              <th data-sort="retailVsNonHost">Retail vs Non-Host</th>
+              <th data-sort="augDecline">Aug. Decline</th>
+            </tr>
+          </thead>
+          <tbody id="cityTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          KEY FINDINGS
+        </div>
+        Seattle saw the largest occupancy gap (-6.3pp) among all 11 host cities, despite the highest ADR growth (+30.5%). The World Cup's hotel effect came through pricing power, not occupancy. Only Los Angeles, Dallas, and San Francisco beat the baseline occupancy. Bank of America confirmed $40B global / $20B U.S. economic impact — half of FIFA's $80B projection. Placer.ai found host markets outperformed non-host by only 0.1pp in YoY retail visits.
+      </div>
+
+      <div class="chart-container" style="margin-top:24px">
+        <div class="chart-title">All Host-City Benchmarks (not Seattle-specific)</div>
+        <div class="chart-subtitle">Bank of America and Placer.ai aggregate data across all 11 U.S. host cities · These are not Seattle-specific values</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:16px">
+          <div class="kpi-card compact">
+            <div class="kpi-label">BofA Host-City Avg Spend</div>
+            <div class="kpi-value">+6.3%</div>
+            <div class="kpi-sub">Retail YoY (all 11 hosts)</div>
+            <div class="evidence-badge class-b" style="margin-top:6px">Class B · BofA</div>
+          </div>
+          <div class="kpi-card compact">
+            <div class="kpi-label">BofA Retail Spend</div>
+            <div class="kpi-value">+3.5%</div>
+            <div class="kpi-sub">Retail YoY (all 11 hosts)</div>
+            <div class="evidence-badge class-b" style="margin-top:6px">Class B · BofA</div>
+          </div>
+          <div class="kpi-card compact">
+            <div class="kpi-label">Placer.ai Host vs Non-Host</div>
+            <div class="kpi-value">+0.1pp</div>
+            <div class="kpi-sub">Retail visits outperformance</div>
+            <div class="evidence-badge class-b" style="margin-top:6px">Class B · Placer.ai</div>
+          </div>
+          <div class="kpi-card compact">
+            <div class="kpi-label">Placer.ai Bars (1mi)</div>
+            <div class="kpi-value">+53.7%</div>
+            <div class="kpi-sub">Dining traffic within 1mi</div>
+            <div class="evidence-badge class-b" style="margin-top:6px">Class B · Placer.ai</div>
+          </div>
+          <div class="kpi-card compact">
+            <div class="kpi-label">Placer.ai Retail (1mi)</div>
+            <div class="kpi-value">+22.0%</div>
+            <div class="kpi-sub">Retail traffic within 1mi</div>
+            <div class="evidence-badge class-b" style="margin-top:6px">Class B · Placer.ai</div>
+          </div>
+          <div class="kpi-card compact">
+            <div class="kpi-label">BofA Total Global Impact</div>
+            <div class="kpi-value">$40B</div>
+            <div class="kpi-sub">$20B within U.S.</div>
+            <div class="evidence-badge class-b" style="margin-top:6px">Class B · BofA</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEATTLE DEEP DIVE -->
+    <div class="section hidden" id="section-seattle">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Seattle Deep Dive</div>
+          <div class="section-subtitle">Six measurement pillars · SSC Standardized Sports Economic Impact Model</div>
+        </div>
+      </div>
+
+      <div class="pillar-tabs" id="pillarTabs">
+        <div class="pillar-tab active" data-pillar="visitation">Visitation <span class="badge">8</span></div>
+        <div class="pillar-tab" data-pillar="spending">Visitor Spending <span class="badge">7</span></div>
+        <div class="pillar-tab" data-pillar="lodging">Lodging Demand <span class="badge">9</span></div>
+        <div class="pillar-tab" data-pillar="mobility">Transportation <span class="badge">12</span></div>
+        <div class="pillar-tab" data-pillar="taxes">Tax Generation <span class="badge">5</span></div>
+        <div class="pillar-tab" data-pillar="workforce">Workforce <span class="badge">6</span></div>
+      </div>
+
+      <!-- VISITATION -->
+      <div class="pillar-content active" id="pillar-visitation">
+        <div class="kpi-grid">
+          <div class="kpi-card success"><div class="kpi-label">Stadium Attendance</div><div class="kpi-value">401,500</div><div class="kpi-delta positive">6 matches · 100% occupancy</div><span class="kpi-class class-a">Class A · FIFA</span></div>
+          <div class="kpi-card"><div class="kpi-label">Downtown Match-Day Visits</div><div class="kpi-value">&gt;3M</div><div class="kpi-delta positive">+17% vs 2025</div><span class="kpi-class class-b">Class B · DSA/Placer.ai</span></div>
+          <div class="kpi-card teal"><div class="kpi-label">Fan Celebration Visits</div><div class="kpi-value">&gt;750K</div><div class="kpi-delta positive">Through Jun 27</div><span class="kpi-class class-a">Class A · SeattleFWC26</span></div>
+          <div class="kpi-card success"><div class="kpi-label">Waterfront Park Visits</div><div class="kpi-value">625,293</div><div class="kpi-delta positive">539,865 unique · Jun 11-27</div><span class="kpi-class class-a">Class A · SeattleFWC26</span></div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">Daily Link Ridership on Match Days</div>
+          <div class="chart-subtitle">Sound Transit · Jul 6 set new single-day record at 309K</div>
+          <div class="chart-wrapper"><canvas id="chartLinkDaily"></canvas></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-container">
+            <div class="chart-title">Pioneer Square & Downtown Visitation</div>
+            <div class="chart-subtitle">DSA/Placer.ai · Domestic visitors only</div>
+            <div class="chart-wrapper short"><canvas id="chartVisitation"></canvas></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">July Downtown Indicators vs 2019</div>
+            <div class="chart-subtitle">% of July 2019 baseline</div>
+            <div class="chart-wrapper short"><canvas id="chartJulyRecovery"></canvas></div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">What This Proves</div>
+          <div class="info-card-body">Seattle hosted six sold-out World Cup matches with a verified regional footprint extending through public celebrations, downtown, the waterfront, transit, airports, ferries and team base camps. The strongest operating evidence is transportation and visitation.</div>
+        </div>
+        <div class="callout warning">
+          <div class="callout-title">WHAT THIS DOES NOT PROVE</div>
+          DSA/Placer.ai visitation data is domestic only — international visitors are not captured. Visits are not deduplicated across locations. Fan Celebration "visits" may include repeats. The 3M+ downtown figure is across 6 match days, not unique visitors.
+        </div>
+      </div>
+
+      <!-- SPENDING -->
+      <div class="pillar-content" id="pillar-spending">
+        <div class="kpi-grid">
+          <div class="kpi-card success"><div class="kpi-label">Square Bar/Brewery Volume</div><div class="kpi-value">+21.8%</div><div class="kpi-delta positive">Group stage transaction volume</div><span class="kpi-class class-b">Class B · Square</span></div>
+          <div class="kpi-card teal"><div class="kpi-label">Toast GMV Jun 19</div><div class="kpi-value">+51%</div><div class="kpi-delta positive">Transactions +56% · vs prior 8 Fridays</div><span class="kpi-class class-b">Class B · Toast</span></div>
+          <div class="kpi-card"><div class="kpi-label">Downtown Consumer Spending</div><div class="kpi-value">$821.6M</div><div class="kpi-delta positive">+6.89% YoY · Jan-Jun 2026</div><span class="kpi-class class-b">Class B · DSA/Datafy</span></div>
+          <div class="kpi-card purple"><div class="kpi-label">BofA Non-Local Spend</div><div class="kpi-value">+16.7%</div><div class="kpi-delta positive">Jun 10-21 · all host cities</div><span class="kpi-class class-b">Class B · Bank of America</span></div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">Toast Jun 19 Category Breakdown vs Prior 8 Fridays</div>
+          <div class="chart-subtitle">% change in GMV by category · 5-mile sample around stadium</div>
+          <div class="chart-wrapper"><canvas id="chartToastCategories"></canvas></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-container">
+            <div class="chart-title">Bank of America Host-City Spending Benchmarks</div>
+            <div class="chart-subtitle">YoY % change · domestic BofA clients · not Seattle-only</div>
+            <div class="chart-wrapper short"><canvas id="chartBofA"></canvas></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">Downtown Spending Context</div>
+            <div class="chart-subtitle">Datafy downtown ZIPs: 98101, 98104, 98154, 98164, 98174 (~11% of citywide)</div>
+            <div class="chart-wrapper short"><canvas id="chartDatafy"></canvas></div>
+          </div>
+        </div>
+        <div class="callout danger">
+          <div class="callout-title">DIRECT-SPEND LIMIT</div>
+          These datasets prove Seattle experienced substantial merchant activity and that visitor/non-local spending was a major host-city driver nationally. They still do NOT supply a public Seattle FIFA-attributable dollar total by ZIP code, merchant NAICS, or visitor home ZIP. The $821.6M Datafy figure is broad downtown spending, NOT FIFA-only.
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Visa Cross-Border Benchmark</div>
+          <div class="info-card-body">Visa reported cross-border transactions in host cities across US/Canada/Mexico grew nearly <strong>+20% YoY</strong> during the tournament. This is an international benchmark, not Seattle-specific.</div>
+        </div>
+      </div>
+
+      <!-- LODGING -->
+      <div class="pillar-content" id="pillar-lodging">
+        <div class="kpi-grid">
+          <div class="kpi-card success"><div class="kpi-label">ADR Peak (Week Jun 20)</div><div class="kpi-value">$271.80</div><div class="kpi-delta positive">+30.5% YoY</div><span class="kpi-class class-b">Class B · CoStar/STR</span></div>
+          <div class="kpi-card danger"><div class="kpi-label">Match-Week Occupancy</div><div class="kpi-value">73.9%</div><div class="kpi-delta negative">-6.9pp vs 2025</div><span class="kpi-class class-b">Class B · CoStar</span></div>
+          <div class="kpi-card success"><div class="kpi-label">Post-Tournament Occupancy</div><div class="kpi-value">90.5%</div><div class="kpi-delta positive">+3.3pp YoY · first full week post-WC</div><span class="kpi-class class-b">Class B · CoStar</span></div>
+          <div class="kpi-card warning"><div class="kpi-label">HVS Counterfactual</div><div class="kpi-value">-6.3pp</div><div class="kpi-delta negative">Occupancy gap · +$26.56 ADR · +15.7% RevPAR</div><span class="kpi-class class-b">Class B · HVS</span></div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">Hotel Performance: Occupancy vs ADR</div>
+          <div class="chart-subtitle">CoStar/STR weekly data · Four match weeks vs post-tournament</div>
+          <div class="chart-wrapper"><canvas id="chartHotelPerf"></canvas></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-container">
+            <div class="chart-title">AirDNA Short-Term Rental Metrics</div>
+            <div class="chart-subtitle">Seattle market · July 2026 · Class B — market context, not FIFA-only</div>
+            <div class="chart-wrapper short"><canvas id="chartAirDNA"></canvas></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">HVS City-by-City Occupancy Gap</div>
+            <div class="chart-subtitle">Seattle had the largest gap among 11 host cities</div>
+            <div class="chart-wrapper short"><canvas id="chartHVS"></canvas></div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Individual Hotel Reports</div>
+          <div class="info-card-body">
+            <p style="margin-bottom:6px"><strong>Inn at the Market</strong> (79 rooms): Occupancy -4%, Rate +40%</p>
+            <p><strong>Hotel Andra</strong> (123 rooms): Occupancy -15%, Rate +30%</p>
+            <p style="margin-top:8px;color:var(--text-faint);font-size:12px">Source: The Guardian, July 2026</p>
+          </div>
+        </div>
+        <div class="callout warning">
+          <div class="callout-title">STR ATTRIBUTION LIMIT</div>
+          AirDNA metrics are current Seattle STR market context, not a FIFA-only event-window result. Daily match-window bookings, ADR, revenue, cancellations, visitor origin and ZIP-level distribution still require licensed AirDNA/KeyData or partner extracts. FIFA room-block cancellations in March-April 2026 affected pre-tournament bookings.
+        </div>
+      </div>
+
+      <!-- MOBILITY -->
+      <div class="pillar-content" id="pillar-mobility">
+        <div class="kpi-grid">
+          <div class="kpi-card teal"><div class="kpi-label">June Link Boardings</div><div class="kpi-value">5.4M</div><div class="kpi-delta positive">All-time monthly record</div><span class="kpi-class class-a">Class A · Sound Transit</span></div>
+          <div class="kpi-card success"><div class="kpi-label">Jul 6 Link (Single-Day Record)</div><div class="kpi-value">309K</div><div class="kpi-delta positive">USA vs BEL · R16</div><span class="kpi-class class-a">Class A · Sound Transit</span></div>
+          <div class="kpi-card"><div class="kpi-label">Metro+ST Combined (6 Days)</div><div class="kpi-value">~3.4M</div><div class="kpi-delta positive">Metro 1.9M + ST 1.5M</div><span class="kpi-class class-a">Class A/B · Metro/ST</span></div>
+          <div class="kpi-card purple"><div class="kpi-label">Jun 19 Shared Mobility</div><div class="kpi-value">83,600</div><div class="kpi-delta positive">Scooters + bikes · citywide</div><span class="kpi-class class-a">Class A · SDOT</span></div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">King County Metro Modal Breakdown — 6 Match Days</div>
+          <div class="chart-subtitle">Exact boardings by mode · Source: King County Metro post-event accounting (Jul 10, 2026)</div>
+          <div class="chart-wrapper tall"><canvas id="chartMetroBreakdown"></canvas></div>
+        </div>
+        <div class="chart-row">
+          <div class="chart-container">
+            <div class="chart-title">Sound Transit Link Daily Match-Day Boardings</div>
+            <div class="chart-subtitle">174 rail vehicles deployed per match day</div>
+            <div class="chart-wrapper short"><canvas id="chartLinkMatchDay"></canvas></div>
+          </div>
+          <div class="chart-container">
+            <div class="chart-title">Jun 19 Shared Mobility Breakdown</div>
+            <div class="chart-subtitle">SDOT · 83,600 total trips · avg 1.6mi, 13.2min</div>
+            <div class="chart-wrapper short"><canvas id="chartSharedMobility"></canvas></div>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Metro Service Plan</div>
+          <div class="info-card-body">
+            <p style="margin-bottom:4px"><strong>Match Day Shuttle:</strong> Frequency increased from 7min to 3min</p>
+            <p style="margin-bottom:4px"><strong>Waterfront Shuttle:</strong> 10min frequency</p>
+            <p style="margin-bottom:4px"><strong>48 added weekday bus trips:</strong> Routes 40, 70, 101, 150</p>
+            <p style="margin-bottom:4px"><strong>Accessible shuttle:</strong> 20min frequency</p>
+            <p style="margin-bottom:4px"><strong>Metro Flex:</strong> 10 vehicles, 8 drivers</p>
+            <p style="margin-bottom:4px"><strong>West Seattle Water Taxi:</strong> +4 weekday roundtrips</p>
+            <p style="margin-bottom:4px"><strong>Vashon Water Taxi:</strong> +7 Sunday roundtrips</p>
+            <p><strong>Streetcar:</strong> 12min frequency on match days</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Regional Mobility Context</div>
+          <div class="info-card-body">
+            <p style="margin-bottom:6px"><strong>SEA Airport:</strong> ~605,000 travelers across 3 busy days; ~1.2M over 3-week span</p>
+            <p style="margin-bottom:6px"><strong>WA State Ferries:</strong> >9.4M riders YTD through Jun 28, +425K vs 2025; 20 of 21 vessels available</p>
+            <p style="margin-bottom:6px"><strong>WSDOT:</strong> Paused I-5 Ship Canal Bridge work during tournament</p>
+            <p><strong>Team Base Camps:</strong> Belgium (Renton, Sounders FC), Egypt (Gonzaga/Spokane), UW practice venue</p>
+          </div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Lime Shared Mobility</div>
+          <div class="info-card-body">
+            <p style="margin-bottom:6px"><strong>Group-stage trips:</strong> >675,000</p>
+            <p style="margin-bottom:6px"><strong>2025 annual shared trips:</strong> 10.5M (+60% vs 2024)</p>
+            <p style="margin-bottom:6px"><strong>Jan-May 2026:</strong> +42% vs 2025</p>
+            <p><strong>Pioneer Square:</strong> Pedestrian zone on all 6 match days; devices geofenced to 8mph</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- TAXES -->
+      <div class="pillar-content" id="pillar-taxes">
+        <div class="banner info">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          <div class="banner-content">
+            <strong>Calculated FIFA-attributable tax estimate: ~$15.5M (direct).</strong> Using 4-method triangulation from actual King County and Seattle collection data through June 2026. The $96M Tourism Economics forecast included indirect/induced multiplier effects; our $15.5M is DIRECT tax only. With multiplier (1.42x), total tax would be ~$22M — still 77% below forecast. The 2-month distribution lag means June-July WC collections won't fully appear until August-September data.
+          </div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi-card purple"><div class="kpi-label">Forecast vs Calc Tax</div><div class="kpi-value">$96M → $15.5M</div><div class="kpi-delta negative">-84% actual vs forecast</div><span class="kpi-class class-b">Class B · SSC 4-Method</span></div>
+          <div class="kpi-card warning"><div class="kpi-label">Admission Tax Rate</div><div class="kpi-value">5%</div><div class="kpi-delta neutral">Lumen Field/T-Mobile Park exempt</div><span class="kpi-class class-c">Class C · Seattle Finance</span></div>
+          <div class="kpi-card warning"><div class="kpi-label">Commercial Parking Tax</div><div class="kpi-value">14.5%</div><div class="kpi-delta neutral">Lumen Field/T-Mobile Park exempt</div><span class="kpi-class class-c">Class C · Seattle Finance</span></div>
+          <div class="kpi-card success"><div class="kpi-label">Calculated Tax Estimate</div><div class="kpi-value">~$15.5M</div><div class="kpi-delta positive">4-method from actual receipts</div><span class="kpi-class class-b">Class B · SSC Triangulation</span></div>
+        </div>
+        <div class="info-card">
+          <div class="info-card-title">Applicable Tax Channels</div>
+          <div class="info-card-body">
+            <p style="margin-bottom:6px"><strong>State B&O Tax:</strong> Applies to business gross receipts</p>
+            <p style="margin-bottom:6px"><strong>Retail Sales Tax:</strong> State + local sales tax on taxable retail sales</p>
+            <p style="margin-bottom:6px"><strong>Lodging Tax:</strong> State hotel/motel tax + local convention center tax</p>
+            <p style="margin-bottom:6px"><strong>STR Tax:</strong> Short-term rental tax applies to Airbnb/VRBO</p>
+            <p style="margin-bottom:6px"><strong>Seattle Admission Tax:</strong> 5% generally; Lumen Field and T-Mobile Park are exempt</p>
+            <p><strong>Seattle Commercial Parking Tax:</strong> 14.5%; Lumen Field and T-Mobile Park are exempt</p>
+          </div>
+        </div>
+        <div class="callout danger">
+          <div class="callout-title">FISCAL RETURN CAVEAT</div>
+          Forecast tax figures use projected visitor spending and tax rates, not actual DOR/City receipts. Until WA DOR and Seattle Finance release aggregated, non-confidential tax collections for June-July 2026 by geography and NAICS, no defensible fiscal return can be claimed. Capital investments should be disclosed separately with legacy/useful-life treatment.
+        </div>
+      </div>
+
+      <!-- WORKFORCE -->
+      <div class="pillar-content" id="pillar-workforce">
+        <div class="kpi-grid">
+          <div class="kpi-card success"><div class="kpi-label">King Co Leisure/Hospitality</div><div class="kpi-value">149,500</div><div class="kpi-delta positive">+2,800 MoM · +5,700 YoY</div><span class="kpi-class class-a">Class A · ESD</span></div>
+          <div class="kpi-card"><div class="kpi-label">King Co Total Nonfarm</div><div class="kpi-value">1,488,200</div><div class="kpi-delta positive">+1,700 MoM · +6,700 YoY</div><span class="kpi-class class-a">Class A · ESD</span></div>
+          <div class="kpi-card teal"><div class="kpi-label">WA Leisure/Hospitality</div><div class="kpi-value">366,800</div><div class="kpi-delta positive">+4,200 MoM · +9,300 YoY</div><span class="kpi-class class-a">Class A · ESD</span></div>
+          <div class="kpi-card warning"><div class="kpi-label">Forecast Jobs</div><div class="kpi-value">~20,000</div><div class="kpi-delta neutral">FORECAST — not event-specific</div><span class="kpi-class class-d">Class D · Tourism Economics</span></div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">King County Employment by Industry (July 2026)</div>
+          <div class="chart-subtitle">WA ESD · Preliminary payroll estimates</div>
+          <div class="chart-wrapper"><canvas id="chartWorkforce"></canvas></div>
+        </div>
+        <div class="chart-container">
+          <div class="chart-title">Leisure/Hospitality Employment Growth</div>
+          <div class="chart-subtitle">King County vs Washington State · MoM and YoY changes</div>
+          <div class="chart-wrapper short"><canvas id="chartLeisureGrowth"></canvas></div>
+        </div>
+        <div class="callout info">
+          <div class="callout-title">WHAT ESD DOES AND DOES NOT PROVE</div>
+          ESD explicitly says preparations for Seattle World Cup games helped boost King County employment and that statewide leisure/hospitality growth was likely tied to the games. These are strong measured labor-market signals. They are NOT an event payroll census. Worker hours, wages, temporary staffing, contractor labor, overtime, occupation, employer and worker home ZIP remain unavailable publicly.
+        </div>
+      </div>
+    </div>
+
+    <!-- PUBLIC SECTOR -->
+    <div class="section hidden" id="section-public">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Public Investment & Operations</div>
+          <div class="section-subtitle">Appropriations, capital investments, city operations · All Class C (appropriations) unless noted</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card warning"><div class="kpi-label">WA Commerce FIFA Project</div><div class="kpi-value">$29.5M</div><div class="kpi-delta neutral">$10M reappropriation + $19.5M appropriation</div><span class="kpi-class class-c">Class C · WA Session Law</span></div>
+        <div class="kpi-card warning"><div class="kpi-label">King County Public Safety</div><div class="kpi-value">$25M</div><div class="kpi-delta neutral">Allocation</div><span class="kpi-class class-c">Class C · King County</span></div>
+        <div class="kpi-card warning"><div class="kpi-label">Seattle CB 121201</div><div class="kpi-value">$18.08M</div><div class="kpi-delta neutral">Conditional appropriations</div><span class="kpi-class class-c">Class C · Seattle Ordinance</span></div>
+        <div class="kpi-card warning"><div class="kpi-label">Estimated Total Public</div><div class="kpi-value">~$120M</div><div class="kpi-delta neutral">KUOW estimate across WA entities</div><span class="kpi-class class-c">Class C · KUOW</span></div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-toolbar"><div style="font-weight:600;font-size:13px">Public Investment Breakdown</div></div>
+        <table class="data-table">
+          <thead><tr><th>Source</th><th>Amount</th><th>Scope</th><th>Evidence Class</th></tr></thead>
+          <tbody id="investmentTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">Seattle CB 121201 Detail ($18,076,982)</div>
+        <div class="info-card-body">
+          <p style="margin-bottom:4px">SPD: $10,649,000 · SFD: $4,091,000 · SDOT: $938,000</p>
+          <p style="margin-bottom:4px">Plus IT, Seattle Center, CARE, OEM allocations</p>
+          <p>SPD drone-threat grant: $2,084,569 · Barrier/safety budget: $3.6M</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">City Operations — SPU</div>
+        <div class="info-card-body">
+          <p style="margin-bottom:4px"><strong>Debris removed:</strong> 294,575 lb</p>
+          <p style="margin-bottom:4px"><strong>Single-use items avoided:</strong> 20,000</p>
+          <p style="margin-bottom:4px"><strong>Campaign impressions:</strong> 3.2M+</p>
+          <p style="margin-bottom:4px"><strong>People reached:</strong> 700K+</p>
+          <p><strong>New water refill stations:</strong> 7</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">King County Sheriff Operations</div>
+        <div class="info-card-body">
+          KCSO deployed: Air Support, Bomb Disposal, Marine, Crisis Negotiations, K-9, TAC-30, transit teams, language access, therapeutic response, Drone/Dialog teams.
+        </div>
+      </div>
+
+      <div class="callout warning">
+        <div class="callout-title">APPROPRIATIONS vs EXPENDITURES</div>
+        The public-sector footprint is substantial, but appropriations must be kept separate from expenditures. The enacted state capital law, Seattle ordinance, County allocation and infrastructure budget lines are documented; final actual public cost remains a closeout-data task. Capital investments should be disclosed separately with legacy/useful-life treatment.
+      </div>
+    </div>
+
+    <!-- COMMUNITY -->
+    <div class="section hidden" id="section-community">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Community & Legacy Outcomes</div>
+          <div class="section-subtitle">Documented outcomes that are real but should remain separate from direct economic spending</div>
+        </div>
+      </div>
+
+      <div class="kpi-grid">
+        <div class="kpi-card success"><div class="kpi-label">Community Business Connector</div><div class="kpi-value">$250K</div><div class="kpi-delta positive">23 organizations · 72 activations · 17K+ residents</div><span class="kpi-class class-a">Class A · CBC</span></div>
+        <div class="kpi-card teal"><div class="kpi-label">Public-Space Activation</div><div class="kpi-value">$1.3M</div><div class="kpi-delta positive">Arts/culture/public realm</div><span class="kpi-class class-a">Class A · Seattle Arts</span></div>
+        <div class="kpi-card"><div class="kpi-label">Community Celebrations</div><div class="kpi-value">$485K</div><div class="kpi-delta positive">13 organizations + 1 community group</div><span class="kpi-class class-a">Class A · SeattleFWC26</span></div>
+        <div class="kpi-card purple"><div class="kpi-label">Waterfront Shuttle Support</div><div class="kpi-value">$500K</div><div class="kpi-delta neutral">Transportation funding</div><span class="kpi-class class-c">Class C</span></div>
+      </div>
+
+      <div class="chart-row">
+        <div class="chart-container">
+          <div class="chart-title">Community Investments</div>
+          <div class="chart-subtitle">Total verified community programming investment</div>
+          <div class="chart-wrapper short"><canvas id="chartCommunity"></canvas></div>
+        </div>
+        <div class="info-card" style="margin-bottom:0">
+          <div class="info-card-title">Legacy Outcomes</div>
+          <div class="info-card-body">
+            <p style="margin-bottom:6px"><strong>SEA&WIN:</strong> 3,000+ unique players, 685 avg daily users; 220+ Super Fan Loop visits, ~100 Unity/Pride Loop visits</p>
+            <p style="margin-bottom:6px"><strong>Youth Match Access:</strong> 1,400+ youth and caregivers sent to World Cup matches</p>
+            <p style="margin-bottom:6px"><strong>RAVE Mini-Pitches:</strong> 33 statewide, with additional pitches in legacy planning</p>
+            <p style="margin-bottom:6px"><strong>Frontline Worker Training:</strong> 2,500 workers trained in human-trafficking awareness</p>
+            <p><strong>Seattle Center LET'S PLAY SEA '26:</strong> 39 days, 60+ matches, daily indoor viewing + outdoor cultural programming</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">Seattle Parks "Beautiful Game" Activations</div>
+        <div class="info-card-body">100+ soccer-themed activations, 7 outdoor watch parties, 12 indoor watch parties, 2 youth jamborees, 60+ recreation programs. 80+ free events supported across Seattle through arts/culture summer programming.</div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">Small Business Programs</div>
+        <div class="info-card-body">
+          <p style="margin-bottom:6px"><strong>CBC Game Ready Activation Grants:</strong> $250K to 23 orgs, 72 activations, 17K+ King County residents engaged, ~250 local businesses received opportunities</p>
+          <p style="margin-bottom:6px"><strong>CID Stamp Book Challenge:</strong> 72 participating businesses, $10+ purchase threshold, Jun 15-Jul 6</p>
+          <p><strong>Seattle OED:</strong> Outdoor dining, Pioneer Square/South Downtown outreach, marketing consulting, procurement readiness, flexible capital, business-resilience work</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- STATEWIDE -->
+    <div class="section hidden" id="section-statewide">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Washington Statewide Footprint</div>
+          <div class="section-subtitle">9 official fan zones · Official locations fully verified; post-event counts uneven</div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead><tr><th>Community</th><th>Official Status</th><th>Verified Attendance</th><th>Additional Notes</th></tr></thead>
+          <tbody id="fanZoneTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="callout info">
+        <div class="callout-title">STRICT VERIFIED-ONLY CHOICE</div>
+        Earlier editions used credible local news reports for several fan-zone attendance estimates. This edition keeps only counts traceable to official/public primary sources. Other communities remain marked "not public" rather than filling them with secondary estimates.
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">Washington State Ferries</div>
+        <div class="info-card-body">
+          <p style="margin-bottom:6px"><strong>YTD riders through Jun 28, 2026:</strong> >9.4M (+425K vs 2025)</p>
+          <p style="margin-bottom:6px"><strong>Vessels:</strong> 20 of 21 available</p>
+          <p>WSF explicitly stated World Cup visitors were adding to summer demand, but the 425K YoY system increase cannot be assigned wholly to FIFA.</p>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">Team Base Camps</div>
+        <div class="info-card-body">
+          <p style="margin-bottom:4px"><strong>Belgium:</strong> Renton (Sounders FC facility)</p>
+          <p style="margin-bottom:4px"><strong>Egypt:</strong> Gonzaga University, Spokane</p>
+          <p><strong>UW:</strong> Practice venue for tournament teams</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- DATA GAPS -->
+    <div class="section hidden" id="section-gaps">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Data Gaps & Request Matrix</div>
+          <div class="section-subtitle">What is still missing from the public record — and who owns it</div>
+        </div>
+      </div>
+
+      <div class="banner danger">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/></svg>
+        <div class="banner-content">
+          <strong>This is the reason no honest report can yet claim it has "every data point that exists."</strong> The remaining gaps are predominantly raw or licensed datasets rather than missed public headline sources.
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-toolbar">
+          <input type="text" class="table-search" id="gapSearch" placeholder="Search data owners or datasets...">
+          <div class="filter-chips">
+            <span class="filter-chip active" data-gap-filter="all">All</span>
+            <span class="filter-chip" data-gap-filter="spending">Spending</span>
+            <span class="filter-chip" data-gap-filter="lodging">Lodging</span>
+            <span class="filter-chip" data-gap-filter="mobility">Mobility</span>
+            <span class="filter-chip" data-gap-filter="taxes">Taxes</span>
+            <span class="filter-chip" data-gap-filter="workforce">Workforce</span>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Data Owner</th><th>Dataset Needed</th><th>Why It Changes the Final Number</th><th>Priority</th></tr></thead>
+          <tbody id="gapTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">Highest-Priority Requests</div>
+        <div class="info-card-body">Datafy/DSA, Placer.ai/DSA, Tourism Economics/Visit Seattle, DOR, Seattle Finance, ESD, Sound Transit, Metro, SDOT/Lime, Port of Seattle, STR, and AirDNA collectively close almost every major hole.</div>
+      </div>
+    </div>
+
+    <!-- METRIC REGISTER -->
+    <div class="section hidden" id="section-register">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Core Metric Register</div>
+          <div class="section-subtitle">Key data points extracted from the Master Evidence Report v7 · Searchable & filterable · See Data Gaps for complete data-request matrix</div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-toolbar">
+          <input type="text" class="table-search" id="metricSearch" placeholder="Search metrics, values, sources...">
+          <div class="filter-chips" id="metricFilters">
+            <span class="filter-chip active" data-metric-filter="all">All</span>
+            <span class="filter-chip" data-metric-filter="Visitation">Visitation</span>
+            <span class="filter-chip" data-metric-filter="Spending">Spending</span>
+            <span class="filter-chip" data-metric-filter="Lodging">Lodging</span>
+            <span class="filter-chip" data-metric-filter="Mobility">Mobility</span>
+            <span class="filter-chip" data-metric-filter="Workforce">Workforce</span>
+            <span class="filter-chip" data-metric-filter="Operations">Operations</span>
+            <span class="filter-chip" data-metric-filter="Public funding">Public Funding</span>
+            <span class="filter-chip" data-metric-filter="Taxes">Taxes</span>
+          </div>
+        </div>
+        <table class="data-table">
+          <thead><tr><th>Pillar</th><th>Metric</th><th>Value</th><th>Class</th><th>Owner</th><th>Caveat</th></tr></thead>
+          <tbody id="metricTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- SOURCES -->
+    <div class="section hidden" id="section-sources">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Sources & Methodology</div>
+          <div class="section-subtitle">55+ direct sources used for the verified core · SSC realized-impact methodology · All URLs verified Sep 13, 2026</div>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="info-card-title">SSC Realized-Impact Methodology</div>
+        <div class="info-card-body">
+          <p style="margin-bottom:6px"><strong>1. Geography:</strong> Report Seattle, King County and Washington statewide separately</p>
+          <p style="margin-bottom:6px"><strong>2. Event window:</strong> Match days + justified shoulder days; keep broader summer context separate</p>
+          <p style="margin-bottom:6px"><strong>3. Incremental visitors:</strong> Combine ticket origin, Placer/Datafy, airport and lodging; deduplicate repeat visits</p>
+          <p style="margin-bottom:6px"><strong>4. Direct visitor spend:</strong> Use visitor-origin card spend + lodging + transportation + event spend; subtract local substitution</p>
+          <p style="margin-bottom:6px"><strong>5. Labor/indirect effects:</strong> Use transparent multipliers only after direct spend and labor income are reconciled</p>
+          <p style="margin-bottom:6px"><strong>6. Fiscal return:</strong> Use actual DOR/City receipts, not forecasted tax rates alone</p>
+          <p style="margin-bottom:6px"><strong>7. Displacement:</strong> Account for hotel/convention displacement, local avoidance, CID/Pioneer Square differences</p>
+          <p style="margin-bottom:6px"><strong>8. Public cost:</strong> Actual expenditure less reimbursements/grants; disclose capital separately by useful life/legacy</p>
+          <p style="margin-bottom:6px"><strong>9. Distribution:</strong> Report neighborhood, sector, business type, worker and statewide fan-zone outcomes</p>
+          <p style="margin-bottom:10px"><strong>10. Confidence:</strong> Attach evidence class, data owner, extraction date and methodology to every headline metric</p>
+          <div class="callout info" style="margin:8px 0 0">
+            <div class="callout-title">CORE FORMULA</div>
+            Net realized benefit = incremental visitor/event direct spending + attributable labor income/indirect effects + attributable fiscal benefits − displaced normal activity − local substitution/leakage − incremental public operating costs. Capital investments should be disclosed separately with legacy/useful-life treatment.
+          </div>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div class="table-toolbar"><div style="font-weight:600;font-size:13px">Source Audit Register</div></div>
+        <table class="data-table">
+          <thead><tr><th>Source</th><th>Contribution</th></tr></thead>
+          <tbody id="sourceTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Seattle Sports Commission · FIFA World Cup 26 Seattle · Verified Evidence Only</p>
+      <p>Prepared by D. The Data Guy · Research verified through September 2, 2026 · Public-source evidence</p>
+      <p style="margin-top:4px">Updated September 13, 2026 · Evidence classes: A (official measured) · B (provider sample) · C (appropriation) · D (forecast/model) · E (not public)</p>
+    </div>
+  </main>
+</div>
+
+<script>
+// === DATA ===
+const matches = [
+  {date:'Jun 15', teams:'BEL vs EGY', type:'Group Stage'},
+  {date:'Jun 19', teams:'USA vs AUS', type:'Group Stage'},
+  {date:'Jun 24', teams:'BIH vs QAT', type:'Group Stage'},
+  {date:'Jun 26', teams:'EGY vs IRN', type:'Group Stage'},
+  {date:'Jul 1', teams:'BEL vs SEN (R32)', type:'Round of 16'},
+  {date:'Jul 6', teams:'USA vs BEL (R16)', type:'Round of 16'},
+];
+
+const cityComparison = [
+  {city:'New York', region:'east', matches:8, projImpact:1850, rev:339.2, adrChange:'+62.27', revparChange:'+55.51', revparPct:'+23.5%', occChange:'Essentially unchanged', counterfactual:'89.4%', augDecline:'Not public', retailVsNonHost:'Not public', notes:'~half of total HVS revenue'},
+  {city:'Los Angeles', region:'west', matches:8, projImpact:1450, rev:77.2, adrChange:'Not stated', revparChange:'+18.64', revparPct:'+15.5%', occChange:'+1.0pp', counterfactual:'Low-mid 70%', augDecline:'Not public', retailVsNonHost:'Not public', notes:'Beat baseline occ'},
+  {city:'Boston', region:'east', matches:7, projImpact:680, rev:69.3, adrChange:'+43.76', revparChange:'+32.80', revparPct:'+22.0%', occChange:'-0.5pp', counterfactual:'78.2%', augDecline:'-2.79pp', retailVsNonHost:'Not public', notes:'+3.73% Jun-Jul → +0.94% Aug'},
+  {city:'Dallas', region:'central', matches:9, projImpact:1100, rev:60.8, adrChange:'Not stated', revparChange:'Not stated', revparPct:'+30.1%', occChange:'+0.7pp', counterfactual:'Not stated', augDecline:'-0.35pp', retailVsNonHost:'Not public', notes:'+2.87% → +2.52% Aug'},
+  {city:'Miami', region:'east', matches:7, projImpact:850, rev:34.2, adrChange:'+26.30', revparChange:'Not stated', revparPct:'+18.9%', occChange:'-4.6pp', counterfactual:'Low-mid 70%', augDecline:'Not public', retailVsNonHost:'Not public', notes:''},
+  {city:'Seattle', region:'west', matches:6, projImpact:550, rev:'<$25M', adrChange:'+26.56', revparChange:'Not stated (2nd-smallest)', revparPct:'+15.7%', occChange:'-6.3pp', counterfactual:'79.7%', augDecline:'-7.55pp', retailVsNonHost:'Not public', notes:'+10.35% Jun-Jul → +2.80% Aug; WC forecast $929M'},
+  {city:'Kansas City', region:'central', matches:6, projImpact:450, rev:'<$25M', adrChange:'+41.14', revparChange:'+20.04', revparPct:'+43.1%', occChange:'-4.6pp', counterfactual:'Not stated', augDecline:'-17.84pp', retailVsNonHost:'Not public', notes:'+25.24% → +7.40% Aug; IBTimes -24% occ YoY'},
+  {city:'Houston', region:'central', matches:7, projImpact:780, rev:'<$25M', adrChange:'+17.10', revparChange:'+7.85', revparPct:'+22.2%', occChange:'-1.8pp', counterfactual:'61.2%', augDecline:'-0.35pp', retailVsNonHost:'Not public', notes:'+2.87% → +2.52% Aug'},
+  {city:'San Francisco', region:'west', matches:6, projImpact:550, rev:'<$25M', adrChange:'Not stated', revparChange:'Not stated', revparPct:'+13.4%', occChange:'+0.3pp', counterfactual:'Low-mid 70%', augDecline:'Not public', retailVsNonHost:'Not public', notes:'Beat baseline occ'},
+  {city:'Philadelphia', region:'east', matches:6, projImpact:620, rev:'<$25M', adrChange:'Not stated', revparChange:'+$19.00', revparPct:'+14.8%', occChange:'-3.5pp', counterfactual:'73.9%', augDecline:'Not public', retailVsNonHost:'Not public', notes:''},
+  {city:'Atlanta', region:'central', matches:8, projImpact:950, rev:'<$25M', adrChange:'+8.31', revparChange:'+$1.96', revparPct:'+9.4%', occChange:'-2.6pp', counterfactual:'67.6%', augDecline:'Not public', retailVsNonHost:'Not public', notes:'IBTimes -13% occ YoY'},
+];
+
+const metroBreakdown = [
+  {mode:'Metro Buses', value:1800177, color:'#2f81f7'},
+  {mode:'Sound Transit Link 1+2', value:1514000, color:'#2dd4bf'},
+  {mode:'Streetcar', value:37901, color:'#bc8cff'},
+  {mode:'Water Taxi', value:35014, color:'#e3b341'},
+  {mode:'DART Routes', value:25729, color:'#f85149'},
+  {mode:'Match Day Shuttle', value:25840, color:'#3fb950'},
+  {mode:'Access Paratransit', value:17633, color:'#d29922'},
+  {mode:'Metro Flex', value:6773, color:'#8250df'},
+  {mode:'Waterfront Shuttle', value:8143, color:'#0969da'},
+];
+
+const investments = [
+  {source:'WA Commerce FIFA Project (SSB 5195)', amount:'$29.5M', scope:'$10M reappropriation + $19.5M appropriation; $19.4M PSA, $100K Gonzaga', cls:'C'},
+  {source:'UW FIFA Improvements', amount:'$1.7M', scope:'Separate appropriation', cls:'C'},
+  {source:'King County Public Safety', amount:'$25M', scope:'Allocation for public safety operations', cls:'C'},
+  {source:'Seattle CB 121201', amount:'$18.08M', scope:'Conditional: SPD $10.65M, SFD $4.09M, SDOT $938K, IT, Seattle Center, CARE, OEM', cls:'C'},
+  {source:'SeattleFWC26 Contribution', amount:'$1.0M', scope:'Organizing committee contribution', cls:'C'},
+  {source:'SPD Drone-Threat Grant', amount:'$2.08M', scope:'Drone detection and threat mitigation', cls:'C'},
+  {source:'Barrier/Safety Budget', amount:'$3.6M', scope:'Removable barriers at Pike Place + pedestrian safety at Seattle Center', cls:'C'},
+  {source:'KUOW Estimated Total', amount:'~$120M', scope:'Estimated across WA public entities', cls:'C'},
+];
+
+const fanZones = [
+  {community:'Bellingham', status:'Official WA fan zone', attendance:'6,600+', notes:'Two Jun 19 watch parties (City of Bellingham) — only officially published count'},
+  {community:'Bremerton', status:'Official WA fan zone', attendance:'Not public', notes:'No standardized final total located in official public sources'},
+  {community:'Everett', status:'Official WA fan zone', attendance:'Not public', notes:'Official location verified; public final standardized total requires source-specific reconciliation'},
+  {community:'Olympia-Lacey', status:'Official WA fan zone', attendance:'Not public', notes:'Official location verified; standardized full-series total not located in official source set'},
+  {community:'Puyallup Tribe / Tacoma', status:'Official WA fan zone', attendance:'Not public', notes:'No standardized full-series final total located'},
+  {community:'Spokane', status:'Official WA fan zone + Egypt base camp', attendance:'Not public', notes:'Egypt team base camp at Gonzaga University; no standardized final attendance located'},
+  {community:'Tri-Cities', status:'Official WA fan zone', attendance:'Not public', notes:'No standardized final total located'},
+  {community:'Vancouver, WA', status:'Official WA fan zone', attendance:'Not public', notes:'No standardized final total located'},
+  {community:'Yakima', status:'Official WA fan zone', attendance:'Not public', notes:'No standardized full-series official total located in core source set'},
+];
+
+const dataGaps = [
+  {owner:'FIFA / Ticketing', dataset:'Ticket-buyer origin, ticket revenue, residence, party size, accredited workforce/vendor spend', why:'Incremental visitor count and direct event revenue', priority:'High', category:'spending'},
+  {owner:'Tourism Economics', dataset:'Final post-event model/workpapers, visitor volumes, spend profiles, multipliers, tax tables, displacement adjustments', why:'Forecast-to-realized reconciliation', priority:'High', category:'spending'},
+  {owner:'Visit Seattle / STR / CoStar', dataset:'Daily room nights, ADR, occupancy, RevPAR, revenue by submarket; group/transient; visitor origin', why:'Incremental lodging + displacement', priority:'High', category:'lodging'},
+  {owner:'AirDNA / STR Partners', dataset:'Daily tournament-window STR demand/rates/revenue and origin', why:'Non-hotel lodging contribution', priority:'Medium', category:'lodging'},
+  {owner:'DSA / Placer.ai', dataset:'Raw daily/hourly unique visitors, origins, dwell, repeats, neighborhood geofences, international-compatible methodology', why:'Deduplicated visitation + geography', priority:'High', category:'spending'},
+  {owner:'DSA / Datafy / Card Providers', dataset:'Daily visitor-origin dollar spend by category/geography and baseline/control series', why:'Actual direct visitor spending and where it landed', priority:'High', category:'spending'},
+  {owner:'SDOT', dataset:'Ped/bike counters, road speeds/volumes, curb/parking transactions, collision/incidents, provider-level mobility files', why:'Street/mobility impact + parking revenue', priority:'Medium', category:'mobility'},
+  {owner:'Sound Transit', dataset:'Final validated station/day APC and OD, fare revenue, incremental service cost', why:'Transit demand + cost/revenue', priority:'Medium', category:'mobility'},
+  {owner:'King County Metro', dataset:'Route/stop/hour boardings, shuttle ridership, fare revenue, extra service cost/overtime', why:'Transit demand + public operating cost', priority:'Medium', category:'mobility'},
+  {owner:'Port of Seattle / SEA', dataset:'Daily enplanements/deplanements, international arrivals, origin markets, parking/TNC/taxi, FIFA operations cost', why:'Gateway attribution + visitor origin', priority:'Medium', category:'mobility'},
+  {owner:'WSF', dataset:'Route/day ridership and vehicles vs baseline, fare revenue, event incremental cost', why:'Statewide mobility spillover', priority:'Low', category:'mobility'},
+  {owner:'WA DOR', dataset:'Taxable retail/lodging/food-service tax base by geography/period', why:'Actual state/local fiscal increment', priority:'High', category:'taxes'},
+  {owner:'Seattle Finance', dataset:'B&O, parking, admissions/STR and relevant receipts by filing period/geography', why:'Actual City fiscal return', priority:'High', category:'taxes'},
+  {owner:'ESD / WDC / Employers', dataset:'Hours, wages, temp staffing, occupation/industry microdata, payroll, worker origin', why:'Labor income + event-specific jobs', priority:'Medium', category:'workforce'},
+  {owner:'SeattleFWC26 / Venue', dataset:'Final contracts, procurement, vendors, payroll, attendance scans, fan-event counts, sponsor activation spend', why:'Direct event operations/local procurement', priority:'Medium', category:'spending'},
+  {owner:'SPD/SFD/CARE/OEM/KCSO', dataset:'Calls, incidents, medical responses, overtime, mutual aid, reimbursements, final costs', why:'Public-service cost + safety outcomes', priority:'Medium', category:'mobility'},
+  {owner:'Fan-Zone Host Cities', dataset:'Event-by-event attendance, vendor revenue, hotel/restaurant lift, municipal cost', why:'Washington statewide spillover', priority:'Low', category:'spending'},
+];
+
+const allMetrics = [
+  {pillar:'Visitation', metric:'Stadium attendance', value:'401,500', cls:'A', owner:'FIFA', caveat:'Aggregate six matches'},
+  {pillar:'Visitation', metric:'Downtown match-day visits', value:'>3M; +17%', cls:'B', owner:'DSA/Placer.ai', caveat:'Domestic only'},
+  {pillar:'Visitation', metric:'Fan Celebration visits', value:'>750K through Jun 27', cls:'A', owner:'SeattleFWC26', caveat:'Visits; dedupe not public'},
+  {pillar:'Visitation', metric:'Waterfront Park', value:'625,293 visits / 539,865 unique', cls:'A', owner:'SeattleFWC26/Waterfront', caveat:'Jun 11-27'},
+  {pillar:'Visitation', metric:'Pioneer Square Jun 19', value:'149,800 domestic visitors', cls:'B', owner:'DSA/Placer.ai', caveat:'Domestic only; highest since 2019 tracking'},
+  {pillar:'Visitation', metric:'Occidental Square watch-party', value:'436,239 visits', cls:'B', owner:'DSA', caveat:''},
+  {pillar:'Visitation', metric:'Westlake Park', value:'129,032 visits', cls:'B', owner:'DSA', caveat:''},
+  {pillar:'Visitation', metric:'Waterfront Park Jun 19', value:'84,767 visits (highest daily since opening)', cls:'A', owner:'SeattleFWC26/Waterfront', caveat:''},
+  {pillar:'Visitation', metric:'National total attendance', value:'6,665,825', cls:'A', owner:'FIFA', caveat:'104 matches · 99.7% stadium occupancy'},
+  {pillar:'Visitation', metric:'July unique downtown visitors', value:'>3.7M', cls:'B', owner:'DSA', caveat:'112% of Jul 2019, +5pts vs Jul 2025'},
+  {pillar:'Visitation', metric:'July avg weekday worker foot traffic', value:'~150,000/day', cls:'B', owner:'DSA', caveat:'64% of Jul 2019'},
+  {pillar:'Visitation', metric:'July local waterfront visits (10mi)', value:'351,284', cls:'B', owner:'DSA', caveat:'~25K above Aug 2019 high'},
+  {pillar:'Visitation', metric:'Jun 19 downtown visits', value:'~580,000', cls:'B', owner:'DSA/Placer.ai', caveat:''},
+  {pillar:'Visitation', metric:'Jul 6 downtown visits', value:'~548,000', cls:'B', owner:'DSA/Placer.ai', caveat:''},
+  {pillar:'Spending', metric:'Square Seattle bars/breweries', value:'+21.8% transaction volume', cls:'B', owner:'Square', caveat:'Group stage'},
+  {pillar:'Spending', metric:'Toast GMV Jun 19', value:'+51%', cls:'B', owner:'Toast', caveat:'5-mile sample; Juneteenth; transactions +56%'},
+  {pillar:'Spending', metric:'Toast beer Jun 19', value:'+212%', cls:'B', owner:'Toast', caveat:'vs prior 8 Fridays'},
+  {pillar:'Spending', metric:'Toast hot dogs Jun 19', value:'+228%', cls:'B', owner:'Toast', caveat:''},
+  {pillar:'Spending', metric:'Toast nachos Jun 19', value:'+87%', cls:'B', owner:'Toast', caveat:''},
+  {pillar:'Spending', metric:'Toast wings Jun 19', value:'+64%', cls:'B', owner:'Toast', caveat:''},
+  {pillar:'Spending', metric:'Toast tenders Jun 19', value:'+63%', cls:'B', owner:'Toast', caveat:''},
+  {pillar:'Spending', metric:'Toast burgers Jun 19', value:'+35%', cls:'B', owner:'Toast', caveat:''},
+  {pillar:'Spending', metric:'Toast 10am transactions Jun 19', value:'+145%', cls:'B', owner:'Toast', caveat:''},
+  {pillar:'Spending', metric:'Toast avg tip Jun 19', value:'16.4%', cls:'B', owner:'Toast', caveat:''},
+  {pillar:'Spending', metric:'HVS total incremental hotel revenue', value:'~$680M', cls:'B', owner:'HVS', caveat:'Across 11 U.S. host cities; match weeks only'},
+  {pillar:'Spending', metric:'Placer host vs non-host retail', value:'+0.1pp', cls:'B', owner:'Placer.ai', caveat:'Host markets vs non-host; YoY retail visits'},
+  {pillar:'Spending', metric:'Placer bars visit growth', value:'+9%', cls:'B', owner:'Placer.ai', caveat:'Host city bars'},
+  {pillar:'Spending', metric:'Placer full-service restaurants', value:'-1%', cls:'B', owner:'Placer.ai', caveat:'Host city FSR'},
+  {pillar:'Spending', metric:'Placer dining within 1mi of stadiums', value:'+53.7%', cls:'B', owner:'Placer.ai', caveat:''},
+  {pillar:'Spending', metric:'Placer retail within 1mi of stadiums', value:'+22.0%', cls:'B', owner:'Placer.ai', caveat:''},
+  {pillar:'Spending', metric:'Datafy Jan-Jun downtown', value:'$821.6M; +6.89% YoY', cls:'B', owner:'DSA/Datafy', caveat:'Not FIFA-only; ZIPs: 98101, 98104, 98154, 98164, 98174'},
+  {pillar:'Spending', metric:'BofA host-city Jun 10-21', value:'+6.3% total; +4.2% local; +16.7% non-local', cls:'B', owner:'Bank of America', caveat:'Benchmark; not Seattle-only'},
+  {pillar:'Spending', metric:'BofA full tournament', value:'+5% total; +13.5% non-local', cls:'B', owner:'Bank of America', caveat:'Domestic BofA clients; restaurants +6%/+9% non-local; retail +3.5%/+11% non-local'},
+  {pillar:'Spending', metric:'Visa cross-border', value:'~+20% YoY', cls:'B', owner:'Visa', caveat:'International benchmark; not Seattle-only'},
+  {pillar:'Lodging', metric:'ADR week ending Jun 20', value:'$271.80; +30.5% YoY', cls:'B', owner:'CoStar/STR', caveat:'Weekly market'},
+  {pillar:'Lodging', metric:'Match-week occupancy (4 weeks)', value:'73.9%; -6.9pp YoY', cls:'B', owner:'CoStar', caveat:'Four match weeks'},
+  {pillar:'Lodging', metric:'First full week post-tournament', value:'90.5%; +3.3pp YoY', cls:'B', owner:'CoStar', caveat:''},
+  {pillar:'Lodging', metric:'HVS counterfactual', value:'-6.3pp occ; +$26.56 ADR; +15.7% RevPAR', cls:'B', owner:'HVS', caveat:'Largest occupancy gap among 11 host cities'},
+  {pillar:'Lodging', metric:'July downtown rooms sold', value:'~432,000', cls:'B', owner:'DSA/Visit Seattle/STR', caveat:'108% of Jul 2019; flat vs Jul 2025'},
+  {pillar:'Lodging', metric:'Visit Seattle single-day record', value:'Jun 18 broke record', cls:'B', owner:'Visit Seattle', caveat:'WC week revenue ~40% above prior year'},
+  {pillar:'Lodging', metric:'AirDNA active listings', value:'12,155; +11.8% YoY', cls:'B', owner:'AirDNA', caveat:'Market context, Jul 2026; not FIFA-only'},
+  {pillar:'Lodging', metric:'AirDNA occupancy', value:'65%; +4.8% YoY', cls:'B', owner:'AirDNA', caveat:''},
+  {pillar:'Lodging', metric:'AirDNA ADR', value:'$190; -13.8% YoY', cls:'B', owner:'AirDNA', caveat:''},
+  {pillar:'Lodging', metric:'AirDNA RevPAR', value:'$124; -5.7% YoY', cls:'B', owner:'AirDNA', caveat:''},
+  {pillar:'Lodging', metric:'AirDNA avg annual revenue', value:'$39.3K; +66.7% YoY', cls:'B', owner:'AirDNA', caveat:'Trailing 12 months'},
+  {pillar:'Mobility', metric:'June Link boardings', value:'5.4M', cls:'A', owner:'Sound Transit', caveat:'All-time monthly record; preliminary APC'},
+  {pillar:'Mobility', metric:'Jul 6 Link', value:'309K', cls:'A/B', owner:'ST/DSA', caveat:'New single-day record'},
+  {pillar:'Mobility', metric:'Metro+ST match days', value:'~3.4M', cls:'A/B', owner:'DSA/Metro/ST', caveat:'Six days; Metro 1.9M + ST 1.5M'},
+  {pillar:'Mobility', metric:'Metro buses (6 match days)', value:'1,800,177', cls:'A', owner:'King County Metro', caveat:''},
+  {pillar:'Mobility', metric:'Match Day Shuttle', value:'25,840', cls:'A', owner:'King County Metro', caveat:'Included within Metro bus activity'},
+  {pillar:'Mobility', metric:'Water Taxi', value:'35,014', cls:'A', owner:'King County Metro', caveat:'WS: 29,922; Vashon: 4,816'},
+  {pillar:'Mobility', metric:'DART bus routes', value:'25,729', cls:'A', owner:'King County Metro', caveat:''},
+  {pillar:'Mobility', metric:'Waterfront Shuttle', value:'8,143', cls:'A', owner:'King County Metro', caveat:'Tournament-period match-day use'},
+  {pillar:'Mobility', metric:'Metro Flex', value:'6,773', cls:'A', owner:'King County Metro', caveat:'10 vehicles, 8 drivers'},
+  {pillar:'Mobility', metric:'Access paratransit', value:'17,633', cls:'A', owner:'King County Metro', caveat:''},
+  {pillar:'Mobility', metric:'Seattle Streetcar', value:'37,901', cls:'A', owner:'King County Metro', caveat:'First Hill: 29,922; SLU: 7,979'},
+  {pillar:'Mobility', metric:'Sound Transit Link 1+2', value:'1,514,000', cls:'A', owner:'Sound Transit', caveat:'Six match days'},
+  {pillar:'Mobility', metric:'Jun 19 shared mobility', value:'83,600', cls:'A', owner:'SDOT', caveat:'Citywide; 46,700 standing scooter, 21,400 seated, 15,500 bike'},
+  {pillar:'Mobility', metric:'Lime group-stage trips', value:'>675,000', cls:'B', owner:'Lime', caveat:''},
+  {pillar:'Mobility', metric:'SEA Airport', value:'~605K (3 busy days); ~1.2M (3 weeks)', cls:'B', owner:'Port of Seattle', caveat:'High-level event-period volume'},
+  {pillar:'Mobility', metric:'WSF riders YTD through Jun 28', value:'>9.4M; +425K vs 2025', cls:'A', owner:'WSDOT/WSF', caveat:'Measured system YTD; not FIFA-only'},
+  {pillar:'Mobility', metric:'WSF July 2-6 expected riders', value:'~400,000', cls:'D', owner:'WSDOT/WSF', caveat:'Forecast for holiday/World Cup overlap; keep as forecast'},
+  {pillar:'Mobility', metric:'Daily Link (Jun 15)', value:'221K', cls:'A', owner:'Sound Transit', caveat:''},
+  {pillar:'Mobility', metric:'Daily Link (Jun 19)', value:'297K', cls:'A', owner:'Sound Transit', caveat:''},
+  {pillar:'Mobility', metric:'Daily Link (Jun 24)', value:'237K', cls:'A', owner:'Sound Transit', caveat:''},
+  {pillar:'Mobility', metric:'Daily Link (Jun 26)', value:'234K', cls:'A', owner:'Sound Transit', caveat:''},
+  {pillar:'Mobility', metric:'Daily Link (Jul 1)', value:'246K', cls:'A', owner:'Sound Transit', caveat:''},
+  {pillar:'Mobility', metric:'Rail vehicles per match day', value:'174', cls:'A', owner:'Sound Transit', caveat:''},
+  {pillar:'Workforce', metric:'King Co leisure/hospitality', value:'149,500; +2,800 MoM; +5,700 YoY', cls:'A', owner:'ESD', caveat:'Preliminary payroll estimate; +4.0% YoY'},
+  {pillar:'Workforce', metric:'King Co total nonfarm', value:'1,488,200; +1,700 MoM; +6,700 YoY', cls:'A', owner:'ESD', caveat:'Jul 2026'},
+  {pillar:'Workforce', metric:'King Co retail', value:'103,000; +900 MoM; -900 YoY', cls:'A', owner:'ESD', caveat:''},
+  {pillar:'Workforce', metric:'King Co transport/util', value:'61,600; +400 MoM; +600 YoY', cls:'A', owner:'ESD', caveat:''},
+  {pillar:'Workforce', metric:'WA leisure/hospitality', value:'366,800; +4,200 MoM; +9,300 YoY', cls:'A', owner:'ESD', caveat:'+2.6% YoY'},
+  {pillar:'Workforce', metric:'WA total nonfarm', value:'3,668,300', cls:'A', owner:'ESD', caveat:'Jul 2026'},
+  {pillar:'Operations', metric:'SPU debris removed', value:'294,575 lb', cls:'A', owner:'SPU', caveat:'World Cup operations'},
+  {pillar:'Operations', metric:'SPU single-use items avoided', value:'20,000', cls:'A', owner:'SPU', caveat:''},
+  {pillar:'Operations', metric:'SPU campaign impressions', value:'3.2M+', cls:'A', owner:'SPU', caveat:''},
+  {pillar:'Operations', metric:'SPU people reached', value:'700K+', cls:'A', owner:'SPU', caveat:''},
+  {pillar:'Operations', metric:'SPU water refill stations', value:'7 new', cls:'A', owner:'SPU', caveat:''},
+  {pillar:'Public funding', metric:'WA Commerce FIFA capital', value:'$29.5M', cls:'C', owner:'WA Session Law', caveat:'Appropriation/reappropriation'},
+  {pillar:'Public funding', metric:'UW FIFA Improvements', value:'$1.7M', cls:'C', owner:'WA Session Law', caveat:'Separate appropriation'},
+  {pillar:'Public funding', metric:'King County public safety', value:'$25M', cls:'C', owner:'King County', caveat:'Allocation'},
+  {pillar:'Public funding', metric:'Seattle CB121201 conditional', value:'$18.077M', cls:'C', owner:'Seattle ordinance', caveat:'Appropriation changes'},
+  {pillar:'Public funding', metric:'SeattleFWC26 contribution', value:'$1.0M', cls:'C', owner:'SeattleFWC26', caveat:''},
+  {pillar:'Public funding', metric:'SPD drone-threat grant', value:'$2.085M', cls:'C', owner:'Seattle', caveat:''},
+  {pillar:'Public funding', metric:'Barrier/safety budget', value:'$3.6M', cls:'C', owner:'Seattle', caveat:'Pike Place + Seattle Center'},
+  {pillar:'Public funding', metric:'KUOW estimated total', value:'~$120M', cls:'C', owner:'KUOW', caveat:'Across WA public entities'},
+  {pillar:'Taxes', metric:'Seattle admission tax', value:'5%', cls:'C', owner:'Seattle Finance', caveat:'Lumen Field/T-Mobile Park exempt'},
+  {pillar:'Taxes', metric:'Seattle commercial parking tax', value:'14.5%', cls:'C', owner:'Seattle Finance', caveat:'Lumen Field/T-Mobile Park exempt'},
+  {pillar:'Taxes', metric:'Forecast tax impact', value:'~$95.8M', cls:'D', owner:'Tourism Economics', caveat:'Forecast; not actual'},
+  {pillar:'Taxes', metric:'Actual FIFA-isolated receipts', value:'Not public', cls:'E', owner:'WA DOR/Seattle Finance', caveat:'Request required'},
+  {pillar:'Taxes', metric:'Applicable: B&O, sales, lodging, STR', value:'Yes', cls:'C', owner:'Seattle Finance', caveat:'Apply to WC-related activity'},
+  {pillar:'Visitation', metric:'Waterfront Park Jun 19', value:'84,767', cls:'A', owner:'DSA/Placer.ai', caveat:'One-day record'},
+  {pillar:'Visitation', metric:'National attendance total', value:'6,665,825', cls:'A', owner:'FIFA', caveat:'104 matches; 99.7% occupancy'},
+  {pillar:'Spending', metric:'Toast wings/tenders', value:'+321% YoY', cls:'B', owner:'Toast', caveat:'Jun 19-July 3'},
+  {pillar:'Spending', metric:'Toast burgers', value:'+85% YoY', cls:'B', owner:'Toast', caveat:'Jun 19-July 3'},
+  {pillar:'Spending', metric:'Toast avg match-day tip', value:'20.7% vs 19.2%', cls:'B', owner:'Toast', caveat:'Match days vs 2026 avg'},
+  {pillar:'Spending', metric:'Toast earliest transaction', value:'10:08am (opening day)', cls:'B', owner:'Toast', caveat:''},
+  {pillar:'Lodging', metric:'NY hotel revenue', value:'$339.2M', cls:'B', owner:'HVS', caveat:'Incremental match-week revenue'},
+  {pillar:'Lodging', metric:'LA hotel revenue', value:'$77.2M', cls:'B', owner:'HVS', caveat:''},
+  {pillar:'Lodging', metric:'Boston hotel revenue', value:'$69.3M', cls:'B', owner:'HVS', caveat:''},
+  {pillar:'Lodging', metric:'Dallas hotel revenue', value:'$60.8M', cls:'B', owner:'HVS', caveat:''},
+  {pillar:'Lodging', metric:'Miami hotel revenue', value:'$34.2M', cls:'B', owner:'HVS', caveat:''},
+  {pillar:'Lodging', metric:'Seattle HVS counterfactual occ', value:'79.7%', cls:'B', owner:'HVS', caveat:''},
+  {pillar:'Lodging', metric:'NY HVS counterfactual occ', value:'89.4%', cls:'B', owner:'HVS', caveat:''},
+  {pillar:'Lodging', metric:'Boston HVS counterfactual occ', value:'78.2%', cls:'B', owner:'HVS', caveat:''},
+  {pillar:'Lodging', metric:'KC HVS RevPAR %', value:'+43.1%', cls:'B', owner:'HVS', caveat:'Highest RevPAR % among host cities'},
+  {pillar:'Lodging', metric:'LA HVS ADR change', value:'Not stated', cls:'E', owner:'HVS', caveat:'Not stated numerically'},
+  {pillar:'Community', metric:'FWC26 Fund grants', value:'$2.5M for community programs', cls:'C', owner:'SeattleFWC26', caveat:'Appropriation'},
+  {pillar:'Community', metric:'Small Business Amplifier', value:'~60 businesses supported', cls:'C', owner:'SeattleFWC26', caveat:''},
+  {pillar:'Community', metric:'Business ecosystem partners', value:'31 partner organizations', cls:'C', owner:'SeattleFWC26', caveat:''},
+  {pillar:'Community', metric:'Parks activations', value:'37+ events', cls:'C', owner:'Seattle Parks & Rec', caveat:''},
+  {pillar:'Community', metric:'Legacy soccer programs', value:'Multiple community programs', cls:'C', owner:'SeattleFWC26', caveat:''},
+  {pillar:'Operations', metric:'KCSO arrests', value:'90+ post-game dispersal arrests', cls:'A', owner:'King County Sheriffs Office', caveat:''},
+  {pillar:'Operations', metric:'KCSO venue closure', value:'Completed Jun 28', cls:'A', owner:'King County Sheriffs Office', caveat:'Shut down after Morocco match'},
+  {pillar:'Mobility', metric:'Metro peak Link service', value:'174 rail vehicles/match day', cls:'A', owner:'Sound Transit', caveat:''},
+  {pillar:'Mobility', metric:'Metro bus trips', value:'31,000 service trips', cls:'A', owner:'King County Metro', caveat:'Across 6 match days'},
+  {pillar:'Mobility', metric:'Metro operational hours', value:'12,000+ hours', cls:'A', owner:'King County Metro', caveat:'Match-day operations'},
+  {pillar:'Mobility', metric:'Metro bus miles', value:'195,000+ miles', cls:'A', owner:'King County Metro', caveat:''},
+  {pillar:'Mobility', metric:'Metro transit employees', value:'1,250+ employees', cls:'A', owner:'King County Metro', caveat:''},
+  {pillar:'Mobility', metric:'WSF vessel availability', value:'20 of 21 vessels', cls:'A', owner:'WSF', caveat:''},
+  {pillar:'Taxes', metric:'Dec 2024 forecast tax impact', value:'$95.8M; revised to $96M', cls:'D', owner:'Tourism Economics', caveat:'Forecast; not actual'},
+  {pillar:'Taxes', metric:'Revised forecast jobs (FTE)', value:'12,152 total; 4,382 direct', cls:'D', owner:'Tourism Economics', caveat:'Economic footprint jobs'},
+  {pillar:'Visitation', metric:'WA Aug tourism momentum', value:'+2.80% (projected)', cls:'D', owner:'Travel and Tour World', caveat:'Aug YoY vs +10.35% Jun-Jul avg'},
+  {pillar:'Visitation', metric:'MO Aug tourism momentum', value:'+7.40% (projected)', cls:'D', owner:'Travel and Tour World', caveat:'Aug YoY vs +25.24% Jun-Jul avg'},
+  {pillar:'Visitation', metric:'MA Aug tourism momentum', value:'+0.94% (projected)', cls:'D', owner:'Travel and Tour World', caveat:'Aug YoY vs +3.73% Jun-Jul avg'},
+  {pillar:'Visitation', metric:'TX Aug tourism momentum', value:'+2.52% (projected)', cls:'D', owner:'Travel and Tour World', caveat:'Aug YoY vs +2.87% Jun-Jul avg'},
+  {pillar:'Visitation', metric:'July downtown visitors', value:'3.7M (112% of Jul 2019)', cls:'A', owner:'DSA/Placer.ai', caveat:'+5pp vs Jul 2025; excludes international'},
+  {pillar:'Visitation', metric:'Jul 6 downtown visitors', value:'543,000+', cls:'A', owner:'DSA', caveat:'Single-day; excludes international'},
+  {pillar:'Visitation', metric:'Jul 6 Pioneer Square visitors', value:'163,000+', cls:'A', owner:'Alliance for Pioneer Square/DSA', caveat:'Broke Jun 19 record; domestic only'},
+  {pillar:'Visitation', metric:'Estimated WC visitors', value:'750,000', cls:'D', owner:'FIFA/Visit Seattle', caveat:'Forecast; 60:40 domestic:foreign predicted'},
+  {pillar:'Visitation', metric:'Above-normal cruise-season visitors', value:'800,000+', cls:'D', owner:'KUOW', caveat:'If 60:40 ratio holds'},
+  {pillar:'Visitation', metric:'Fan Celebration visitors', value:'750,000+', cls:'B', owner:'SeattleFWC26', caveat:'Jun 15-27 across 4 official sites'},
+  {pillar:'Visitation', metric:'Waterfront Park total visits', value:'625,293 (539,865 unique)', cls:'A', owner:'Friends of Waterfront Park', caveat:'Jun 11-27'},
+  {pillar:'Visitation', metric:'Seattle Soccer Celebration', value:'450,000+', cls:'B', owner:'SeattleFWC26', caveat:'Visitors/media from 5 continents'},
+  {pillar:'Visitation', metric:'Seattle Center USA supporters', value:'8,000', cls:'B', owner:'Seattle Center', caveat:'Group stage'},
+  {pillar:'Visitation', metric:'CID dim sum Guinness record', value:'830 participants', cls:'A', owner:'Guinness World Records', caveat:'Jun 18; beat Sydney 2019 record of 764'},
+  {pillar:'Visitation', metric:'CID pedestrian traffic', value:'+10%', cls:'B', owner:'DSA', caveat:'Group stage increase'},
+  {pillar:'Visitation', metric:'Sounders/Reign events', value:'40+', cls:'B', owner:'SeattleFWC26', caveat:'Pier 62 and Barge'},
+  {pillar:'Visitation', metric:'Avg weekday workers downtown', value:'~150,000 (64% of Jul 2019)', cls:'A', owner:'DSA', caveat:'July 2026'},
+  {pillar:'Mobility', metric:'Lime fleet cap', value:'15,000 devices', cls:'B', owner:'Lime', caveat:'City cap; sole shared e-bike/scooter provider'},
+  {pillar:'Mobility', metric:'Lime Jun 15-21 trips', value:'300,000+', cls:'B', owner:'Lime', caveat:'First week of tournament'},
+  {pillar:'Mobility', metric:'Lime Fan Pass', value:'Available through Jul 19', cls:'B', owner:'Lime', caveat:'Discounted rides for fans'},
+  {pillar:'Mobility', metric:'Lime scooter availability issues', value:'Hard to find on match days', cls:'B', owner:'KIRO7', caveat:'Devices staged near stadium; dead batteries reported'},
+  {pillar:'Mobility', metric:'Link Sunday boardings (Jul)', value:'743,041', cls:'A', owner:'Sound Transit', caveat:'Monthly record; avg Sunday 123K'},
+  {pillar:'Mobility', metric:'Link peak service hours', value:'6am-1am', cls:'A', owner:'Sound Transit', caveat:'Match-day extended service'},
+  {pillar:'Spending', metric:'Toast match-day sales', value:'+51%', cls:'B', owner:'Toast', caveat:'Seattle restaurants/bars vs typical day'},
+  {pillar:'Spending', metric:'Toast match-day transactions', value:'+56%', cls:'B', owner:'Toast', caveat:'Seattle restaurants/bars'},
+  {pillar:'Spending', metric:'Toast beer sales', value:'+212%', cls:'B', owner:'Toast', caveat:'Match days'},
+  {pillar:'Spending', metric:'Toast hot dog sales', value:'+228%', cls:'B', owner:'Toast', caveat:'Match days'},
+  {pillar:'Spending', metric:'Toast avg tip match days', value:'16.4% (vs 17.2% normal)', cls:'B', owner:'Toast', caveat:'Tips declined'},
+  {pillar:'Spending', metric:'Square bar/brewery revenue', value:'+8%', cls:'B', owner:'Square', caveat:'Group stage vs baseline'},
+  {pillar:'Spending', metric:'Square late-night transactions', value:'+20.2%', cls:'B', owner:'Square', caveat:'10pm-1am during group stage'},
+  {pillar:'Spending', metric:'Pioneer Square sales', value:'3-10x typical day', cls:'B', owner:'KIRO7/WA Retail Assn', caveat:'Exceeded Taylor Swift concert weekend'},
+  {pillar:'Spending', metric:'Cafe Umbria orders', value:'3-4x normal', cls:'B', owner:'The Morning Sheet', caveat:'After first match'},
+  {pillar:'Spending', metric:'CID sales decline', value:'-22%', cls:'B', owner:'NW Asian Weekly', caveat:'Vs same period last year; ~10min walk from stadium'},
+  {pillar:'Spending', metric:'International Lobster Rolls', value:'-20-25%', cls:'B', owner:'The Morning Sheet', caveat:'Sales declined during WC'},
+  {pillar:'Spending', metric:'Underbelly inventory', value:'1 month used in 1 day', cls:'B', owner:'The Morning Sheet', caveat:'Match-day demand'},
+  {pillar:'Spending', metric:'Falafel Fresh', value:'Ran out of meat', cls:'B', owner:'The Morning Sheet', caveat:'Match-day demand'},
+  {pillar:'Spending', metric:'Collins Pub', value:'Record sales', cls:'B', owner:'The Morning Sheet', caveat:''},
+  {pillar:'Spending', metric:'Central Saloon', value:'Busiest day ever', cls:'B', owner:'The Morning Sheet', caveat:''},
+  {pillar:'Spending', metric:'BofA full tournament', value:'+5% total; +17% non-local', cls:'B', owner:'Bank of America', caveat:'Card spending YoY; all 11 host cities'},
+  {pillar:'Spending', metric:'BofA Kansas City', value:'+7% (golden boot)', cls:'B', owner:'Bank of America', caveat:'Highest host-city spending growth'},
+  {pillar:'Spending', metric:'Downtown consumer spending Jan-Jun', value:'$821.6M; +6.89% YoY', cls:'B', owner:'DSA/Datafy', caveat:'Not FIFA-only; ZIPs: 98101, 98104, 98154, 98164, 98174'},
+  {pillar:'Spending', metric:'Seattle share of prep spending', value:'~$14M', cls:'C', owner:'KUOW', caveat:'Of $120M total WA public spending'},
+  {pillar:'Lodging', metric:'July hotel rooms sold', value:'~432,000 (108% of Jul 2019)', cls:'B', owner:'DSA/Visit Seattle/STR', caveat:'Flat vs Jul 2025'},
+  {pillar:'Lodging', metric:'US record RevPAR week', value:'$129 (Jun 21-27)', cls:'B', owner:'CoStar', caveat:'Highest weekly RevPAR on record nationally'},
+  {pillar:'Lodging', metric:'US record ADR week', value:'$178.82 (Jun 21-27)', cls:'B', owner:'CoStar', caveat:'Highest weekly ADR on record nationally'},
+  {pillar:'Lodging', metric:'Host market RevPAR Jun 11-27', value:'+18.7%', cls:'B', owner:'CoStar', caveat:'vs +7.9% non-host; combined US +10.3%'},
+  {pillar:'Lodging', metric:'Host market match-day RevPAR', value:'+25.8%', cls:'B', owner:'CoStar', caveat:'ADR +25.9%; occ essentially flat'},
+  {pillar:'Lodging', metric:'Host market shoulder-day occ', value:'-3.1pp', cls:'B', owner:'CoStar', caveat:'Every market except SF declined on shoulder days'},
+  {pillar:'Lodging', metric:'Miami RevPAR peak', value:'+51.6%', cls:'B', owner:'CoStar', caveat:'ADR +51.1%; 5 consecutive days ADR >50%'},
+  {pillar:'Forecast', metric:'Original Visit Seattle projection', value:'$929M', cls:'D', owner:'Visit Seattle/Tourism Economics', caveat:'Dec 2024 forecast; revised down ~9% to $845.6M'},
+  {pillar:'Forecast', metric:'Original projected tax revenue', value:'$100M+', cls:'D', owner:'Visit Seattle', caveat:'State/local tax; revised to ~$96M'},
+  {pillar:'Forecast', metric:'Original projected jobs', value:'20,000', cls:'D', owner:'Visit Seattle', caveat:'Revised to 12,152 FTE'},
+  {pillar:'Forecast', metric:'Hotel operators below plan', value:'~80%', cls:'B', owner:'The Morning Sheet', caveat:'Tracking below own plans 1 month before first match'},
+  {pillar:'Forecast', metric:'FIFA global projection', value:'$80B gross output', cls:'D', owner:'FIFA', caveat:'Pre-tournament projection'},
+  {pillar:'Forecast', metric:'BofA confirmed global actual', value:'$40B ($20B U.S.)', cls:'B', owner:'Bank of America', caveat:'Half of FIFA projection'},
+  {pillar:'Forecast', metric:'FIFA projected US GDP boost', value:'$17B; 185,000 jobs', cls:'D', owner:'FIFA', caveat:'Pre-tournament projection'},
+  {pillar:'Forecast', metric:'NY/NJ post-event actual', value:'$3.5B (6% above forecast)', cls:'A', owner:'Governor Hochul', caveat:'Aug 26, 2026; Seattle has no equivalent'},
+  {pillar:'Calculated', metric:'Direct spending (triangulated)', value:'$391M', cls:'B', owner:'SSC 5-method triangulation', caveat:'Weighted avg of 5 independent methods; A(30%) B(30%) C(15%) D(15%) E(10%)'},
+  {pillar:'Calculated', metric:'Method A: Top-down', value:'$1,094M', cls:'B', owner:'SSC calculation', caveat:'180K foreign × 12d × $350 + 225K domestic × 6d × $250; may overstate (includes airfare)'},
+  {pillar:'Calculated', metric:'Method B: Bottom-up', value:'$118M', cls:'B', owner:'SSC calculation', caveat:'HVS + AirDNA + Toast + Square + transit + airport + events; incremental only'},
+  {pillar:'Calculated', metric:'Method C: BofA macro', value:'$81M', cls:'B', owner:'SSC calculation', caveat:'+5% total × 35 days × $50M/day avg; BofA host-city data'},
+  {pillar:'Calculated', metric:'Method D: DSA/Datafy', value:'$21M', cls:'B', owner:'SSC calculation', caveat:'$821.6M Jan-Jun × 6.89% YoY × 40% WC portion'},
+  {pillar:'Calculated', metric:'Method E: Tax implied', value:'$126M', cls:'B', owner:'SSC calculation', caveat:'Tax receipts / 10% blended rate; reverse-calculation'},
+  {pillar:'Calculated', metric:'Multiplier range', value:'1.35x–1.50x (mid 1.42x)', cls:'B', owner:'IMPLAN/RIMS II', caveat:'Original forecast used 1.42x ($929M/$652.6M)'},
+  {pillar:'Calculated', metric:'Gross total impact', value:'$528M–$587M', cls:'B', owner:'SSC calculation', caveat:'Direct × multiplier range'},
+  {pillar:'Calculated', metric:'Displacement rate', value:'8%–15% (mid 12%)', cls:'B', owner:'SSC estimate', caveat:'Hotel occ flat vs 2025; CID −22%; Intl Lobster −20-25%'},
+  {pillar:'Calculated', metric:'Net total impact (central)', value:'$489M', cls:'B', owner:'SSC calculation', caveat:'Range $486M–$499M; 42% below revised forecast; 47% below original'},
+  {pillar:'Calculated', metric:'Lodging direct (calculated)', value:'$44M (38%)', cls:'B', owner:'SSC calculation', caveat:'HVS $22M + AirDNA $8.6M + ADR incr $13.7M'},
+  {pillar:'Calculated', metric:'Restaurant/bar direct', value:'$25M (21%)', cls:'B', owner:'SSC calculation', caveat:'Match-day +51% × 6 days + non-match +8% × 25 days'},
+  {pillar:'Calculated', metric:'Transportation direct', value:'$18M (15%)', cls:'B', owner:'SSC calculation', caveat:'Link $2.7M + Metro $1.4M + Lime $3.4M + Airport $7.2M + WSF $0.15M + Parking $3M'},
+  {pillar:'Calculated', metric:'Retail direct', value:'$11M (9%)', cls:'B', owner:'SSC calculation', caveat:'+10% × 35 days × $3M/day avg'},
+  {pillar:'Calculated', metric:'Entertainment direct', value:'$10M (9%)', cls:'B', owner:'SSC estimate', caveat:'Event operations spending (SeattleFWC26/venue)'},
+  {pillar:'Calculated', metric:'Cruise direct', value:'$10M (9%)', cls:'B', owner:'SSC estimate', caveat:'50K incremental passengers × $200 spend'},
+  {pillar:'Calculated', metric:'Calculated tax revenue', value:'$12.6M', cls:'B', owner:'SSC calculation', caveat:'Hotel $7M + Sales $3.7M + B&O $1.5M + Parking $0.5M; vs $96M forecast'},
+  {pillar:'Tax', metric:'Seattle lodging tax rate', value:'15.70%', cls:'A', owner:'WA DOR/Seattle Finance', caveat:'8.70% sales + 7% King County Convention Center'},
+  {pillar:'Tax', metric:'Seattle sales tax rate', value:'10.25%', cls:'A', owner:'WA DOR', caveat:'Retail/restaurant purchases'},
+  {pillar:'Tax', metric:'Seattle B&O tax threshold', value:'$2M (2026)', cls:'A', owner:'Seattle Finance', caveat:'Effective Jan 1, 2026'},
+  {pillar:'Tax', metric:'Admission tax', value:'5% (not at Lumen/T-Mobile)', cls:'A', owner:'Seattle Finance', caveat:'Excludes stadium venues'},
+  {pillar:'Tax', metric:'Parking tax', value:'14.5% (not at Lumen/T-Mobile)', cls:'A', owner:'Seattle Finance', caveat:'Excludes stadium venues'},
+  {pillar:'Tax', metric:'Tourism Improvement Area', value:'2.3% (71 hotels)', cls:'A', owner:'Visit Seattle', caveat:'Downtown hotels only; funds Visit Seattle marketing'},
+  {pillar:'Tax', metric:'King County 2026 hotel tax', value:'$193.3M (+9.11%)', cls:'A', owner:'King County', caveat:'Forecast includes "enhanced WC expectations"'},
+  {pillar:'Tax', metric:'King County taxable sales 2026', value:'$898.4B (+2.87%)', cls:'A', owner:'King County', caveat:'Countywide forecast'},
+  {pillar:'Workforce', metric:'WA L&H jobs added May', value:'4,900', cls:'A', owner:'WA ESD', caveat:'Leisure/hospitality; pre-tournament ramp'},
+  {pillar:'Workforce', metric:'WA L&H jobs added June', value:'3,100', cls:'A', owner:'WA ESD', caveat:'During group stage'},
+  {pillar:'Workforce', metric:'WA L&H jobs added July', value:'2,700', cls:'A', owner:'WA ESD', caveat:'Knockout + post-tournament'},
+  {pillar:'Workforce', metric:'King Co visitor economy jobs', value:'>76,000', cls:'B', owner:'Seattle Hospitality Authority', caveat:'Pre-pandemic baseline; NAICS 71+72'},
+  {pillar:'Mobility', metric:'WSF Jun 19 boardings', value:'83,467 (+17.6%)', cls:'A', owner:'WSF/Bainbridge Review', caveat:'vs 70,954 same day 2025; Seattle-Bainbridge + Bremerton'},
+  {pillar:'Mobility', metric:'WSF Seattle-Bainbridge Jun-Jul', value:'640,884', cls:'A', owner:'WSF', caveat:'Jun 1-Jul 6; vs 637,985 in 2025'},
+  {pillar:'Mobility', metric:'WSF Seattle-Bremerton Jun-Jul', value:'167,224', cls:'A', owner:'WSF', caveat:'Jun 1-Jul 6; vs 154,750 in 2025 (+8%)'},
+  {pillar:'Mobility', metric:'WSF system-wide Jun 28', value:'9.4M (+425K)', cls:'A', owner:'WSF/WSDOT', caveat:'Year-to-date vs 2025'},
+  {pillar:'Mobility', metric:'WSF cancellations Jun-Jul', value:'69 (49 BI + 20 Bre)', cls:'A', owner:'WSF', caveat:'Jun 1-Jul 6'},
+  {pillar:'Mobility', metric:'WSF on-time performance', value:'79.2% BI / 95.5% Bre', cls:'A', owner:'WSF', caveat:'Jun 1-Jul 6'},
+  {pillar:'Visitation', metric:'Port of Seattle 2026 cruise', value:'330 calls; 2.1M passengers', cls:'A', owner:'Port of Seattle', caveat:'Record season; runs through Oct 11'},
+  {pillar:'Visitation', metric:'Labor Day cruise', value:'11 ships; 35K+ passengers', cls:'B', owner:'Port of Seattle/KING5', caveat:'Seattle #1 Labor Day destination (AAA)'},
+  {pillar:'Corridor', metric:'Pioneer Square Jun 19 visitors', value:'149,800', cls:'A', owner:'Alliance for Pioneer Square/DSA', caveat:'Highest since 2019 tracking began; domestic only'},
+  {pillar:'Corridor', metric:'Pioneer Square Jul 6 visitors', value:'163,000+', cls:'A', owner:'Alliance for Pioneer Square/DSA', caveat:'Broke Jun 19 record; domestic only'},
+  {pillar:'Corridor', metric:'Pioneer Square tournament total', value:'500K+', cls:'A', owner:'Alliance for Pioneer Square', caveat:'Across all 6 match days'},
+  {pillar:'Corridor', metric:'Pioneer Square sales multiplier', value:'3-10x typical day', cls:'B', owner:'KIRO7/WA Retail Assn', caveat:'Exceeded Taylor Swift concert weekend'},
+  {pillar:'Corridor', metric:'Cafe Umbria orders', value:'3-4x normal', cls:'B', owner:'The Morning Sheet/KUOW', caveat:'After first match'},
+  {pillar:'Corridor', metric:'Central Saloon Jun 19', value:'Busiest day ever', cls:'B', owner:'The Morning Sheet', caveat:'Manager statement'},
+  {pillar:'Corridor', metric:'Collins Pub', value:'Record sales', cls:'B', owner:'The Morning Sheet', caveat:''},
+  {pillar:'Corridor', metric:'Underbelly inventory', value:'1 month in 1 day', cls:'B', owner:'The Morning Sheet', caveat:''},
+  {pillar:'Corridor', metric:'Falafel Fresh', value:'Ran out of meat', cls:'B', owner:'The Morning Sheet', caveat:''},
+  {pillar:'Corridor', metric:'Cone & Steiner', value:'Highest day since Taylor Swift Jul 2023', cls:'B', owner:'Fox13', caveat:''},
+  {pillar:'Corridor', metric:'Parlour Pioneer Square', value:'3.5x previous record', cls:'B', owner:'Fox13', caveat:''},
+  {pillar:'Corridor', metric:'DeLeo Bros. Pizza', value:'500+ pizzas (11x normal)', cls:'B', owner:'Fox13', caveat:'vs 20-50 pizzas normal Friday'},
+  {pillar:'Corridor', metric:'Lady Yum', value:'5-6 staff; custom macarons', cls:'B', owner:'Fox13', caveat:'Custom flavors for Egypt, Belgium, USA'},
+  {pillar:'Corridor', metric:'Cookies Country Chicken', value:'$150K revenue (3 WC days)', cls:'B', owner:'Milimgo/UpFlip', caveat:'vs $100K normal month; +50%; 4,000 lbs chicken/week'},
+  {pillar:'Corridor', metric:'Toasted Bagels', value:'+100% (doubled)', cls:'B', owner:'Milimgo/UpFlip', caveat:'Owners: Jaafar Altameemi, Murat Akyuz'},
+  {pillar:'Corridor', metric:'CID foot traffic', value:'+10%', cls:'B', owner:'CID BIA/DSA', caveat:'During tournament'},
+  {pillar:'Corridor', metric:'CID sales decline', value:'-22%', cls:'B', owner:'NW Asian Weekly', caveat:'Vs same period last year; 10 min from stadium'},
+  {pillar:'Corridor', metric:'CID sales decline (KING5)', value:'-10-20%', cls:'B', owner:'KING5', caveat:'Some businesses -70% on match days'},
+  {pillar:'Corridor', metric:'International Lobster Rolls', value:'-20-25%', cls:'B', owner:'The Morning Sheet', caveat:''},
+  {pillar:'Corridor', metric:'Anh Oi Bake Shop', value:'-70% on match days', cls:'B', owner:'KING5', caveat:'Owner Vince Vu: "cost more than earned"'},
+  {pillar:'Corridor', metric:'CID Tanya Woo quote', value:'"Nothing but empty tables"', cls:'B', owner:'NW Asian Weekly', caveat:'CID advocate'},
+  {pillar:'Corridor', metric:'Waterfront Park total visits', value:'625,293 (539,865 unique)', cls:'A', owner:'Friends of Waterfront Park', caveat:'Jun 11-27'},
+  {pillar:'Corridor', metric:'Waterfront Park Jul 6', value:'84,767 (single-day record)', cls:'A', owner:'Friends of Waterfront Park', caveat:''},
+  {pillar:'Corridor', metric:'July waterfront visits', value:'351,284', cls:'A', owner:'DSA', caveat:'25K above Aug 2019 record; within 10mi'},
+  {pillar:'Corridor', metric:'Seattle Center USA supporters', value:'8,000', cls:'B', owner:'SeattleFWC26', caveat:''},
+  {pillar:'Corridor', metric:'Facteus Lumen Field cohort', value:'2,332 cardholders', cls:'B', owner:'Facteus', caveat:'Jul 6 US vs Belgium; concession-identified'},
+  {pillar:'Corridor', metric:'Facteus: tickets/souvenirs', value:'22% of spend', cls:'B', owner:'Facteus', caveat:'To FIFA/adidas, not local'},
+  {pillar:'Corridor', metric:'Facteus: dining/drinking', value:'22.7% of spend', cls:'B', owner:'Facteus', caveat:'Fast food 3:1 over sit-down'},
+  {pillar:'Corridor', metric:'Facteus: travel/lodging', value:'19.6% of spend', cls:'B', owner:'Facteus', caveat:'Largely national/intl brands'},
+  {pillar:'Corridor', metric:'Facteus: non-local capture', value:'>60% to FIFA/airlines/hotels', cls:'B', owner:'Facteus', caveat:'Before reaching local merchants'},
+  {pillar:'Corridor', metric:'Facteus: local capture', value:'<40% stays local', cls:'B', owner:'Facteus', caveat:'Food, drink, transport in Seattle'},
+  {pillar:'Corridor', metric:'Facteus: premium packages', value:'13 purchases avg >$2K', cls:'B', owner:'Facteus', caveat:'One purchase $9,873'},
+  {pillar:'Corridor', metric:'Facteus: souvenirs', value:'193 purchases avg $251', cls:'B', owner:'Facteus', caveat:'Jerseys, scarves, gear'},
+  {pillar:'Corridor', metric:'SoDo corridor data', value:'Not separately reported', cls:'E', owner:'SODO Business Assn', caveat:'Resources page existed; no merchant data published'},
+  {pillar:'Corridor', metric:'Capitol Hill corridor data', value:'Not separately reported', cls:'E', owner:'—', caveat:'Expected to benefit from hotel demand'},
+  {pillar:'Corridor', metric:'Belltown corridor data', value:'Not separately reported', cls:'E', owner:'—', caveat:'Expected to benefit from hotel demand'},
+  {pillar:'Corridor', metric:'Occidental corridor data', value:'Positive (anecdotal)', cls:'E', owner:'The Morning Sheet', caveat:'"A bar on Occidental" — no name or figure'},
+];
+
+const sources = [
+  {name:'FIFA Seattle wrap', url:'https://inside.fifa.com/organisation/news/seattle-stadium-world-cup-2026-wrap-sounders-dzeko-dempsey', contribution:'Attendance/occupancy'},
+  {name:'SeattleFWC26 group-stage records', url:'https://www.seattlefwc26.org/news/seattle-breaks-records-as-fifa-world-cup-2026-tm-group-stage-closes-welcoming-the-world-and-new-teams-for-the-knockout-round', contribution:'Fan celebrations, airport, transit, waterfront'},
+  {name:'DSA World Cup by the numbers', url:'https://downtownseattle.org/2026/07/seattles-world-cup-summer-by-the-numbers-downtown-westlake-pioneer-square-occidental/', contribution:'Downtown/public realm/transit'},
+  {name:'DSA Dashboard', url:'https://downtownseattle.org/programs-services/research/downtown-dashboard/', contribution:'July visitors, hotel rooms, Datafy'},
+  {name:'SDOT Jun 19 record', url:'https://sdotblog.seattle.gov/2026/06/23/june-19-trips-record/', contribution:'Shared mobility'},
+  {name:'Sound Transit retrospective', url:'https://www.soundtransit.org/blog/platform/tournament-to-remember', contribution:'Link ridership/service'},
+  {name:'King County Metro service plan', url:'https://aqua.kingcounty.gov/council/agendas/RTC/20260421-RTC-packet.pdf', contribution:'Service additions'},
+  {name:'King County Metro post-tournament', url:'https://kingcountymetro.blog/2026/07/10/millions-of-memories-smiles-for-miles-tournament-ridership-breaks-3-4-million-mark/', contribution:'Modal ridership breakdown'},
+  {name:'Square', url:'https://squareup.com/us/es/press/soccer-tournament-economic-impact', contribution:'Seattle transaction-volume sample'},
+  {name:'Toast', url:'https://pos.toasttab.com/blog/data/world-cup-2026-impact-restaurants-bars-tipping-data', contribution:'Stadium-area merchant sample'},
+  {name:'CoStar/STR weekly', url:'https://www.costar.com/products/str-benchmark/resources/press-releases/us-hotel-results-week-ending-20-june', contribution:'Hotel ADR'},
+  {name:'CoStar tournament wrap', url:'https://www.costar.com/article/1261496447/world-cup-concludes-with-record-host-market-hotel-rates', contribution:'Hotel occupancy'},
+  {name:'HVS', url:'https://hvs.com/article/10529-how-the-2026-fifa-world-cup-changed-us-hotel-markets', contribution:'Hotel counterfactual model'},
+  {name:'AirDNA Seattle', url:'https://www.airdna.co/vacation-rental-data/app/us/washington/seattle/overview', contribution:'Public STR market metrics'},
+  {name:'WA ESD King County', url:'https://esd.wa.gov/jobs-and-training/labor-market-information/reports-and-research/labor-market-county-profiles/king-county-profile', contribution:'Workforce'},
+  {name:'WA ESD July 2026', url:'https://esd.wa.gov/es/node/278', contribution:'State labor market'},
+  {name:'WA Session Law SSB 5195', url:'https://lawfilesext.leg.wa.gov/biennium/2025-26/Htm/Bills/Session%20Laws/Senate/5195-S.SL.htm', contribution:'State capital appropriations'},
+  {name:'Seattle CB 121201', url:'https://seattle.legistar.com/LegislationDetail.aspx?FullText=1&GUID=3ED7A1DD-9D13-454F-A382-FC806E621BD9&ID=7994605&Options=&Search=', contribution:'City appropriations/reimbursements'},
+  {name:'King County supplemental budget', url:'https://cd.kingcounty.gov/en/dept/council/governance-leadership/county-council/newsroom/2026/06-23-council-supplemental-budget-release', contribution:'Public safety allocation'},
+  {name:'Seattle Finance', url:'https://www.seattle.gov/city-finance/business-taxes-and-licenses/business-taxes/world-cup-2026', contribution:'Tax rules'},
+  {name:'SPU', url:'https://atyourservice.seattle.gov/2026/08/12/spu-and-seattle-shine-during-the-fifa-world-cup/', contribution:'Sanitation/sustainability'},
+  {name:'Seattle Center', url:'https://seattlecenter.com/events/lets-play-sea-26/world-soccer-fan-celebration', contribution:'39-day programming'},
+  {name:'Seattle Parks', url:'https://parkways.seattle.gov/2026/05/26/community-activations-and-events-bring-the-spirit-of-the-fifa-world-cup-2026-to-neighborhoods-across-seattle/', contribution:'Community activations'},
+  {name:'Seattle Arts', url:'https://artbeat.seattle.gov/2025/12/02/seattle-invests-nearly-1-3m-to-activate-public-spaces-and-bring-communities-together-ahead-of-world-cup/', contribution:'Community investment'},
+  {name:'Community Business Connector', url:'https://communitybusinessconnector.com/reports', contribution:'Small-business/community activation'},
+  {name:'SeattleFWC26 fan zones', url:'https://www.seattlefwc26.org/news/announcing-official-fan-zone-locations-across-washington-state', contribution:'Statewide locations'},
+  {name:'Visit Seattle forecast', url:'https://visitseattle.org/press/press-release-archive/fifaworldcupeconomicimpact2024/', contribution:'Forecast only'},
+  {name:'Bank of America Institute', url:'https://newsroom.bankofamerica.com/content/newsroom/company-overview/initiatives/sports-with-us/soccer0/fifa-world-cup-2026/the-beautiful-game-is-working-its-magic-on-spending.html', contribution:'Host-city spending benchmarks'},
+  {name:'Visa', url:'https://usa.visa.com/about-visa/newsroom/press-releases.releaseId.22596.html', contribution:'Cross-border transaction analysis'},
+  {name:'Datafy Downtowns', url:'https://www.datafy.com/downtowns', contribution:'Downtown ZIP definition / spending share'},
+  {name:'WSF', url:'https://wsdot.wa.gov/about/news/2026/star-spangled-start-summer-washington-state-ferries-seeing-strong-demand-its-75th-year', contribution:'2026 summer ridership'},
+  {name:'Placer.ai', url:'https://www.placer.ai/anchor/reports/7-world-cup-lessons-for-retail-dining-real-estate', contribution:'Retail/dining visit analysis'},
+  {name:'The Guardian', url:'https://www.theguardian.com/us-news/2026/jul/06/seattle-business-world-cup', contribution:'Business reporting'},
+  {name:'NBC/Yahoo News', url:'https://finance.yahoo.com/economy/articles/2026-world-cup-supposed-supercharge-140000532.html', contribution:'National economic context'},
+  {name:'Governor Hochul (NY/NJ)', url:'https://www.governor.ny.gov/news/governor-hochul-announces-35-billion-regional-economic-impact-fifa-world-cup-2026tm', contribution:'NY/NJ post-event analysis ($3.5B)'},
+  {name:'United 2026', url:'https://www.united-2026.com/news/economic-impact-host-cities', contribution:'Original projected economic impact by city'},
+  {name:'Travel and Tour World', url:'https://www.travelandtourworld.com/news/article/7pvnk4rfx74y/', contribution:'August 2026 tourism momentum decline by state'},
+  {name:'IBTimes', url:'https://www.ibtimes.com/2026-world-cup-host-cities-tourism-bust-3805180', contribution:'Hotel occupancy decline by city'},
+  {name:'KIRO7 (Lime availability)', url:'https://www.kiro7.com/news/local/lime-bikes-scooters-hard-find-during-world-cup-frenzy/BMNAA2KKURC2DAD3W4VRUST4OI/', contribution:'Lime scooter availability issues on match days'},
+  {name:'GeekWire (Lime record)', url:'https://www.geekwire.com/2026/lime-rides-world-cup-fever-in-seattle-to-single-day-ridership-record-during-usa-vs-australia-match/', contribution:'Lime single-day record, fleet size, Fan Pass'},
+  {name:'KUOW (visitor count)', url:'https://www.kuow.org/sports/2026-07-15/we-now-know-how-many-visitors-seattle-had-during-the-world-cup', contribution:'750K estimated visitors, 60:40 ratio, $14M Seattle share'},
+  {name:'KOMO (July visitors)', url:'https://komonews.com/news/local/downtown-seattle-tourism-data-tops-nearly-4-million-july-visitors-as-waterfront-trips-light-rail-use-rise-world-cup-events', contribution:'3.7M July visitors, 432K hotel rooms, 351K waterfront, 743K Sunday Link'},
+  {name:'The Morning Sheet', url:'https://themorningsheet.com/blog/world-cup-seattle-restaurants/', contribution:'Toast restaurant data, neighborhood business impact, CID decline'},
+  {name:'NW Asian Weekly (CID)', url:'https://nwasianweekly.com/2026/07/cid-businesses-say-world-cup-windfall-is-bypassing-their-neighborhood/', contribution:'CID -22% sales decline, 10min from stadium'},
+  {name:'NW Asian Weekly (dim sum)', url:'https://nwasianweekly.com/2026/06/seattles-chinatown-international-district-breaks-guinness-world-record-for-largest-dim-sum-meal/', contribution:'CID Guinness World Record dim sum'},
+  {name:'Fox13 (bar surge)', url:'https://www.fox13seattle.com/news/seattle-bars-us-australia-match', contribution:'56% surge in bar/restaurant transactions'},
+  {name:'BofA Institute (final score)', url:'https://institute.bankofamerica.com/economic-insights/on-the-ball-2026-final-score.html', contribution:'BofA final tournament spending: +5% total, +17% non-local, KC golden boot'},
+  {name:'CoStar (record rates)', url:'https://www.costar.com/article/1466462996/world-cup-fuels-record-us-hotel-rates-as-demand-shifts-beyond-host-cities', contribution:'US record RevPAR/ADR, host market match-day data'},
+  {name:'Axios Seattle', url:'https://www.axios.com/local/seattle/2026/08/26/seattle-summer-tourism-waterfront-world-cup-record-crowds', contribution:'3.7M July visitors, 432K hotel rooms, 150K weekday workers'},
+  {name:'KIRO7 (Pioneer Square)', url:'https://www.kiro7.com/news/local/world-cup-crowds-brought-record-breaking-business-seattles-pioneer-square-will-momentum-last/O7EETA6JNVA7RK277DBZ3YYK7I/', contribution:'Pioneer Square 163K visitors Jul 6, sales 3-10x typical'},
+  {name:'Seattle Times (revised forecast)', url:'https://www.seattletimes.com/sports/world-cup/seattle-world-cup-boosters-say-trumps-actions-likely-to-hurt-tourism/', contribution:'Forecast revised down ~9%, $96M tax, 20K jobs'},
+  {name:'Seattle Mag', url:'https://seattlemag.com/news/world-cup-tourism-boom-looks-shaky-in-seattle/', contribution:'$845M forecast, 91% of original projection'},
+  {name:'eMarketer', url:'https://www.emarketer.com/content/world-cup-bars-restaurants-sales-growth-2026', contribution:'Square 8% bar/brewery revenue increase'},
+  {name:'Dubsea (records)', url:'https://www.dubsea.com/sports/seattle-makes-world-cup-history-every-record-broken-during-fridays-usa-vs-australia-clash', contribution:'Lime 83K record, comprehensive match-day records'},
+  {name:'Fox13 (business surge)', url:'https://www.fox13seattle.com/news/world-cup-surge-seattle-businesses', contribution:'Pioneer Square business surge, 500+ pizzas'},
+  {name:'The Global Statistics', url:'https://www.theglobalstatistics.com/fifa-world-cup-economic-statistics/', contribution:'BofA $40B global, $20B U.S., FIFA $17B GDP projection'},
+  {name:'NC State (economics)', url:'https://cnr.ncsu.edu/news/2026/06/fifa-world-cup-economic-impact/', contribution:'Academic perspective on WC economic overstatement'},
+  {name:'Alliance for Pioneer Square', url:'https://allianceforpioneersquare.org/world-cup-2026/', contribution:'Pioneer Square corridor: 149K-163K visitors, 500K+ total, corridor data'},
+  {name:'Facteus', url:'https://facteus.com/blog/2026-world-cup-economic-impact', contribution:'Lumen Field cohort: 2,332 cardholders, dollar flow breakdown, >60% non-local capture'},
+  {name:'Milimgo/UpFlip', url:'https://milimgo.com/business/seattle-restaurant-owners-world-cup-2026-food-business-x6s0za', contribution:'Cookie's Country Chicken $150K revenue, Toasted Bagels +100%, merchant-level data'},
+  {name:'KING5 (CID decline)', url:'https://www.king5.com/article/money/business/cid-businesses-report-double-digit-sales-decline-fifa-match-days/281-82d4097b-d8b7-4832-b3b2-559fcf70c9f7', contribution:'CID -10-20% sales, Anh Oi Bake Shop -70% match days, Vince Vu quote'},
+  {name:'NW Asian Weekly (CID rally)', url:'https://nwasianweekly.com/2026/07/cid-advocates-rally-at-seattle-stadium-demand-world-cup-economic-parity/', contribution:'CID rally at stadium, $846M forecast reference, economic parity demands'},
+  {name:'Fox13 (bar surge)', url:'https://www.fox13seattle.com/news/seattle-bars-us-australia-match', contribution:'56% surge in bar/restaurant transactions, Toast data'},
+  {name:'Fox13 (business surge)', url:'https://www.fox13seattle.com/news/world-cup-surge-seattle-businesses', contribution:'DeLeo Bros. 500+ pizzas, Lady Yum, Cone & Steiner, Parlour Pioneer Square data'},
+  {name:'Fox13 (CID)', url:'https://www.fox13seattle.com/news/seattle-chinatown-international-district-world-cup', contribution:'CID 10-20% sales loss, public safety issues'},
+  {name:'Fox13 (Sound Transit)', url:'https://www.fox13seattle.com/news/summer-soccer-sound-transit-upgrades', contribution:'ID/Chinatown station: all elevators/escalators in service, additional ORCA readers'},
+  {name:'SODO Seattle', url:'https://sodoseattle.org/worldcup/sodo-business/', contribution:'SODO Business Association World Cup resources for businesses'},
+  {name:'Pioneer Square BIA', url:'https://allianceforpioneersquare.org/wp-content/uploads/2026/02/PSBIA-work-plan-and-Budget-2026.pdf', contribution:'Pioneer Square BIA 2026 work plan: WC preparation, sports economy'},
+  {name:'BizJournals (restaurants)', url:'https://www.bizjournals.com/seattle/news/2026/07/13/world-cup-restaurants-sales-ivars-waterfront.html', contribution:'Seattle restaurant sales surge during WC'},
+  {name:'KNKX (sports)', url:'https://www.knkx.org/sports/2026-07-08/world-cup-soccer-feeds-seattle-appetite-for-international-sports', contribution:'580K visitors Jun 19, Pioneer Square 28K Occidental Park, match-day detail'},
+  {name:'Vashon Beachcomber', url:'https://www.vashonbeachcomber.com/2026/06/30/world-cup-crowds-smash-records-across-seattle/', contribution:'750K fan celebration visitors, 625K waterfront, 85K single-day record'},
+  {name:'OPB', url:'https://www.opb.org/article/2026/06/12/washington-world-cup-seattle-soccer-sports-lumen-field-seattle/', contribution:'$120M WA public spending, Sound Transit >$20M, Seattle $32M'},
+  {name:'Seattle Hospitality Authority', url:'https://seattlehospitalityauthority.com/seattle-hospitality-industry-economic-impact/', contribution:'King Co visitor economy: >76K jobs, >$7.5B spending, NAICS 71+72 methodology'},
+  {name:'Seattle City Finance (WC taxes)', url:'https://www.seattle.gov/city-finance/business-taxes-and-licenses/business-taxes/world-cup-2026', contribution:'Seattle tax rates: admission 5%, parking 14.5%, B&O threshold $2M'},
+  {name:'King County RevTracker (Jul 2026)', url:'https://cdn.kingcounty.gov/-/media/king-county/independent/governance-and-leadership/government-oversight/forecasting/documents/kc-revtracker-202607.pdf', contribution:'Actual KC tax collections through Jun 2026: hotel/motel, lodging, sales tax actuals vs forecast'},
+  {name:'King County EconPulse Q2 2026', url:'https://cdn.kingcounty.gov/-/media/king-county/independent/governance-and-leadership/government-oversight/forecasting/documents/econpulse2q2026.pdf', contribution:'Q2 taxable sales $27.94B (+17%), Food/Accom/Ent +7.5%, WC attribution confirmed'},
+  {name:'Seattle OERF Q2 Report', url:'https://www.seattle.gov/documents/departments/oerf/reports/2026/2026%20q2%20revenue%20report.pdf', contribution:'Seattle actual collections Q1-Q2: Sales $95.82M, B&O $101.16M, combined +$7.58M above forecast'},
+  {name:'Seattle General Fund Revenue', url:'https://www.seattle.gov/documents/Departments/FinanceDepartment/26adoptedbudget/GFRevenueOverview.pdf', contribution:'2026 General Fund: $2,019.2M (+3.1%)'},
+  {name:'WA DOR World Cup Guide', url:'https://dor.wa.gov/education/industry-guides/world-cup-2026', contribution:'WA DOR tax guidance for World Cup businesses'},
+  {name:'Bloomberg Tax (jock taxes)', url:'https://news.bloombergtax.com/daily-tax-report-state/washington-dor-releases-guide-for-2026-fifa-world-cup-tax-obligations', contribution:'WC tax obligations: players, coaches, referees face US jock taxes'},
+  {name:'Fortune (IRS jock taxes)', url:'https://fortune.com/2026/07/23/spain-fifa-world-cup-irs-50-million-jock-taxes/', contribution:'$50M FIFA prize money subject to US jock taxes; portion to Washington'},
+  {name:'King County Forecast', url:'https://cdn.kingcounty.gov/-/media/king-county/independent/governance-and-leadership/government-oversight/forecasting/documents/march2026_pdfadopted.pdf', contribution:'King County 2026: $193.3M hotel tax, "enhanced WC expectations"'},
+  {name:'DocSports', url:'https://www.docsports.com/2026/fifa-world-cup-financial-statistics.html', contribution:'$416/day visitor spend, $5K+ per person, $929M Seattle forecast, $652.6M direct'},
+  {name:'AcadeResearch', url:'https://acaderesearch.com/world-cup-2026-economic-analysis-usa-numbers/', contribution:'$350/day intl visitor spend, 8-10 day stay, 40% foreign share, crowding-out analysis'},
+  {name:'Global Statistics', url:'https://www.theglobalstatistics.com/fifa-world-cup-revenue-statistics/', contribution:'$13.9B global direct spending, $6.4B US, $416/day, 12-day stay, $5K+ per visitor'},
+  {name:'Deloitte/Airbnb', url:'https://news.airbnb.com/wp-content/uploads/sites/4/2025/06/Deloitte-Report_Airbnb_FIFAWorldCup26.pdf', contribution:'5M FIFA tourists, 40% foreign, 12-day stay, 1:1 domestic:foreign US ratio, methodology'},
+  {name:'Tourism Economics (Virginia)', url:'https://www.vatc.org/wp-content/uploads/2021/12/Virginia-Economic-Impact-Methods-Tourism-Economics-12-2021.pdf', contribution:'Tourism Economics methodology: triangulation, IMPLAN/RIMS II, Longwoods survey data'},
+  {name:'Tourism Economics (studies)', url:'https://www.tourismeconomics.com/economic-impact-studies/', contribution:'Economic impact study framework: direct, indirect, induced effects'},
+  {name:'BBC (hospitality jobs)', url:'https://www.bbc.com/news/articles/cdxpx4gel1yo', contribution:'172K US jobs created in May, leisure/hospitality hiring ramp'},
+  {name:'Citizen Portal (ESD)', url:'https://citizenportal.ai/articles/9447198/esd-world-cup-likely-boosted-leisure-and-hospitality-jobs-but-durability-unclear', contribution:'WA ESD: 10,700 L&H jobs May-Jul, King Co concentration, August data critical'},
+  {name:'RoomMaster (hotel tax)', url:'https://www.roommaster.com/hotel-tax/seattle', contribution:'Seattle lodging tax 15.70% breakdown: 8.70% sales + 7% Convention Center'},
+  {name:'Bainbridge Review (WSF)', url:'https://www.bainbridgereview.com/2026/07/15/a-look-at-wsf-ridership-during-seattle-world-cup-matches/', contribution:'WSF: 808K passengers Jun 1-Jul 6, route-level data, Jun 19 +17.6%'},
+  {name:'Port of Seattle', url:'https://www.portseattle.org/news/port-seattle-approves-2026-budget', contribution:'330 cruise calls, 2.1M passengers (record), 2026 budget'},
+  {name:'KOMO (cruise)', url:'https://komonews.com/news/consumer/how-many-ships-dock-at-seattle-waterfront-western-washington-puget-sound-cruise-ship-season-tourism-pier66-virgin-voyages-msc-cruises', contribution:'Record cruise season, $1.2B economic impact'},
+  {name:'Sounder at Heart', url:'https://www.sounderatheart.com/2026/06/seattle-has-re-affirmed-itself-a-world-class-city/', contribution:'SeattleFWC26 records: 750K fan celebration, 625K waterfront, 85K record day'},
+];
+
+// === RENDER FUNCTIONS ===
+function renderMatches() {
+  const el = document.getElementById('matchList');
+  el.innerHTML = matches.map(m => `
+    <div class="match-item">
+      <span class="match-date">${m.date}</span>
+      <span class="match-teams">${m.teams}</span>
+      <span class="match-type tag green">100% capacity</span>
+      <span class="match-type">${m.type}</span>
+    </div>
+  `).join('');
+}
+
+function renderCityTable(filter='all') {
+  const tbody = document.getElementById('cityTableBody');
+  const filtered = filter === 'all' ? cityComparison : cityComparison.filter(c => c.region === filter);
+  tbody.innerHTML = filtered.map(c => {
+    const isSeattle = c.city === 'Seattle';
+    const occClass = typeof c.occChange === 'string' && c.occChange.includes('-') ? 'neg' : typeof c.occChange === 'string' && c.occChange.includes('+') ? 'pos' : '';
+    const augClass = c.augDecline.includes('-') && !c.augDecline.includes('Not public') ? 'neg' : '';
+    return `
+    <tr class="${isSeattle ? 'highlight' : ''}" title="${c.notes}">
+      <td><strong>${isSeattle ? '⭐ ' : ''}${c.city}</strong></td>
+      <td class="num">${c.matches}</td>
+      <td class="num">$${c.projImpact}M</td>
+      <td class="num">${typeof c.rev === 'number' ? '$' + c.rev + 'M' : c.rev}</td>
+      <td class="num ${occClass}">${c.occChange}</td>
+      <td class="num">${c.revparPct}</td>
+      <td style="font-size:12px">${c.retailVsNonHost}</td>
+      <td class="num ${augClass}">${c.augDecline}</td>
+    </tr>`;
+  }).join('');
+}
+
+function renderInvestments() {
+  const tbody = document.getElementById('investmentTableBody');
+  tbody.innerHTML = investments.map(i => `
+    <tr>
+      <td>${i.source}</td>
+      <td class="num"><strong>${i.amount}</strong></td>
+      <td>${i.scope}</td>
+      <td><span class="evidence-badge class-${i.cls.toLowerCase().replace('/','').replace(' ','')} ">Class ${i.cls}</span></td>
+    </tr>
+  `).join('');
+}
+
+function renderFanZones() {
+  const tbody = document.getElementById('fanZoneTableBody');
+  tbody.innerHTML = fanZones.map(f => `
+    <tr>
+      <td><strong>${f.community}</strong></td>
+      <td><span class="tag blue">${f.status}</span></td>
+      <td>${f.attendance === 'Not public' ? '<span class="tag red">Not public</span>' : '<span class="tag green">' + f.attendance + '</span>'}</td>
+      <td>${f.notes}</td>
+    </tr>
+  `).join('');
+}
+
+function renderGaps(filter='all') {
+  const tbody = document.getElementById('gapTableBody');
+  const filtered = filter === 'all' ? dataGaps : dataGaps.filter(g => g.category === filter);
+  tbody.innerHTML = filtered.map(g => `
+    <tr>
+      <td><strong>${g.owner}</strong></td>
+      <td>${g.dataset}</td>
+      <td>${g.why}</td>
+      <td><span class="tag ${g.priority === 'High' ? 'red' : g.priority === 'Medium' ? 'gold' : 'blue'}">${g.priority}</span></td>
+    </tr>
+  `).join('');
+}
+
+function renderMetrics(filter='all', search='') {
+  const tbody = document.getElementById('metricTableBody');
+  let filtered = filter === 'all' ? allMetrics : allMetrics.filter(m => m.pillar === filter);
+  if (search) {
+    const s = search.toLowerCase();
+    filtered = filtered.filter(m =>
+      m.metric.toLowerCase().includes(s) ||
+      m.value.toLowerCase().includes(s) ||
+      m.owner.toLowerCase().includes(s) ||
+      m.caveat.toLowerCase().includes(s)
+    );
+  }
+  tbody.innerHTML = filtered.map(m => `
+    <tr>
+      <td><span class="tag blue">${m.pillar}</span></td>
+      <td><strong>${m.metric}</strong></td>
+      <td class="num">${m.value}</td>
+      <td><span class="evidence-badge class-${m.cls.toLowerCase().replace('/','').replace(' ','')} ">Class ${m.cls}</span></td>
+      <td>${m.owner}</td>
+      <td style="font-size:12px;color:var(--text-muted)">${m.caveat}</td>
+    </tr>
+  `).join('');
+}
+
+function renderSources() {
+  const tbody = document.getElementById('sourceTableBody');
+  tbody.innerHTML = sources.map(s => `
+    <tr>
+      <td><a href="${s.url}" target="_blank" rel="noopener">${s.name}</a></td>
+      <td>${s.contribution}</td>
+    </tr>
+  `).join('');
+}
+
+// === CHART DEFAULTS ===
+Chart.defaults.color = getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim();
+Chart.defaults.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
+Chart.defaults.font.family = "'General Sans', sans-serif";
+
+function getCSSVar(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+function makeChart(id, config) {
+  const ctx = document.getElementById(id);
+  if (!ctx) return null;
+  return new Chart(ctx, config);
+}
+
+// === NAVIGATION ===
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+    item.classList.add('active');
+    const nav = item.dataset.nav;
+    document.getElementById('section-' + nav).classList.remove('hidden');
+    document.getElementById('main').scrollTop = 0;
+    // Render charts for the newly visible section
+    setTimeout(() => renderSectionCharts(nav), 50);
+  });
+});
+
+// === PILLAR TABS ===
+document.querySelectorAll('.pillar-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.pillar-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.pillar-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('pillar-' + tab.dataset.pillar).classList.add('active');
+    setTimeout(() => renderPillarCharts(tab.dataset.pillar), 50);
+  });
+});
+
+// === THEME TOGGLE ===
+document.getElementById('themeToggle').addEventListener('click', () => {
+  const html = document.documentElement;
+  const current = html.getAttribute('data-theme');
+  const next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  document.getElementById('themeIcon').innerHTML = next === 'dark'
+    ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+    : '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+  // Re-render charts with new theme colors
+  Object.values(Chart.instances).forEach(c => c.destroy());
+  Chart.defaults.color = getCSSVar('--text-muted');
+  Chart.defaults.borderColor = getCSSVar('--border');
+  renderAllCharts();
+});
+
+// === TABLE SORTING ===
+document.querySelectorAll('.data-table th[data-sort]').forEach(th => {
+  th.addEventListener('click', () => {
+    const table = th.closest('.data-table');
+    const sortKey = th.dataset.sort;
+    const isAsc = th.classList.contains('sorted-asc');
+    table.querySelectorAll('th').forEach(t => { t.classList.remove('sorted-asc', 'sorted-desc'); });
+    th.classList.add(isAsc ? 'sorted-desc' : 'sorted-asc');
+    // Sort logic would go here for the city table
+    if (table.id === 'cityTable') {
+      sortCityTable(sortKey, !isAsc);
+    }
+  });
+});
+
+function sortCityTable(key, asc) {
+  cityComparison.sort((a, b) => {
+    let va = a[key], vb = b[key];
+    if (key === 'rev' && typeof va === 'string') va = 0;
+    if (key === 'rev' && typeof vb === 'string') vb = 0;
+    if (typeof va === 'number') return asc ? va - vb : vb - va;
+    if (typeof va === 'string') return asc ? va.localeCompare(vb) : vb.localeCompare(va);
+    return 0;
+  });
+  const activeFilter = document.querySelector('.filter-chip.active')?.dataset.filter || 'all';
+  renderCityTable(activeFilter);
+}
+
+// === FILTER CHIPS ===
+document.querySelectorAll('[data-filter]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    renderCityTable(chip.dataset.filter);
+  });
+});
+
+document.querySelectorAll('[data-gap-filter]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    renderGaps(chip.dataset.gapFilter);
+  });
+});
+
+document.querySelectorAll('[data-metric-filter]').forEach(chip => {
+  chip.addEventListener('click', () => {
+    chip.parentElement.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    const search = document.getElementById('metricSearch').value;
+    renderMetrics(chip.dataset.metricFilter, search);
+  });
+});
+
+// === SEARCH ===
+document.getElementById('citySearch').addEventListener('input', (e) => {
+  const s = e.target.value.toLowerCase();
+  const tbody = document.getElementById('cityTableBody');
+  const activeFilter = document.querySelector('[data-filter].active')?.dataset.filter || 'all';
+  let filtered = activeFilter === 'all' ? cityComparison : cityComparison.filter(c => c.region === activeFilter);
+  filtered = filtered.filter(c => c.city.toLowerCase().includes(s));
+  tbody.innerHTML = filtered.map(c => {
+    const isSeattle = c.city === 'Seattle';
+    const occClass = typeof c.occChange === 'string' && c.occChange.includes('-') ? 'neg' : typeof c.occChange === 'string' && c.occChange.includes('+') ? 'pos' : '';
+    const augClass = c.augDecline.includes('-') && !c.augDecline.includes('Not public') ? 'neg' : '';
+    return `
+    <tr class="${isSeattle ? 'highlight' : ''}" title="${c.notes}">
+      <td><strong>${isSeattle ? '⭐ ' : ''}${c.city}</strong></td>
+      <td class="num">${c.matches}</td>
+      <td class="num">$${c.projImpact}M</td>
+      <td class="num">${typeof c.rev === 'number' ? '$' + c.rev + 'M' : c.rev}</td>
+      <td class="num ${occClass}">${c.occChange}</td>
+      <td class="num">${c.revparPct}</td>
+      <td style="font-size:12px">${c.retailVsNonHost}</td>
+      <td class="num ${augClass}">${c.augDecline}</td>
+    </tr>`;
+  }).join('');
+});
+
+document.getElementById('gapSearch').addEventListener('input', (e) => {
+  const s = e.target.value.toLowerCase();
+  const tbody = document.getElementById('gapTableBody');
+  const activeFilter = document.querySelector('[data-gap-filter].active')?.dataset.gapFilter || 'all';
+  let filtered = activeFilter === 'all' ? dataGaps : dataGaps.filter(g => g.category === activeFilter);
+  filtered = filtered.filter(g =>
+    g.owner.toLowerCase().includes(s) || g.dataset.toLowerCase().includes(s) || g.why.toLowerCase().includes(s)
+  );
+  tbody.innerHTML = filtered.map(g => `
+    <tr>
+      <td><strong>${g.owner}</strong></td>
+      <td>${g.dataset}</td>
+      <td>${g.why}</td>
+      <td><span class="tag ${g.priority === 'High' ? 'red' : g.priority === 'Medium' ? 'gold' : 'blue'}">${g.priority}</span></td>
+    </tr>
+  `).join('');
+});
+
+document.getElementById('metricSearch').addEventListener('input', (e) => {
+  const activeFilter = document.querySelector('[data-metric-filter].active')?.dataset.metricFilter || 'all';
+  renderMetrics(activeFilter, e.target.value);
+});
+
+// === CHARTS ===
+let charts = {};
+
+function renderAllCharts() {
+  renderCommandCharts();
+  renderCityCharts();
+  renderPillarCharts('visitation');
+}
+
+function renderSectionCharts(nav) {
+  if (nav === 'command') renderCommandCharts();
+  if (nav === 'cities') renderCityCharts();
+  if (nav === 'seattle') {
+    const activePillar = document.querySelector('.pillar-tab.active')?.dataset.pillar || 'visitation';
+    renderPillarCharts(activePillar);
+  }
+}
+
+function renderCommandCharts() {
+  if (charts.globalGap) charts.globalGap.destroy();
+  if (charts.seattleForecast) charts.seattleForecast.destroy();
+
+  charts.globalGap = makeChart('chartGlobalGap', {
+    type: 'bar',
+    data: {
+      labels: ['FIFA Global Projection', 'Bank of America Confirmed'],
+      datasets: [{
+        label: 'Economic Impact ($B)',
+        data: [80.1, 40],
+        backgroundColor: [getCSSVar('--purple'), getCSSVar('--danger')],
+        borderRadius: 6,
+        barThickness: 60,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '$' + c.parsed.y + 'B' } } },
+      scales: { y: { beginAtZero: true, ticks: { callback: (v) => '$' + v + 'B' } } }
+    }
+  });
+
+  charts.seattleForecast = makeChart('chartSeattleForecast', {
+    type: 'bar',
+    data: {
+      labels: ['Dec 2024 Forecast', '2026 Revised Forecast', 'SSC Calculated Estimate'],
+      datasets: [{
+        label: 'Economic Impact ($M)',
+        data: [929, 845.6, 489],
+        backgroundColor: [getCSSVar('--purple'), getCSSVar('--gold'), getCSSVar('--success')],
+        borderRadius: 6,
+        barThickness: 50,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '$' + c.parsed.y + 'M' + (c.dataIndex === 2 ? ' (5-method triangulation)' : '') } } },
+      scales: { y: { beginAtZero: true, ticks: { callback: (v) => '$' + v + 'M' } } }
+    }
+  });
+}
+
+function renderCityCharts() {
+  if (charts.hotelRev) charts.hotelRev.destroy();
+  if (charts.occChange) charts.occChange.destroy();
+  if (charts.adrChange) charts.adrChange.destroy();
+
+  const citiesWithRev = cityComparison.filter(c => typeof c.rev === 'number').sort((a,b) => b.rev - a.rev);
+  const citiesWithOcc = cityComparison.filter(c => typeof c.occChange === 'string' && c.occChange.includes('pp')).sort((a,b) => {
+    const va = parseFloat(a.occChange.replace('pp',''));
+    const vb = parseFloat(b.occChange.replace('pp',''));
+    return va - vb;
+  });
+  const citiesWithOccText = cityComparison.filter(c => typeof c.occChange === 'string' && !c.occChange.includes('pp') && c.occChange !== 'Not public').sort((a,b) => a.city.localeCompare(b.city));
+
+  charts.hotelRev = makeChart('chartHotelRevenue', {
+    type: 'bar',
+    data: {
+      labels: citiesWithRev.map(c => c.city),
+      datasets: [{
+        data: citiesWithRev.map(c => c.rev),
+        backgroundColor: citiesWithRev.map(c => c.city === 'Seattle' ? getCSSVar('--accent') : getCSSVar('--surface-3')),
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '$' + c.parsed.x + 'M' } } },
+      scales: { x: { beginAtZero: true, ticks: { callback: (v) => '$' + v + 'M' } } }
+    }
+  });
+
+  charts.occChange = makeChart('chartOccChange', {
+    type: 'bar',
+    data: {
+      labels: citiesWithOcc.map(c => c.city),
+      datasets: [{
+        data: citiesWithOcc.map(c => parseFloat(c.occChange.replace('pp',''))),
+        backgroundColor: citiesWithOcc.map(c => {
+          const v = parseFloat(c.occChange.replace('pp',''));
+          return v < 0 ? getCSSVar('--danger') : getCSSVar('--success');
+        }),
+        borderRadius: 6,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => (c.parsed.y > 0 ? '+' : '') + c.parsed.y + 'pp' } } },
+      scales: { y: { min: -8, max: 2, ticks: { callback: (v) => v + 'pp' } }, x: { ticks: { maxRotation: 45, minRotation: 30, autoSkip: false } } }
+    }
+  });
+
+  // ADR impact chart: Seattle ADR $ and YoY change
+  charts.adrChange = makeChart('chartADRChange', {
+    type: 'bar',
+    data: {
+      labels: ['ADR Week Jun 20', 'ADR YoY Change'],
+      datasets: [{
+        label: 'ADR ($)',
+        data: [271.80, 30.5],
+        backgroundColor: [getCSSVar('--accent'), getCSSVar('--success')],
+        borderRadius: 6,
+        yAxisID: 'y',
+      }, {
+        label: 'YoY %',
+        data: [null, 30.5],
+        type: 'line',
+        borderColor: getCSSVar('--gold'),
+        backgroundColor: getCSSVar('--gold'),
+        yAxisID: 'y1',
+        tension: 0.3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+      scales: {
+        y: { beginAtZero: true, position: 'left', title: { display: true, text: 'ADR ($)' } },
+        y1: { position: 'right', title: { display: true, text: 'YoY %' }, grid: { drawOnChartArea: false }, beginAtZero: true }
+      }
+    }
+  });
+}
+
+function renderPillarCharts(pillar) {
+  if (pillar === 'visitation') {
+    if (charts.linkDaily) charts.linkDaily.destroy();
+    if (charts.visitation) charts.visitation.destroy();
+    if (charts.julyRecovery) charts.julyRecovery.destroy();
+
+    charts.linkDaily = makeChart('chartLinkDaily', {
+      type: 'bar',
+      data: {
+        labels: ['Jun 15', 'Jun 19', 'Jun 24', 'Jun 26', 'Jul 1', 'Jul 6'],
+        datasets: [{
+          label: 'Link Boardings',
+          data: [221, 297, 237, 234, 246, 309],
+          backgroundColor: ['rgba(47,129,247,0.6)','rgba(47,129,247,0.7)','rgba(47,129,247,0.6)','rgba(47,129,247,0.6)','rgba(47,129,247,0.7)',getCSSVar('--success')],
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.parsed.y + 'K boardings' } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: (v) => v + 'K' } } }
+      }
+    });
+
+    charts.visitation = makeChart('chartVisitation', {
+      type: 'bar',
+      data: {
+        labels: ['Pioneer Square Jun 19', 'Jun 19 Downtown', 'Jul 6 Downtown'],
+        datasets: [{
+          data: [149800, 580000, 548000],
+          backgroundColor: [getCSSVar('--accent'), getCSSVar('--teal'), getCSSVar('--purple')],
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.parsed.y.toLocaleString() + ' visits' } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: (v) => v >= 1000 ? (v/1000) + 'K' : v } } }
+      }
+    });
+
+    charts.julyRecovery = makeChart('chartJulyRecovery', {
+      type: 'bar',
+      data: {
+        labels: ['Unique Downtown Visitors', 'Weekday Worker Traffic', 'Downtown Hotel Rooms'],
+        datasets: [{
+          data: [112, 64, 108],
+          backgroundColor: [getCSSVar('--accent'), getCSSVar('--warning'), getCSSVar('--teal')],
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.parsed.y + '% of 2019 baseline' } } },
+        scales: { y: { beginAtZero: true, max: 140, ticks: { callback: (v) => v + '%' } } }
+      }
+    });
+  }
+
+  if (pillar === 'spending') {
+    if (charts.toast) charts.toast.destroy();
+    if (charts.bofa) charts.bofa.destroy();
+    if (charts.datafy) charts.datafy.destroy();
+
+    charts.toast = makeChart('chartToastCategories', {
+      type: 'bar',
+      data: {
+        labels: ['GMV', 'Transactions', 'Beer', 'Hot Dogs', 'Nachos', 'Wings', 'Tenders', 'Burgers', '10am Txns'],
+        datasets: [{
+          data: [51, 56, 212, 228, 87, 64, 63, 35, 145],
+          backgroundColor: [getCSSVar('--accent'), getCSSVar('--teal'), getCSSVar('--success'), getCSSVar('--gold'), getCSSVar('--purple'), getCSSVar('--accent'), getCSSVar('--teal'), getCSSVar('--warning'), getCSSVar('--danger')],
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '+' + c.parsed.y + '%' } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: (v) => '+' + v + '%' } } }
+      }
+    });
+
+    charts.bofa = makeChart('chartBofA', {
+      type: 'bar',
+      data: {
+        labels: ['Jun 10-21 Total', 'Jun 10-21 Local', 'Jun 10-21 Non-Local', 'Group Stage Total', 'Group Stage Non-Local', 'Full Tourn. Total', 'Full Tourn. Non-Local'],
+        datasets: [{
+          data: [6.3, 4.2, 16.7, 5.4, 17.4, 5.0, 13.5],
+          backgroundColor: getCSSVar('--accent'),
+          borderRadius: 4,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '+' + c.parsed.y + '%' } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: (v) => '+' + v + '%' } } }
+      }
+    });
+
+    charts.datafy = makeChart('chartDatafy', {
+      type: 'doughnut',
+      data: {
+        labels: ['Downtown (11%)', 'Rest of Seattle (89%)'],
+        datasets: [{
+          data: [11, 89],
+          backgroundColor: [getCSSVar('--accent'), getCSSVar('--surface-3')],
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => c.label + ': ' + c.parsed + '%' } } },
+        cutout: '60%',
+      }
+    });
+  }
+
+  if (pillar === 'lodging') {
+    if (charts.hotelPerf) charts.hotelPerf.destroy();
+    if (charts.airdna) charts.airdna.destroy();
+    if (charts.hvs) charts.hvs.destroy();
+
+    charts.hotelPerf = makeChart('chartHotelPerf', {
+      type: 'bar',
+      data: {
+        labels: ['Match Wk Avg (4 wks)', 'Post-Tourn Wk'],
+        datasets: [
+          {
+            label: 'Occupancy (%)',
+            data: [73.9, 90.5],
+            backgroundColor: [getCSSVar('--danger'), getCSSVar('--success')],
+            yAxisID: 'y',
+            borderRadius: 6,
+          },
+          {
+            label: 'Occupancy YoY Change (pp)',
+            data: [-6.9, 3.3],
+            type: 'line',
+            borderColor: getCSSVar('--gold'),
+            backgroundColor: getCSSVar('--gold'),
+            yAxisID: 'y1',
+            tension: 0.3,
+            pointRadius: 6,
+          }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } },
+        scales: {
+          y: { beginAtZero: true, max: 100, position: 'left', title: { display: true, text: 'Occupancy %' } },
+          y1: { position: 'right', title: { display: true, text: 'YoY Change (pp)' }, grid: { drawOnChartArea: false } }
+        }
+      }
+    });
+
+    charts.airdna = makeChart('chartAirDNA', {
+      type: 'bar',
+      data: {
+        labels: ['Active Listings', 'Occupancy', 'ADR', 'RevPAR', 'Avg Revenue'],
+        datasets: [
+          { label: '2026', data: [12155, 65, 190, 124, 39300], backgroundColor: getCSSVar('--accent'), borderRadius: 6 },
+          { label: 'YoY Change', data: [11.8, 4.8, -13.8, -5.7, 66.7], backgroundColor: getCSSVar('--gold'), borderRadius: 6 }
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } },
+        scales: { y: { beginAtZero: true } }
+      }
+    });
+
+    const citiesWithOcc = cityComparison.filter(c => typeof c.occChange === 'string' && c.occChange.includes('pp')).sort((a,b) => { const va = parseFloat(a.occChange.replace('pp','')); const vb = parseFloat(b.occChange.replace('pp','')); return va - vb; });
+    charts.hvs = makeChart('chartHVS', {
+      type: 'bar',
+      data: {
+        labels: citiesWithOcc.map(c => c.city),
+        datasets: [{
+          data: citiesWithOcc.map(c => parseFloat(c.occChange.replace('pp',''))),
+          backgroundColor: citiesWithOcc.map(c => { const v = parseFloat(c.occChange.replace('pp','')); return c.city === 'Seattle' ? getCSSVar('--danger') : v < 0 ? getCSSVar('--warning') : getCSSVar('--success'); }),
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => (c.parsed.x > 0 ? '+' : '') + c.parsed.x + 'pp' } } },
+        scales: { x: { ticks: { callback: (v) => v + 'pp' } } }
+      }
+    });
+  }
+
+  if (pillar === 'mobility') {
+    if (charts.metro) charts.metro.destroy();
+    if (charts.linkMatch) charts.linkMatch.destroy();
+    if (charts.shared) charts.shared.destroy();
+
+    charts.metro = makeChart('chartMetroBreakdown', {
+      type: 'bar',
+      data: {
+        labels: metroBreakdown.map(m => m.mode),
+        datasets: [{
+          data: metroBreakdown.map(m => m.value),
+          backgroundColor: metroBreakdown.map(m => m.color),
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.parsed.x.toLocaleString() + ' boardings' } } },
+        scales: { x: { beginAtZero: true, ticks: { callback: (v) => v >= 1000000 ? (v/1000000).toFixed(1) + 'M' : v >= 1000 ? (v/1000) + 'K' : v } } }
+      }
+    });
+
+    charts.linkMatch = makeChart('chartLinkMatchDay', {
+      type: 'line',
+      data: {
+        labels: ['Jun 15', 'Jun 19', 'Jun 24', 'Jun 26', 'Jul 1', 'Jul 6'],
+        datasets: [{
+          label: 'Link Boardings (K)',
+          data: [221, 297, 237, 234, 246, 309],
+          borderColor: getCSSVar('--accent'),
+          backgroundColor: 'rgba(47,129,247,0.1)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 5,
+          pointBackgroundColor: getCSSVar('--accent'),
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.parsed.y + 'K boardings' } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: (v) => v + 'K' } } }
+      }
+    });
+
+    charts.shared = makeChart('chartSharedMobility', {
+      type: 'doughnut',
+      data: {
+        labels: ['Standing Scooter', 'Seated Scooter', 'Bike'],
+        datasets: [{
+          data: [46700, 21400, 15500],
+          backgroundColor: [getCSSVar('--accent'), getCSSVar('--teal'), getCSSVar('--gold')],
+          borderWidth: 0,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => c.label + ': ' + c.parsed.toLocaleString() + ' trips' } } },
+        cutout: '60%',
+      }
+    });
+  }
+
+  if (pillar === 'workforce') {
+    if (charts.workforce) charts.workforce.destroy();
+    if (charts.leisure) charts.leisure.destroy();
+
+    charts.workforce = makeChart('chartWorkforce', {
+      type: 'bar',
+      data: {
+        labels: ['Leisure/Hospitality', 'Prof/Business', 'Retail', 'Transport/Util'],
+        datasets: [{
+          data: [149500, 309500, 103000, 61600],
+          backgroundColor: [getCSSVar('--success'), getCSSVar('--accent'), getCSSVar('--gold'), getCSSVar('--purple')],
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => c.parsed.y.toLocaleString() + ' jobs' } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: (v) => v >= 1000 ? (v/1000) + 'K' : v } } }
+      }
+    });
+
+    charts.leisure = makeChart('chartLeisureGrowth', {
+      type: 'bar',
+      data: {
+        labels: ['King Co MoM', 'King Co YoY', 'WA MoM', 'WA YoY'],
+        datasets: [{
+          data: [2800, 5700, 4200, 9300],
+          backgroundColor: [getCSSVar('--accent'), getCSSVar('--success'), getCSSVar('--teal'), getCSSVar('--gold')],
+          borderRadius: 6,
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => '+' + c.parsed.y.toLocaleString() + ' jobs' } } },
+        scales: { y: { beginAtZero: true, ticks: { callback: (v) => '+' + v.toLocaleString() } } }
+      }
+    });
+  }
+}
+
+// === COMMUNITY CHART ===
+function renderCommunityChart() {
+  if (charts.community) charts.community.destroy();
+  charts.community = makeChart('chartCommunity', {
+    type: 'doughnut',
+    data: {
+      labels: ['Public-Space Activation', 'Community Celebrations', 'Waterfront Shuttle', 'CBC Grants'],
+      datasets: [{
+        data: [1300, 485, 500, 250],
+        backgroundColor: [getCSSVar('--accent'), getCSSVar('--teal'), getCSSVar('--gold'), getCSSVar('--purple')],
+        borderWidth: 0,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' }, tooltip: { callbacks: { label: (c) => c.label + ': $' + c.parsed + 'K' } } },
+      cutout: '55%',
+    }
+  });
+}
+
+// === INIT ===
+renderMatches();
+renderCityTable();
+renderInvestments();
+renderFanZones();
+renderGaps();
+renderMetrics();
+renderSources();
+renderAllCharts();
+renderCommunityChart();
+</script>
+</body>
+</html>

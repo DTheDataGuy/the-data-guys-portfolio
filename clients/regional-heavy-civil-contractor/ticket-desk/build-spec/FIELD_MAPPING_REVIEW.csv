@@ -1,0 +1,20 @@
+canonical_field,actual_form_label,page/region,vendor_examples,required_for_capture,required_for_export,required_for_Procore,required_for_invoice_match,decision_owner,status
+project,,,,,,,,Jordan,VISUAL REVIEW PENDING
+vendor/carrier,,,,,,,,Jordan,VISUAL REVIEW PENDING
+ticket number,,,,,,,,Jordan,VISUAL REVIEW PENDING
+truck number,,,,,,,,Jordan,VISUAL REVIEW PENDING
+service date,,,,,,,,Jordan,VISUAL REVIEW PENDING
+truck type,,,,,,,,Jordan,VISUAL REVIEW PENDING
+material raw/normalized,,,,,,,,Jordan,VISUAL REVIEW PENDING
+load count / runs,,,,,,,,Jordan,VISUAL REVIEW PENDING
+quantity,,,,,,,,Jordan,VISUAL REVIEW PENDING
+unit,,,,,,,,Jordan,VISUAL REVIEW PENDING
+quantity basis,,,,,,,,Jordan,VISUAL REVIEW PENDING
+gross/tare/net,,,,,,,,Jordan,VISUAL REVIEW PENDING
+start/end time,,,,,,,,Jordan,VISUAL REVIEW PENDING
+break/billed hours,,,,,,,,Jordan,VISUAL REVIEW PENDING
+foreman CC note,,,,,,,,Jordan,VISUAL REVIEW PENDING
+cost-code allocations,,,,,,,,Jordan,VISUAL REVIEW PENDING
+origin/destination/location,,,,,,,,Jordan,VISUAL REVIEW PENDING
+source pages/regions,,,,,,,,Jordan,VISUAL REVIEW PENDING
+signature-present observation,,,,,,,,Jordan,VISUAL REVIEW PENDING

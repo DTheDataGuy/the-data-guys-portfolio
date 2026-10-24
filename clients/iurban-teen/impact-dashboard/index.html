@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>iUrban Teen Impact Dashboard</title>
+<meta name="description" content="iUrban Teen Impact Dashboard: from outputs to outcomes.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%231F2A6B'/%3E%3Cpath d='M9 22V13M16 22V9M23 22v-6' stroke='%23FF8A3D' stroke-width='3.2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<header class="top">
+  <div class="brand">
+    <svg class="logo" viewBox="0 0 40 40" aria-label="iUrban Teen Impact Dashboard logo" fill="none">
+      <rect x="1" y="1" width="38" height="38" rx="11" fill="currentColor" opacity=".08"/>
+      <path d="M11 28V18" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M20 28V12" stroke="currentColor" stroke-width="3.4" stroke-linecap="round"/>
+      <path d="M29 28v-7" stroke="var(--accent)" stroke-width="3.4" stroke-linecap="round"/>
+      <circle cx="29" cy="13.5" r="3" fill="var(--accent)"/>
+    </svg>
+    <div>
+      <div class="brand-name">iUrban Teen</div>
+      <div class="brand-sub">Impact Dashboard</div>
+    </div>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-view="overview" role="tab">Overview</button>
+    <button class="tab" data-view="impact" role="tab">Impact Tracking</button>
+    <button class="tab" data-view="programs" role="tab">Programs</button>
+    <button class="tab" data-view="reach" role="tab">Reach</button>
+    <button class="tab" data-view="journey" role="tab">Student Journey</button>
+    <button class="tab" data-view="about" role="tab">About</button>
+    <button class="tab tab-studio" data-view="studio" role="tab">Data Studio</button>
+  </nav>
+  <div class="top-actions">
+    <span class="badge-proto" title="Built from Eventbrite exports. Secure login and live refresh come in a later phase.">Prototype</span>
+    <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </div>
+</header>
+
+<section class="filters" aria-label="Filters">
+  <div class="fgroup">
+    <span class="flabel">Year</span>
+    <div class="chips" id="yearChips">
+      <button class="chip active" data-year="all">2024–2025</button>
+      <button class="chip" data-year="2024">2024</button>
+      <button class="chip" data-year="2025">2025</button>
+    </div>
+  </div>
+  <div class="fgroup">
+    <span class="flabel">Region</span>
+    <select id="regionSel">
+      <option value="all">All regions</option>
+      <option value="WA">Washington</option>
+      <option value="OR">Oregon</option>
+      <option value="TX">Texas</option>
+      <option value="CA">California</option>
+      <option value="Other">Other states</option>
+      <option value="Not provided">Not provided</option>
+    </select>
+  </div>
+  <div class="fgroup">
+    <span class="flabel">Program family</span>
+    <select id="familySel"><option value="all">All programs</option></select>
+  </div>
+  <div class="fgroup">
+    <span class="flabel">Who</span>
+    <div class="chips" id="roleChips">
+      <button class="chip active" data-role="all">Everyone</button>
+      <button class="chip" data-role="Participant">Participants</button>
+      <button class="chip" data-role="Volunteer">Volunteers</button>
+    </div>
+  </div>
+  <button class="reset" id="resetBtn">Reset</button>
+</section>
+
+<main>
+  <!-- OVERVIEW -->
+  <section class="view active" id="view-overview">
+    <div class="hero">
+      <div>
+        <p class="eyebrow">From outputs to outcomes</p>
+        <h1>Every registration is a young person saying <em>yes</em> to what's possible.</h1>
+        <p class="lede">This dashboard starts with what iUrban Teen already tracks, Eventbrite registrations, and builds toward the outcomes that matter most: graduation, college and training, credentials and careers.</p>
+      </div>
+      <div class="hero-stat">
+        <div class="hs-num" id="heroNum">0</div>
+        <div class="hs-label" id="heroLabel">registrations, 2024–2025</div>
+        <div class="tag measured">Measured · Eventbrite</div>
+      </div>
+    </div>
+
+    <div class="kpis" id="kpis"></div>
+
+    <div class="grid g-2-1">
+      <article class="card">
+        <header class="card-h">
+          <div><h2>Registrations by month</h2><p class="sub" id="trendSub">Grouped by Eventbrite export month</p></div>
+          <div class="tag measured">Measured</div>
+        </header>
+        <div class="chart-wrap tall"><canvas id="trendChart"></canvas></div>
+      </article>
+      <article class="card">
+        <header class="card-h">
+          <div><h2>Program mix</h2><p class="sub">Share of registrations by program family</p></div>
+        </header>
+        <div class="chart-wrap tall"><canvas id="mixChart"></canvas></div>
+      </article>
+    </div>
+
+    <article class="card journey-card">
+      <header class="card-h">
+        <div><h2>The student journey</h2><p class="sub">Where the data stands today at each stage</p></div>
+        <button class="link-btn" data-goto="journey">Open journey view →</button>
+      </header>
+      <div class="journey" id="journeyMini"></div>
+    </article>
+  </section>
+
+  <!-- PROGRAMS -->
+  <section class="view" id="view-programs">
+    <div class="section-head">
+      <h1>Programs & Events</h1>
+      <p class="lede">Which experiences draw the most young people, families and volunteers.</p>
+    </div>
+    <div class="grid g-1-1">
+      <article class="card">
+        <header class="card-h"><div><h2>Registrations by program family</h2><p class="sub">Click a bar to filter the whole dashboard</p></div></header>
+        <div class="chart-wrap"><canvas id="famChart"></canvas></div>
+      </article>
+      <article class="card">
+        <header class="card-h"><div><h2>Program family by year</h2><p class="sub" id="famYearSub">2024 full year · 2025 January–September</p></div></header>
+        <div class="chart-wrap"><canvas id="famYearChart"></canvas></div>
+      </article>
+    </div>
+        <article class="card">
+      <header class="card-h"><div><h2>Breadth of programming</h2><p class="sub" id="breadthSub">Distinct experiences in each program family</p></div><span class="tag measured">Measured · Eventbrite</span></header>
+      <div class="breadth" id="breadth"></div>
+    </article>
+    <div class="grid g-1-1">
+      <article class="card">
+        <header class="card-h"><div><h2>Most popular experiences</h2><p class="sub" id="topSub">Top 10 by registrations</p></div></header>
+        <ol class="top10" id="top10"></ol>
+      </article>
+      <article class="card">
+        <header class="card-h"><div><h2>When each program family runs</h2><p class="sub">Registrations by export month · darker means more</p></div></header>
+        <div class="heat" id="heat"></div>
+      </article>
+    </div>
+    <article class="card">
+      <header class="card-h">
+        <div><h2>Event listings</h2><p class="sub" id="eventSub"></p></div>
+        <input type="search" id="eventSearch" placeholder="Search events…" aria-label="Search events">
+      </header>
+      <div class="table-wrap">
+        <table id="eventTable">
+          <thead><tr>
+            <th data-sort="name">Event</th>
+            <th data-sort="year" class="num">Year</th>
+            <th data-sort="family">Program family</th>
+            <th data-sort="topRegion">Top region</th>
+            <th data-sort="n" class="num sorted-desc">Registrations</th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <p class="foot-note">Event list responds to Year, Program family and Who filters. Region filter applies to charts only.</p>
+    </article>
+  </section>
+
+  <!-- REACH -->
+  <section class="view" id="view-reach">
+    <div class="section-head">
+      <h1>Reach & Engagement</h1>
+      <p class="lede">Where registrants come from, how they find iUrban Teen, and who keeps coming back.</p>
+    </div>
+    <div class="grid g-1-1">
+      <article class="card">
+        <header class="card-h"><div><h2>Registrations by home state</h2><p class="sub">Click a bar to filter</p></div><div class="tag measured">Measured</div></header>
+        <div class="chart-wrap"><canvas id="regionChart"></canvas></div>
+      </article>
+      <article class="card">
+        <header class="card-h"><div><h2>How people hear about iUrban Teen</h2><p class="sub">Registrants may choose more than one answer</p></div><div class="tag self">Self-reported</div></header>
+        <div class="chart-wrap"><canvas id="refChart"></canvas></div>
+      </article>
+    </div>
+    <div class="grid g-1-1">
+      <article class="card">
+        <header class="card-h"><div><h2>Returning participants</h2><p class="sub">"Are you a returning iUrban Teen student?"</p></div><div class="tag self">Self-reported</div></header>
+        <div class="ret" id="retBlock"></div>
+      </article>
+      <article class="card">
+        <header class="card-h"><div><h2>Age of registrants</h2><p class="sub">Student age as entered at registration</p></div><div class="tag self">Self-reported</div></header>
+        <div class="chart-wrap"><canvas id="ageChart"></canvas></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- JOURNEY -->
+  <section class="view" id="view-journey">
+    <div class="section-head">
+      <h1>Student Journey</h1>
+      <p class="lede">Outputs show what iUrban Teen delivers. Outcomes show what changes for students. Here is how each stage gets measured.</p>
+    </div>
+    <div class="stages" id="stages"></div>
+    <div class="grid g-1-1-1">
+      <article class="card phase"><div class="phase-n">Phase 1</div><h3>Foundation & executive view</h3><p>Clean, labeled registration data by program, region and year. Check-ins and unique-student matching.</p><span class="tag measured">In progress</span></article>
+      <article class="card phase"><div class="phase-n">Phase 2</div><h3>Surveys & alumni outcomes</h3><p>Matched pre/post surveys, alumni follow-up on graduation, college, credentials and careers.</p><span class="tag next">Next</span></article>
+      <article class="card phase"><div class="phase-n">Phase 3</div><h3>Automatic refresh & public page</h3><p>Scheduled updates from source systems and an approved public impact page for funders and partners.</p><span class="tag next">Planned</span></article>
+    </div>
+    <article class="card">
+      <header class="card-h"><div><h2>Data we are connecting next</h2><p class="sub">Each source unlocks a stage of the journey</p></div></header>
+      <div class="sources">
+        <div class="src"><b>Eventbrite check-ins</b><span>Attendance and participation</span></div>
+        <div class="src"><b>Salesforce</b><span>Student records and history</span></div>
+        <div class="src"><b>Pre/post surveys</b><span>Learning and confidence change</span></div>
+        <div class="src"><b>Alumni surveys</b><span>Graduation, college, careers</span></div>
+        <div class="src"><b>Alumni & scholarship records</b><span>Credentials and support</span></div>
+        <div class="src"><b>Sector metrics</b><span>Industry-aligned indicators</span></div>
+        <div class="src"><b>School partnerships</b><span>Where students are reached</span></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="view" id="view-about">
+    <div class="section-head">
+      <h1>About the Data</h1>
+      <p class="lede">Every number here says exactly what it is. That is what makes it hold up in front of a funder.</p>
+    </div>
+    <div class="grid g-1-1">
+      <article class="card">
+        <header class="card-h"><div><h2>Coverage</h2><p class="sub">Monthly Eventbrite exports received</p></div></header>
+        <div class="coverage" id="coverage"></div>
+        <p class="foot-note">Months are grouped by export file. Additional 2025 months will appear as exports are added.</p>
+      </article>
+      <article class="card">
+        <header class="card-h"><div><h2>How we count</h2></div></header>
+        <dl class="defs">
+          <dt>Registration</dt><dd>One Eventbrite attendee row. One person can register for several events, so registrations are not the same as unique students.</dd>
+          <dt>Event listing</dt><dd>A distinct Eventbrite event ID. Some events run under more than one listing.</dd>
+          <dt>Volunteer</dt><dd>A registration whose event or ticket name includes "volunteer."</dd>
+          <dt>Returning</dt><dd>The registrant's own answer to the returning-student question. Unanswered rows are shown separately.</dd>
+          <dt>Program family</dt><dd>Grouping of event names into five families for this walkthrough. Open for council review.</dd>
+          <dt>Small groups</dt><dd>Any breakdown under 10 is shown as "&lt;10" to protect privacy.</dd>
+        </dl>
+      </article>
+    </div>
+    <article class="card">
+      <header class="card-h"><div><h2>Labels used on this dashboard</h2></div></header>
+      <div class="legend-tags">
+        <div><span class="tag measured">Measured</span> Counted directly from source exports.</div>
+        <div><span class="tag self">Self-reported</span> Answers registrants gave on the form.</div>
+        <div><span class="tag next">Connecting next</span> Source identified; data not yet loaded.</div>
+      </div>
+      <p class="foot-note">Privacy: this page contains aggregate totals only. No names, emails, phone numbers, addresses or guardian details are included.</p>
+    </article>
+  </section>
+
+
+
+  <section class="view" id="view-impact">
+    <div class="section-head"><h1>Impact Tracking</h1><p class="lede">Year-over-year view of reach, engagement and who we serve. Every chart follows the filters above.</p></div>
+    <div class="kpis" id="impKpis"></div>
+    <div class="grid g-1-1"><article class="card"><header class="card-h"><div><h2>Average registrations per active month</h2><p class="sub">Registrations ÷ months with exports, by year</p></div><span class="tag self">Calculated</span></header><div class="chart-wrap"><canvas id="impPerMonth"></canvas></div></article><article class="card"><header class="card-h"><div><h2>Registrations per event listing</h2><p class="sub">Registrations ÷ distinct Eventbrite listings, by year</p></div><span class="tag self">Calculated</span></header><div class="chart-wrap"><canvas id="impPerListing"></canvas></div></article></div>
+    <div class="grid g-1-1"><article class="card"><header class="card-h"><div><h2>Returning share of answered responses</h2><p class="sub">Yes ÷ (Yes + No), by year</p></div><span class="tag self">Self-reported</span></header><div class="chart-wrap"><canvas id="impRet"></canvas></div></article><article class="card"><header class="card-h"><div><h2>Volunteer registrations by program family</h2><p class="sub">By year</p></div><span class="tag measured">Measured</span></header><div class="chart-wrap"><canvas id="impVol"></canvas></div></article></div>
+    <div class="grid g-1-1"><article class="card"><header class="card-h"><div><h2>Age of registrants by year</h2><p class="sub">Student age bands</p></div><span class="tag self">Self-reported</span></header><div class="chart-wrap"><canvas id="impAge"></canvas></div></article><article class="card"><header class="card-h"><div><h2>How people heard about us, by year</h2><p class="sub">Top sources</p></div><span class="tag self">Self-reported</span></header><div class="chart-wrap"><canvas id="impRef"></canvas></div></article></div>
+    <div class="grid g-1-1"><article class="card"><header class="card-h"><div><h2>Registrations by state, by year</h2><p class="sub">Home state on registration</p></div><span class="tag measured">Measured</span></header><div class="chart-wrap"><canvas id="impState"></canvas></div></article><article class="card"><header class="card-h"><div><h2>Cumulative registrations</h2><p class="sub">Running total across export months</p></div><span class="tag measured">Measured</span></header><div class="chart-wrap"><canvas id="impCum"></canvas></div></article></div>
+
+    <div class="section-head" style="margin-top:28px"><h1 style="font-size:28px">Outcomes & engagement</h1><p class="lede">Outcome results appear here as soon as they are entered in Data Studio.</p></div>
+    <div class="grid g-1-1"><article class="card"><header class="card-h"><div><h2>Outcomes pipeline</h2><p class="sub">Registrations through entered outcome results</p></div><span class="tag self">Entered by team</span></header><div class="chart-wrap"><canvas id="impFunnel"></canvas></div></article><article class="card"><header class="card-h"><div><h2>Returning share by program family</h2><p class="sub">Yes ÷ (Yes + No), by year</p></div><span class="tag self">Self-reported</span></header><div class="chart-wrap"><canvas id="impRetFam"></canvas></div></article></div>
+    <div class="grid g-1-1"><article class="card"><header class="card-h"><div><h2>Volunteers per 100 participants</h2><p class="sub">Volunteer ÷ participant registrations × 100, by year</p></div><span class="tag self">Calculated</span></header><div class="chart-wrap"><canvas id="impVolRatio"></canvas></div></article><article class="card"><header class="card-h"><div><h2>Event size distribution</h2><p class="sub">Number of events by registration count</p></div><span class="tag measured">Measured</span></header><div class="chart-wrap"><canvas id="impSize"></canvas></div></article></div>
+    <div class="grid g-1-1"><article class="card"><header class="card-h"><div><h2>Engagement by program family over time</h2><p class="sub">Registrations per export month</p></div><span class="tag measured">Measured</span></header><div class="chart-wrap"><canvas id="impFamTrend"></canvas></div></article><article class="card"><header class="card-h"><div><h2>How each program family is found</h2><p class="sub">Top referral sources by family</p></div><span class="tag self">Self-reported</span></header><div class="chart-wrap"><canvas id="impRefFam"></canvas></div></article></div>
+
+    <div class="section-head" style="margin-top:28px"><h1 style="font-size:28px">What funding makes possible</h1><p class="lede">Youth programming is free to families. Paid tickets come from signature fundraising events. Participant registrations only, from the published Eventbrite exports.</p></div>
+    <div class="kpis" id="funKpis"></div>
+    <div class="grid g-1-1"><article class="card"><header class="card-h"><div><h2>Free vs. paid registrations by program family</h2><p class="sub">Participant registrations</p></div><span class="tag measured">Measured</span></header><div class="chart-wrap"><canvas id="funFree"></canvas></div></article><article class="card"><header class="card-h"><div><h2>Ticket revenue by program family</h2><p class="sub">Eventbrite Total Paid, by year</p></div><span class="tag measured">Measured</span></header><div class="chart-wrap"><canvas id="funRev"></canvas></div></article></div>
+    <div class="grid g-1-1"><article class="card"><header class="card-h"><div><h2>Depth of engagement</h2><p class="sub">Registration contacts by number of distinct events in a year</p></div><span class="tag self">Calculated</span></header><div class="chart-wrap"><canvas id="funDepth"></canvas></div></article><article class="card"><header class="card-h"><div><h2>Share of registrations that are free</h2><p class="sub">Free ÷ participant registrations, by year</p></div><span class="tag self">Calculated</span></header><div class="chart-wrap"><canvas id="funShare"></canvas></div></article></div>
+  </section>
+
+  <!-- STUDIO -->
+  <section class="view" id="view-studio">
+    <div class="section-head">
+      <h1>Data Studio</h1>
+      <p class="lede">Drop in new Eventbrite exports, adjust how events are grouped, and add outcome results. Every change updates the dashboard instantly.</p>
+    </div>
+
+    <article class="card">
+      <header class="card-h">
+        <div><h2>1. Import Eventbrite exports</h2><p class="sub">CSV attendee reports. Files are read inside your browser; names, emails and contact details are never stored or sent anywhere. Only totals are kept.</p></div>
+        <span class="tag measured">Private by design</span>
+      </header>
+      <label class="drop" id="drop">
+        <input type="file" id="fileInput" accept=".csv,text/csv" multiple hidden>
+        <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+        <b>Drop CSV files here or click to browse</b>
+        <span>Name files like "9Sep2025.csv" and the month is detected automatically. You can adjust it before adding.</span>
+      </label>
+      <div id="importPreview"></div>
+      <div id="importedList"></div>
+    </article>
+
+    <div class="grid g-1-1">
+      <article class="card">
+        <header class="card-h"><div><h2>2. Outcome results</h2><p class="sub">Enter results as they come in from check-ins, surveys and alumni follow-up. They appear on the Student Journey right away.</p></div><span class="tag self">Entered by team</span></header>
+        <div id="outcomeForm" class="oform"></div>
+      </article>
+      <article class="card">
+        <header class="card-h"><div><h2>3. Save & share settings</h2><p class="sub">Changes apply for this session. Export a settings file before you close the page, then import it next time or send it to a teammate to pick up where you left off.</p></div></header>
+        <div class="btn-row">
+          <button class="btn primary" id="exportBtn">Export settings</button>
+          <label class="btn">Import settings<input type="file" id="settingsInput" accept=".json" hidden></label>
+          <button class="btn ghost" id="clearBtn">Reset to published data</button>
+        </div>
+        <div class="status" id="studioStatus"></div>
+      </article>
+    </div>
+
+    <article class="card">
+      <header class="card-h">
+        <div><h2>4. Program groupings</h2><p class="sub">Change any event's program family and every chart updates.</p></div>
+        <input type="search" id="mapSearch" placeholder="Search events…" aria-label="Search event groupings">
+      </header>
+      <div class="table-wrap"><table id="mapTable"><thead><tr><th>Event</th><th>Years</th><th class="num">Registrations</th><th>Program family</th></tr></thead><tbody></tbody></table></div>
+    </article>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>iUrban Teen · iEngage · iLearn · iSucceed</span>
+  <span id="footSrc">Source: Eventbrite registration exports.</span>
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

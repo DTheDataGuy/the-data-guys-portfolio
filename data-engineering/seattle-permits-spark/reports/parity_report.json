@@ -1,0 +1,64 @@
+{
+  "passed": true,
+  "tolerance": 1e-09,
+  "results": {
+    "cycle_times": {
+      "duckdb": {
+        "rows_base": 124,
+        "rows_other": 124,
+        "only_in_base": 0,
+        "only_in_other": 0,
+        "mismatched_values": 0,
+        "max_abs_diff": 5.684341886080802e-14,
+        "match": true
+      },
+      "pyspark": {
+        "rows_base": 124,
+        "rows_other": 124,
+        "only_in_base": 0,
+        "only_in_other": 0,
+        "mismatched_values": 0,
+        "max_abs_diff": 5.684341886080802e-14,
+        "match": true
+      },
+      "scala": {
+        "rows_base": 124,
+        "rows_other": 124,
+        "only_in_base": 0,
+        "only_in_other": 0,
+        "mismatched_values": 0,
+        "max_abs_diff": 0.0,
+        "match": true
+      }
+    },
+    "housing_production": {
+      "duckdb": {
+        "rows_base": 620,
+        "rows_other": 620,
+        "only_in_base": 0,
+        "only_in_other": 0,
+        "mismatched_values": 0,
+        "max_abs_diff": 0.0,
+        "match": true
+      },
+      "pyspark": {
+        "rows_base": 620,
+        "rows_other": 620,
+        "only_in_base": 0,
+        "only_in_other": 0,
+        "mismatched_values": 0,
+        "max_abs_diff": 0.0,
+        "match": true
+      },
+      "scala": {
+        "rows_base": 620,
+        "rows_other": 620,
+        "only_in_base": 0,
+        "only_in_other": 0,
+        "mismatched_values": 0,
+        "max_abs_diff": 0.0,
+        "match": true
+      }
+    }
+  }
+}

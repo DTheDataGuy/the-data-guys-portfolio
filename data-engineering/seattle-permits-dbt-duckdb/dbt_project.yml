@@ -1,0 +1,43 @@
+name: seattle_permits
+version: "1.0.0"
+config-version: 2
+profile: seattle_permits
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+snapshot-paths: ["snapshots"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+analysis-paths: ["analyses"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+vars:
+  # Silver output of ../seattle-permits-polars-pipeline (Parquet, contract-checked upstream).
+  silver_path: "../seattle-permits-polars-pipeline/data/silver/permits.parquet"
+  cycle_time_min_year: 2010
+  top_n_contractors: 10
+
+models:
+  seattle_permits:
+    +persist_docs: {relation: true, columns: true}
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+    marts:
+      +materialized: table
+      core:
+        +schema: core
+      analytics:
+        +schema: analytics
+
+seeds:
+  seattle_permits:
+    +schema: reference
+
+snapshots:
+  seattle_permits:
+    +target_schema: snapshots

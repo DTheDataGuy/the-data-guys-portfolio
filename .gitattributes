@@ -1,0 +1,5 @@
+**/production-build/** linguist-generated=true
+**/components/ui/** linguist-vendored=true
+**/*.min.js linguist-vendored=true
+*.pdf binary
+docs/** linguist-documentation

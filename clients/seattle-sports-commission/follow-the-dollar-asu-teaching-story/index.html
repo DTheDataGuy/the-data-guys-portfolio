@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Following the Dollar: Seattle Sports, Data & Policy | The Data Guys™</title>
+<meta name="description" content="How card swipes, transit taps and hotel nights become an economic story, a funding case and policy. A data engineering walkthrough for the ASU Sports Business Scholars by DeiMarlon Scisney, The Data Guys™.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2307142A'/%3E%3Cpath d='M7 22 L13 14 L18 18 L25 9' stroke='%2369BE28' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@500,700,800&f[]=satoshi@400,500,700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="topbar" id="topbar">
+  <div class="topbar-inner">
+    <a href="#top" class="brand" aria-label="The Data Guys home">
+      <img src="tdg-logo.png" alt="The Data Guys" width="120" height="40">
+    </a>
+    <nav class="chapters" aria-label="Chapters">
+      <a href="#kickoff" data-ch="kickoff"><span>01</span>Kickoff</a>
+      <a href="#games" data-ch="games"><span>02</span>Game days</a>
+      <a href="#who" data-ch="who"><span>03</span>Who spent</a>
+      <a href="#move" data-ch="move"><span>04</span>Movement</a>
+      <a href="#model" data-ch="model"><span>05</span>The model</a>
+      <a href="#chamber" data-ch="chamber"><span>06</span>Neighborhoods</a>
+      <a href="#pipeline" data-ch="pipeline"><span>07</span>Pipeline</a>
+      <a href="#you" data-ch="you"><span>08</span>Your path</a>
+    </nav>
+  </div>
+  <div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+</header>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="hero-field" aria-hidden="true">
+    <svg viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+      <defs>
+        <radialGradient id="lightL" cx="0.1" cy="0" r="0.8"><stop offset="0" stop-color="#69BE28" stop-opacity=".22"/><stop offset="1" stop-color="#69BE28" stop-opacity="0"/></radialGradient>
+        <radialGradient id="lightR" cx="0.95" cy="0" r="0.7"><stop offset="0" stop-color="#3FA9F5" stop-opacity=".16"/><stop offset="1" stop-color="#3FA9F5" stop-opacity="0"/></radialGradient>
+      </defs>
+      <rect width="1200" height="600" fill="url(#lightL)"/>
+      <rect width="1200" height="600" fill="url(#lightR)"/>
+      <g stroke="#A5ACAF" stroke-opacity=".08" stroke-width="1">
+        <line x1="100" y1="600" x2="300" y2="0"/><line x1="250" y1="600" x2="400" y2="0"/><line x1="400" y1="600" x2="500" y2="0"/><line x1="550" y1="600" x2="600" y2="0"/><line x1="700" y1="600" x2="700" y2="0"/><line x1="850" y1="600" x2="800" y2="0"/><line x1="1000" y1="600" x2="900" y2="0"/><line x1="1150" y1="600" x2="1000" y2="0"/>
+      </g>
+      <path id="heroLine" d="M0 470 C 120 460, 200 455, 260 440 S 330 250, 360 230 S 420 430, 470 440 S 560 300, 590 290 S 660 445, 720 450 S 850 360, 880 350 S 960 452, 1040 455 L1200 458" fill="none" stroke="#69BE28" stroke-width="3" stroke-linecap="round"/>
+    </svg>
+  </div>
+  <div class="wrap hero-inner">
+    <p class="eyebrow">ASU Sports Business Scholars · Seattle · October 13, 2026</p>
+    <h1>Follow the dollar.<br><em>Find the story.</em></h1>
+    <p class="lede">Three playoff dates. 119,400 cardholders. Ten neighborhood watch parties. One question running through all of it: <strong>where did the money go, and what should we do about it?</strong> This is how data engineering turns card swipes, transit taps and hotel nights into a funding case and, eventually, policy.</p>
+    <div class="hero-meta">
+      <div><span class="k">Presented by</span><span class="v">DeiMarlon Scisney</span><span class="s">President &amp; Principal Data Engineer, The Data Guys™</span></div>
+      <div><span class="k">Hosted by</span><span class="v">Seattle Sports Commission</span><span class="s">Washington Athletic Club · 12:45 PM</span></div>
+    </div>
+    <a href="#kickoff" class="cta">Start the story <span aria-hidden="true">↓</span></a>
+  </div>
+</section>
+
+<!-- 01 KICKOFF -->
+<section class="chapter" id="kickoff">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="ch-num">01</span>
+      <div>
+        <p class="eyebrow">The postseason in numbers</p>
+        <h2>Three dates. $9.9 million moved through Seattle's card terminals.</h2>
+        <p class="ch-lede">January 17, January 25 and February 11, 2026. Two home playoff games at Lumen Field and a Super Bowl parade through downtown. Here's what the transaction data actually saw, and the one number that's a model instead of a measurement.</p>
+      </div>
+    </header>
+
+    <div class="kpis">
+      <article class="kpi kpi-hero">
+        <p class="kpi-v"><span data-count="9.9" data-prefix="$" data-suffix="M" data-dec="1">$9.9M</span></p>
+        <p class="kpi-l">Total card spend across the three events</p>
+      </article>
+      <article class="kpi">
+        <p class="kpi-v"><span data-count="2.8" data-prefix="$" data-suffix="M" data-dec="1">$2.8M</span></p>
+        <p class="kpi-l">Spent by visitors</p>
+      </article>
+      <article class="kpi">
+        <p class="kpi-v"><span data-count="27.7" data-suffix="%" data-dec="1">27.7%</span></p>
+        <p class="kpi-l">Average visitor share of spend</p>
+      </article>
+      <article class="kpi">
+        <p class="kpi-v"><span data-count="119.4" data-suffix="K" data-dec="1">119.4K</span></p>
+        <p class="kpi-l">Unique cardholders</p>
+      </article>
+      <article class="kpi">
+        <p class="kpi-v"><span data-count="82.9" data-prefix="$" data-dec="1">$82.9</span></p>
+        <p class="kpi-l">Average spend per cardholder</p>
+      </article>
+      <article class="kpi">
+        <p class="kpi-v"><span data-count="600" data-suffix="K" data-dec="0">600K</span></p>
+        <p class="kpi-l">Parade attendance</p>
+      </article>
+      <article class="kpi kpi-model">
+        <p class="kpi-v"><span data-count="16.6" data-prefix="$" data-suffix="M" data-dec="1">$16.6M</span></p>
+        <p class="kpi-l">Estimated economic impact (DSA / Datafy model)</p>
+      </article>
+    </div>
+
+    <div class="callout">
+      <div class="callout-mark" aria-hidden="true">?</div>
+      <div>
+        <h3>Why does $9.9M turn into $16.6M?</h3>
+        <p>The $9.9M is what card networks actually recorded. The $16.6M is a <strong>modeled estimate</strong> that adds what the cards can't see, like cash, spending re-circulating through local payrolls and suppliers, and activity outside the tracked area. Neither number is wrong. They answer different questions, and a good data engineer never lets them sit in the same column without a label.</p>
+      </div>
+    </div>
+
+    <div class="split-bar-wrap">
+      <div class="split-head">
+        <h3>Who was spending?</h3>
+        <p class="muted">Share of total spend, all three events combined</p>
+      </div>
+      <div class="split-bar" role="img" aria-label="72.2 percent local, 27.8 percent visitor">
+        <div class="seg seg-local" style="--w:72.2%"><span><b class="lbl">Local · </b>72.2%</span></div>
+        <div class="seg seg-visitor" style="--w:27.8%"><span><b class="lbl">Visitor · </b>27.8%</span></div>
+      </div>
+      <p class="legend-sm small"><span class="dot dl"></span>Local <span class="dot dv"></span>Visitor</p>
+      <p class="muted small">About one dollar in four came from someone who doesn't live here. That's the money tourism funds care about most, because it's new money entering the local economy rather than locals shifting spend from one Saturday to another.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 02 GAMES -->
+<section class="chapter alt" id="games">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="ch-num">02</span>
+      <div>
+        <p class="eyebrow">Event by event</p>
+        <h2>The biggest crowd didn't spend the most per person.</h2>
+        <p class="ch-lede">Pick an event to see its numbers. Then look at what happens to spend per attendee when 68,800 people in a stadium become 600,000 people on a parade route.</p>
+      </div>
+    </header>
+
+    <div class="switcher" role="tablist" aria-label="Choose an event">
+      <button role="tab" class="sw active" data-ev="0" aria-selected="true"><span class="sw-date">Jan 17, 2026</span><span class="sw-name">Divisional Round vs 49ers</span></button>
+      <button role="tab" class="sw" data-ev="1" aria-selected="false"><span class="sw-date">Jan 25, 2026</span><span class="sw-name">NFC Championship vs Rams</span></button>
+      <button role="tab" class="sw" data-ev="2" aria-selected="false"><span class="sw-date">Feb 11, 2026</span><span class="sw-name">Super Bowl Parade</span></button>
+    </div>
+
+    <div class="event-panel" id="eventPanel" aria-live="polite">
+      <div class="ev-stats">
+        <div class="ev-stat big"><span class="k">Total spend</span><span class="v" id="evTotal">$3.8M</span></div>
+        <div class="ev-stat"><span class="k">Local</span><span class="v" id="evLocal">$2.7M</span></div>
+        <div class="ev-stat"><span class="k">Visitor</span><span class="v vis" id="evVisitor">$1.1M</span></div>
+        <div class="ev-stat"><span class="k">Visitor share</span><span class="v" id="evShare">28.95%</span></div>
+        <div class="ev-stat"><span class="k">Attendance</span><span class="v" id="evAtt">68.8K</span></div>
+        <div class="ev-stat"><span class="k">Cardholders</span><span class="v" id="evCards">42.4K</span></div>
+        <div class="ev-stat"><span class="k">Spend per cardholder</span><span class="v" id="evPerCard">$89.62</span></div>
+        <div class="ev-stat"><span class="k">Spend per attendee</span><span class="v" id="evPerAtt">$55</span></div>
+      </div>
+      <p class="ev-note" id="evNote"></p>
+    </div>
+
+    <div class="grid-2">
+      <figure class="chart-card">
+        <figcaption><h3>Spend by event, local vs visitor</h3><p class="muted">Card spend in millions of dollars</p></figcaption>
+        <div class="chart-box"><canvas id="chEventSplit" aria-label="Stacked bar chart of local and visitor spend by event"></canvas></div>
+      </figure>
+      <figure class="chart-card">
+        <figcaption><h3>Average spend per attendee</h3><p class="muted">Total card spend ÷ attendance</p></figcaption>
+        <div class="chart-box"><canvas id="chPerAtt" aria-label="Bar chart of spend per attendee"></canvas></div>
+      </figure>
+    </div>
+
+    <div class="insight">
+      <p class="insight-k">The insight</p>
+      <p class="insight-v">Stadium games produced <strong>about $55 and $47 per attendee</strong>. The parade produced <strong>about $4.80</strong>, even though it drew roughly nine times the crowd. Big crowds and big spending aren't the same thing. A parade is free, short and outdoors, so people come, cheer and go home. A playoff game is ticketed, hours long and surrounded by bars and restaurants.</p>
+      <p class="insight-q">Ask yourself: if you were deciding which event to fund with tourism dollars, which metric would you lead with, total attendance or spend per attendee? What would each choice reward?</p>
+    </div>
+
+    <figure class="chart-card wide">
+      <figcaption><h3>Event-day spend, side by side</h3><p class="muted">The dashboard tracks spend on event dates only. Days between events are not measured, so they aren't shown as zero here.</p></figcaption>
+      <div class="chart-box tall"><canvas id="chEventDays" aria-label="Grouped bar chart of local and visitor spend on each event date"></canvas></div>
+    </figure>
+    <p class="muted small">Finalized event reporting is typically completed within 3–4 weeks of each event. Transaction card data: Downtown Seattle Association / Datafy.</p>
+  </div>
+</section>
+
+<!-- 03 WHO -->
+<section class="chapter" id="who">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="ch-num">03</span>
+      <div>
+        <p class="eyebrow">Category insights</p>
+        <h2>Visitors book the rooms. Locals buy the groceries.</h2>
+        <p class="ch-lede">Not every dollar is equal for a tourism fund. This shows the share of spending that comes from visitors in each category. It's a baseline pattern across the data, not one event.</p>
+      </div>
+    </header>
+
+    <div class="toggle-row" role="group" aria-label="Chart view">
+      <button class="tg active" data-view="visitor" aria-pressed="true">Visitor share</button>
+      <button class="tg" data-view="stack" aria-pressed="false">Visitor vs local</button>
+    </div>
+    <figure class="chart-card wide">
+      <figcaption><h3 id="catTitle">Lodging is 83% visitor-driven. Grocery is 19%.</h3><p class="muted">Percent of category spend by cardholder origin</p></figcaption>
+      <div class="chart-box xtall"><canvas id="chCat" aria-label="Horizontal bar chart of visitor share by spending category"></canvas></div>
+    </figure>
+
+    <div class="grid-3 cards">
+      <article class="mini"><p class="mini-k">83%</p><h3>Lodging</h3><p>Almost every hotel dollar is visitor money. That's why hotel assessments fund tourism promotion: the people who benefit pay in.</p></article>
+      <article class="mini"><p class="mini-k">59%</p><h3>Retail (misc)</h3><p>Souvenirs, gear and one-off purchases. Visitors buy things they'd never buy at home.</p></article>
+      <article class="mini"><p class="mini-k">27%</p><h3>Restaurants</h3><p>Close to the overall 27.8% average. Restaurants serve everyone, which makes them the best mirror of an event's reach.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- 04 MOVEMENT -->
+<section class="chapter alt" id="move">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="ch-num">04</span>
+      <div>
+        <p class="eyebrow">Mobility, scale and recovery</p>
+        <h2>Downtown didn't just recover on game days. It beat 2019.</h2>
+        <p class="ch-lede">Card data tells you who paid. Foot traffic, transit and hotel data tell you who showed up and how they got there. Layering them is what turns a spending report into a city story.</p>
+      </div>
+    </header>
+
+    <div class="kpis kpis-4">
+      <article class="kpi"><p class="kpi-v"><span data-count="2.5" data-suffix="M" data-dec="1">2.5M</span></p><p class="kpi-l">January downtown visits</p></article>
+      <article class="kpi"><p class="kpi-v"><span data-count="378.0" data-suffix="K" data-dec="1">378.0K</span></p><p class="kpi-l">Busiest day: Jan 17, Divisional Round</p></article>
+      <article class="kpi kpi-hero"><p class="kpi-v"><span data-count="108" data-suffix="%" data-dec="0">108%</span></p><p class="kpi-l">Of the 2019 baseline during peak event periods</p></article>
+      <article class="kpi"><p class="kpi-v"><span data-count="334.0" data-suffix="K" data-dec="1">334.0K</span></p><p class="kpi-l">Parade-day transit boardings</p></article>
+    </div>
+
+    <div class="grid-2">
+      <figure class="chart-card">
+        <figcaption><h3>Parade day: how people got there</h3><p class="muted">Boardings by mode, February 11, 2026</p></figcaption>
+        <div class="chart-box tall"><canvas id="chMode" aria-label="Bar chart of parade boardings by transit mode"></canvas></div>
+      </figure>
+      <div class="stack">
+        <article class="compare">
+          <h3>Parade vs a normal day on Link</h3>
+          <div class="cmp-row"><span class="cmp-l">Parade-day Link light rail</span><span class="cmp-bar"><i style="--w:100%"></i></span><span class="cmp-v">225K</span></div>
+          <div class="cmp-row"><span class="cmp-l">2 Line opening ridership</span><span class="cmp-bar"><i class="g" style="--w:91%"></i></span><span class="cmp-v">205K</span></div>
+          <div class="cmp-row"><span class="cmp-l">Average daily Link boardings</span><span class="cmp-bar"><i class="g" style="--w:54.7%"></i></span><span class="cmp-v">123K</span></div>
+          <p class="muted small">Parade-day Link boardings ran at roughly 1.8× a typical day. That's the kind of baseline comparison that makes a number mean something.</p>
+        </article>
+        <article class="compare">
+          <h3>Downtown, March 2026 vs 2019</h3>
+          <div class="ring-row">
+            <div class="ring" style="--p:93"><span>93%</span></div>
+            <div><p class="ring-v">2.8M+ visitors</p><p class="muted small">93% of 2019 levels (DSA / Placer.ai)</p></div>
+          </div>
+          <div class="ring-row">
+            <div class="ring" style="--p:91"><span>91%</span></div>
+            <div><p class="ring-v">320,000+ hotel rooms sold</p><p class="muted small">91% of 2019 levels (DSA / Visit Seattle / STR)</p></div>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <div class="context-band">
+      <h3>The bigger picture: tourism is a workforce story</h3>
+      <div class="ctx-grid">
+        <div><p class="ctx-v">39.6M</p><p class="ctx-l">Visitors to the region, 2025</p></div>
+        <div><p class="ctx-v">$8.8B</p><p class="ctx-l">Visitor spending, 2025</p></div>
+        <div><p class="ctx-v">68,375</p><p class="ctx-l">Tourism jobs</p></div>
+        <div><p class="ctx-v">204.3K</p><p class="ctx-l">King County leisure &amp; hospitality workers, of 1.4M in all sectors</p></div>
+      </div>
+      <div class="workforce" role="img" aria-label="Leisure and hospitality is about 14.6 percent of King County employment">
+        <div class="wf-bar"><i style="--w:14.6%"></i></div>
+        <p class="muted small">Leisure &amp; hospitality is about 1 in every 7 jobs in King County (204.3K of 1.4M). When an event fills downtown, those are the paychecks it touches first.</p>
+      </div>
+      <p class="muted small">Event-driven spikes are concentrated in key downtown corridors. Geographic, corridor-level impact mapping is in development in the dashboard.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 05 MODEL -->
+<section class="chapter model" id="model">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="ch-num">05</span>
+      <div>
+        <p class="eyebrow">Built for the Seattle Sports Commission</p>
+        <h2>One framework. One annual number. One stronger case for Seattle sports.</h2>
+        <p class="ch-lede">A dashboard tells you what happened at one event. The Standardized Sports Economic Impact Model is designed to answer two harder questions every year, the same way, so the answers can be compared and defended.</p>
+      </div>
+    </header>
+
+    <div class="questions">
+      <div class="q"><span>Q1</span><p>How much economic value does Seattle sports generate annually?</p></div>
+      <div class="q"><span>Q2</span><p>How much STIA funding should the Seattle Sports Commission receive based on that contribution?</p></div>
+    </div>
+
+    <div class="grid-2 align-start">
+      <div class="prose">
+        <h3>The goal is a baseline, not a perfect study</h3>
+        <p>This model is designed to produce the <strong>minimum defensible annual impact</strong>. It isn't a one-time report or a FIFA-scale analysis. It's built to be:</p>
+        <ul class="chips">
+          <li>Repeatable</li><li>Standardized</li><li>Defensible</li><li>Expandable</li><li>Updated annually</li><li>Data-driven</li>
+        </ul>
+        <p>That word "minimum" matters. When you walk into a budget conversation with a conservative number, nobody can knock it down. You build credibility first, then expand.</p>
+      </div>
+      <aside class="stia">
+        <p class="eyebrow">The funding objective</p>
+        <h3>Seattle Tourism Improvement Area</h3>
+        <p class="stia-v">~$23M–$24M</p>
+        <p class="muted">Current annual fund, generated through a <strong>2.3% hotel assessment</strong> and administered by Visit Seattle.</p>
+        <p class="small">Remember: lodging is 83% visitor spend. Hotel guests fund STIA. If sports brings those guests, sports has a case for a share.</p>
+      </aside>
+    </div>
+
+    <h3 class="sub">Six pillars, measured for every event</h3>
+    <div class="pillars" role="tablist" aria-label="Model pillars">
+      <button role="tab" class="pl active" data-p="0" aria-selected="true"><span>1</span>Visitation</button>
+      <button role="tab" class="pl" data-p="1" aria-selected="false"><span>2</span>Visitor spending</button>
+      <button role="tab" class="pl" data-p="2" aria-selected="false"><span>3</span>Lodging</button>
+      <button role="tab" class="pl" data-p="3" aria-selected="false"><span>4</span>Mobility</button>
+      <button role="tab" class="pl" data-p="4" aria-selected="false"><span>5</span>Tax generation</button>
+      <button role="tab" class="pl" data-p="5" aria-selected="false"><span>6</span>Workforce</button>
+    </div>
+    <div class="pillar-panel" id="pillarPanel" aria-live="polite"></div>
+
+    <h3 class="sub">The formula</h3>
+    <div class="formula">
+      <div class="f-part main"><span class="f-k">Visitor spending</span><span class="f-v">Visitors × Visitor % × Length of stay × Daily spend</span></div>
+      <span class="f-op">+</span>
+      <div class="f-part"><span class="f-k">Lodging</span><span class="f-v">Hotel revenue</span></div>
+      <span class="f-op">+</span>
+      <div class="f-part"><span class="f-k">Mobility</span><span class="f-v">Transportation revenue</span></div>
+      <span class="f-op">+</span>
+      <div class="f-part"><span class="f-k">Public</span><span class="f-v">Tax revenue</span></div>
+      <span class="f-op">+</span>
+      <div class="f-part"><span class="f-k">Local</span><span class="f-v">Event operations &amp; local business impact</span></div>
+      <span class="f-op">=</span>
+      <div class="f-part total"><span class="f-k">Result</span><span class="f-v">Total economic impact (minimum annual)</span></div>
+    </div>
+
+    <div class="calc">
+      <div class="calc-head">
+        <div>
+          <p class="eyebrow">Try it yourself</p>
+          <h3>Visitor spending calculator</h3>
+        </div>
+        <span class="tag tag-hyp">Hypothetical teaching example · not a Seattle estimate</span>
+      </div>
+      <p class="muted">Move the sliders for an imaginary event. Watch how sensitive the answer is to each input, and why a data engineer obsesses over where every input comes from.</p>
+      <div class="calc-grid">
+        <label class="sl"><span class="sl-k">Attendance <b id="vAtt">20,000</b></span><input type="range" id="iAtt" min="1000" max="100000" step="1000" value="20000"></label>
+        <label class="sl"><span class="sl-k">Visitor share <b id="vPct">30%</b></span><input type="range" id="iPct" min="0" max="100" step="1" value="30"></label>
+        <label class="sl"><span class="sl-k">Length of stay (days) <b id="vStay">2</b></span><input type="range" id="iStay" min="1" max="7" step="0.5" value="2"></label>
+        <label class="sl"><span class="sl-k">Daily spend per visitor <b id="vSpend">$150</b></span><input type="range" id="iSpend" min="25" max="500" step="5" value="150"></label>
+      </div>
+      <div class="calc-out">
+        <div><span class="k">Visitors</span><span class="v" id="oVis">6,000</span></div>
+        <div><span class="k">Visitor-days</span><span class="v" id="oDays">12,000</span></div>
+        <div class="hl"><span class="k">Visitor spending</span><span class="v" id="oSpend">$1,800,000</span></div>
+      </div>
+      <p class="small muted">The full model then adds hotel revenue, transportation revenue, tax revenue and event operations. Every input has to come from a named source, the same way, every year.</p>
+    </div>
+
+    <h3 class="sub">From impact to a funding ask: the attribution model</h3>
+    <div class="attr">
+      <div class="attr-step"><span class="a-n">1</span><p class="a-t">Total sports economy</p><p class="a-d">The annual number from the formula, across every event in the portfolio</p></div>
+      <span class="a-op">×</span>
+      <div class="attr-step"><span class="a-n">2</span><p class="a-t">SSC influence factor</p><p class="a-d">How much of that activity the Commission helped bring or grow</p></div>
+      <span class="a-op">=</span>
+      <div class="attr-step"><span class="a-n">3</span><p class="a-t">Value influenced by SSC</p><p class="a-d">The portion of the sports economy tied to the Commission's work</p></div>
+      <span class="a-op">→</span>
+      <div class="attr-step hl"><span class="a-n">4</span><p class="a-t">Recommended STIA allocation</p><p class="a-d">A funding share grounded in evidence, not a guess</p></div>
+    </div>
+    <div class="influence">
+      <p class="muted small">What counts as influence:</p>
+      <ul class="chips">
+        <li>Event recruitment</li><li>Partnership development</li><li>Marketing</li><li>Coordination</li><li>Community impact</li><li>Volunteer network</li><li>Venue support</li>
+      </ul>
+    </div>
+
+    <div class="grid-3 align-start">
+      <article class="panel">
+        <h3>Annual portfolio</h3>
+        <p class="muted small">Every event type runs through the same inputs: attendance, visitor %, length of stay, average spend, hotel nights, transportation spend and tax impact.</p>
+        <ul class="list">
+          <li>Professional games</li><li>College sports</li><li>Tournaments &amp; events</li><li>Community sports</li><li>International events</li>
+        </ul>
+        <p class="tagline">Same framework. Same methodology. One annual number.</p>
+      </article>
+      <article class="panel">
+        <h3>Funding pathways</h3>
+        <ul class="list">
+          <li>STIA funding</li><li>Visit Seattle partnership</li><li>County support</li><li>State funding</li><li>Sales tax participation</li>
+        </ul>
+        <h4>Phase 2 expansion</h4>
+        <ul class="list sm">
+          <li>State sales tax participation</li><li>Legislative and county funding</li><li>Event tax investment</li><li>Tourism &amp; marketing funds</li><li>Infrastructure support</li><li>Major event grants</li>
+        </ul>
+      </article>
+      <article class="panel">
+        <h3>Phase 2 analysis: the honest ledger</h3>
+        <p class="muted small">Events have costs too. Phase 2 subtracts them to get a net number.</p>
+        <ul class="list">
+          <li>Public safety</li><li>Sanitation</li><li>Traffic</li><li>City service costs</li>
+        </ul>
+        <p class="tagline">→ Net economic benefit</p>
+      </article>
+    </div>
+
+    <h3 class="sub">Who holds the data</h3>
+    <div class="partners">
+      <div class="pg"><h4>Government</h4><p>Port of Seattle · King County Metro · SDOT · WA Dept. of Revenue · WA Commerce · Seattle Center · Seattle Parks &amp; Recreation</p></div>
+      <div class="pg"><h4>Tourism</h4><p>Visit Seattle · Seattle Hotel Association · Downtown Seattle Association · Tourism Economics · STR / CoStar · Airbnb · Expedia Group</p></div>
+      <div class="pg"><h4>Teams &amp; venues</h4><p>Mariners · Seahawks · Kraken · Sounders FC · Reign FC · Storm · UW Athletics · event organizers · venue operators</p></div>
+      <div class="pg"><h4>Community</h4><p>Workforce Development Council of Seattle-King County · Greater Seattle Partners · Seattle Metro Chamber · Alliance for Pioneer Square · local business associations · BIAs</p></div>
+    </div>
+    <p class="muted small">Mobility sources named in the model include Lime, Sound Transit, King County Metro, Washington State Ferries, Seattle Streetcar, SDOT pedestrian and bike counts, micromobility and parking.</p>
+
+    <h3 class="sub">The annual loop</h3>
+    <ol class="loop">
+      <li><span>1</span>Event data collection</li>
+      <li><span>2</span>Economic modeling</li>
+      <li><span>3</span>Annual report &amp; dashboard</li>
+      <li><span>4</span>Funding decisions</li>
+      <li><span>5</span>Future investments</li>
+    </ol>
+    <div class="grid-2 align-start">
+      <div class="panel">
+        <h3>What the Commission gets</h3>
+        <ul class="chips">
+          <li>Annual estimate</li><li>Framework</li><li>Methodology</li><li>Executive dashboard</li><li>Public funding narrative</li><li>Annual report</li><li>Event benchmarking</li><li>Policy decision support</li>
+        </ul>
+      </div>
+      <div class="panel">
+        <h3>What the community gets</h3>
+        <ul class="chips">
+          <li>Visitor spending</li><li>Public revenue</li><li>Small business revenue</li><li>Jobs</li><li>Workforce development</li><li>Community investment</li><li>Restaurant &amp; retail activity</li><li>Technical assistance</li><li>Event-readiness funding</li><li>Corridor activation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 06 CHAMBER -->
+<section class="chapter alt" id="chamber">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="ch-num">06</span>
+      <div>
+        <p class="eyebrow">Case study · Seattle Metro Chamber &amp; Kent Chamber</p>
+        <h2>The World Cup came to Lumen Field. We followed it into the neighborhoods.</h2>
+        <p class="ch-lede">From June 14 to July 19, 2026, ten funded watch parties and business activations ran across seven South King County communities: Kent, SeaTac, Burien, Federal Way, White Center, Skyway and Maple Valley–Black Diamond. The question wasn't "how big was the World Cup?" It was "did the money reach small businesses, and what should the next round fund?"</p>
+        <p class="draft-note"><span class="tag tag-hyp">Review draft · Oct 2026</span> Figures are from the economic impact report issued for Chamber review. Funded by King County through the Seattle Metro Chamber's Community Business Connector.</p>
+      </div>
+    </header>
+
+    <div class="flow">
+      <div class="fl"><span class="fl-v">$89,000</span><span class="fl-l">Allocated to 8 grantees ($79K for activations, $10K for data collection)</span></div>
+      <span class="fl-arrow" aria-hidden="true">→</span>
+      <div class="fl"><span class="fl-v">10</span><span class="fl-l">Activations in 7 communities</span></div>
+      <span class="fl-arrow" aria-hidden="true">→</span>
+      <div class="fl"><span class="fl-v">6,665</span><span class="fl-l">Attendees counted, about $9.90 each</span></div>
+      <span class="fl-arrow" aria-hidden="true">→</span>
+      <div class="fl"><span class="fl-v">222</span><span class="fl-l">Small businesses reached</span></div>
+      <span class="fl-arrow" aria-hidden="true">→</span>
+      <div class="fl"><span class="fl-v">36</span><span class="fl-l">Surveys read line by line (8 organizers, 28 businesses)</span></div>
+    </div>
+
+    <div class="kpis kpis-4">
+      <article class="kpi"><p class="kpi-v">$26,886</p><p class="kpi-l">Business gross sales (26 businesses)</p></article>
+      <article class="kpi"><p class="kpi-v">$28,403</p><p class="kpi-l">What those businesses spent to take part</p></article>
+      <article class="kpi neg"><p class="kpi-v">−$1,517</p><p class="kpi-l">Net result before grant awards (−5.3%)</p></article>
+      <article class="kpi kpi-hero"><p class="kpi-v">+$11,483</p><p class="kpi-l">Net after $13,000 in direct awards. Businesses ahead: 11 → 17</p></article>
+    </div>
+
+    <div class="toggle-row" role="group" aria-label="Net result view">
+      <button class="tg active" data-net="before" aria-pressed="true">Before awards</button>
+      <button class="tg" data-net="after" aria-pressed="false">After direct awards</button>
+    </div>
+    <figure class="chart-card wide">
+      <figcaption><h3 id="netTitle">Same fund, very different results by city</h3><p class="muted">Net business result: gross sales minus business spending, for businesses reporting both. Kent and Burien returned no business data.</p></figcaption>
+      <div class="chart-box tall"><canvas id="chNet" aria-label="Bar chart of net business result by city"></canvas></div>
+    </figure>
+
+    <div class="versus">
+      <article class="vs win">
+        <p class="vs-tag">Host-venue model</p>
+        <h3>Maple Valley–Black Diamond</h3>
+        <p class="vs-big">+400%</p>
+        <p>Grants went to four existing venues: a taproom, a winery, a restaurant and an RC-car venue. They hosted watch parties in their own space with their own screens, staff and licenses. <strong>+$7,700.95 on $1,925 of business spending.</strong> All four profited or broke even.</p>
+      </article>
+      <div class="vs-mid">vs</div>
+      <article class="vs lose">
+        <p class="vs-tag">Central vendor model</p>
+        <h3>Federal Way</h3>
+        <p class="vs-big">−49%</p>
+        <p>Pop-up vendors at central events paid for booths, inventory, permits and the drive before the first customer arrived. They carried <strong>80% of all business spending</strong> in the program ($22,595) and finished <strong>−$11,018</strong>. Still −$6,018 after $5,000 in stipends. 12 of 13 did not profit.</p>
+      </article>
+    </div>
+    <div class="insight">
+      <p class="insight-k">The central finding</p>
+      <p class="insight-v">The design mattered more than the dollars.</p>
+    </div>
+
+    <div class="grid-2">
+      <figure class="chart-card">
+        <figcaption><h3>Why businesses joined vs what they got</h3><p class="muted">Count of 28 businesses, multi-select</p></figcaption>
+        <div class="chart-box tall"><canvas id="chWhy" aria-label="Bar chart comparing reasons businesses joined"></canvas></div>
+      </figure>
+      <figure class="chart-card">
+        <figcaption><h3>How grantees planned to use $79,000</h3><p class="muted">Budgeted, not audited</p></figcaption>
+        <div class="chart-box tall"><canvas id="chBudget" aria-label="Bar chart of activation budget by category"></canvas></div>
+      </figure>
+    </div>
+
+    <div class="grid-4 cards">
+      <article class="mini"><p class="mini-k">99</p><h3>Added workers</h3><p>Plus 312 volunteer hours, per organizers.</p></article>
+      <article class="mini"><p class="mini-k">20 of 28</p><h3>Would return</h3><p>Plus 5 maybe. 7 of 8 organizers would host again.</p></article>
+      <article class="mini"><p class="mini-k">18 of 28</p><h3>Low attendance</h3><p>The top challenge, often tied to short notice.</p></article>
+      <article class="mini"><p class="mini-k">4 of 8</p><h3>Saw spillover</h3><p>Organizers who saw neighboring businesses benefit. 4 were unsure and none said no. It hasn't been measured yet.</p></article>
+    </div>
+
+    <h3 class="sub">From findings to policy: 13 recommendations</h3>
+    <p class="muted">This is the part students often miss. The analysis isn't the finish line. Each recommendation is tied to evidence in the data and written so a funder can act on it.</p>
+    <div class="recs" id="recs"></div>
+
+    <div class="context-band">
+      <h3>Two scales that should never be added together</h3>
+      <div class="ctx-grid">
+        <div><p class="ctx-v">$889M</p><p class="ctx-l">Tournament economic impact, Seattle &amp; King County (Visit Seattle, Sept 2026)</p></div>
+        <div><p class="ctx-v">$109M</p><p class="ctx-l">Tax revenue (Visit Seattle)</p></div>
+        <div><p class="ctx-v">~20,000</p><p class="ctx-l">Jobs supported (Visit Seattle)</p></div>
+        <div><p class="ctx-v">~1.3M</p><p class="ctx-l">Visitors to matches and watch parties, 45% from outside Seattle (KNKX)</p></div>
+      </div>
+      <p class="small">A pre-tournament planning estimate of 750,000 additional visitors was a projection. Visit Seattle's dollar forecast moved from $929M (December 2024) to $846M (March 2026) before the measured $889M. Forecasts and measurements are different evidence and belong in different columns.</p>
+      <p class="small muted">The Chamber's earlier Game Ready grants put $250,000 into 23 organizations: 72 activations, 17,131+ community members, 248 businesses, 74% BIPOC- or women-led and $222,000 leveraged. Its Small Business Readiness Playbook (January 14, 2026) received BREI Award of Excellence and Impact Award honors on June 17, 2026.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 07 PIPELINE -->
+<section class="chapter" id="pipeline">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="ch-num">07</span>
+      <div>
+        <p class="eyebrow">Behind the dashboard</p>
+        <h2>Nobody hands you a clean spreadsheet. That's the job.</h2>
+        <p class="ch-lede">Everything you just saw came from a dozen organizations that don't share a format, a calendar or a definition of "visitor." Data engineering is the work of making them agree. Click each stage.</p>
+      </div>
+    </header>
+
+    <div class="pipe" role="tablist" aria-label="Pipeline stages">
+      <button role="tab" class="ps active" data-s="0" aria-selected="true"><span class="ps-n">1</span><span class="ps-t">Sources</span></button>
+      <button role="tab" class="ps" data-s="1" aria-selected="false"><span class="ps-n">2</span><span class="ps-t">Ingest</span></button>
+      <button role="tab" class="ps" data-s="2" aria-selected="false"><span class="ps-n">3</span><span class="ps-t">Clean &amp; standardize</span></button>
+      <button role="tab" class="ps" data-s="3" aria-selected="false"><span class="ps-n">4</span><span class="ps-t">Model</span></button>
+      <button role="tab" class="ps" data-s="4" aria-selected="false"><span class="ps-n">5</span><span class="ps-t">Dashboards</span></button>
+      <button role="tab" class="ps" data-s="5" aria-selected="false"><span class="ps-n">6</span><span class="ps-t">Decisions</span></button>
+    </div>
+    <div class="pipe-panel" id="pipePanel" aria-live="polite"></div>
+
+    <h3 class="sub">The rule that makes people trust your numbers</h3>
+    <p class="muted">Good analysis keeps these kinds of evidence separate and never adds them together.</p>
+    <div class="evidence">
+      <div class="evd"><span class="tag tag-obs">Observed</span><p>Measured directly by a system, like card transactions.</p><p class="ex">$9.9M card spend</p></div>
+      <div class="evd"><span class="tag tag-self">Self-reported</span><p>What participants told us in surveys. Unaudited.</p><p class="ex">$26,886 business sales</p></div>
+      <div class="evd"><span class="tag tag-calc">Calculated</span><p>Derived from reported data, with the method shown.</p><p class="ex">−$1,517 net result</p></div>
+      <div class="evd"><span class="tag tag-pub">Published</span><p>Released by a named third party and cited.</p><p class="ex">$889M (Visit Seattle)</p></div>
+      <div class="evd"><span class="tag tag-mod">Modeled</span><p>An estimate from a stated model and assumptions.</p><p class="ex">$16.6M impact</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- 08 YOU -->
+<section class="chapter alt" id="you">
+  <div class="wrap">
+    <header class="ch-head">
+      <span class="ch-num">08</span>
+      <div>
+        <p class="eyebrow">Your path</p>
+        <h2>You don't have to work for a team to work in sports.</h2>
+        <p class="ch-lede">Most people picture sports business as ticketing, sponsorship, marketing or operations. Those are great careers. But there's another door: the people who measure what sports does for a city and turn it into decisions about money and policy.</p>
+      </div>
+    </header>
+
+    <div class="grid-3 cards roles">
+      <article class="role"><h3>Data engineer</h3><p>Builds the pipelines that pull card, transit, hotel and survey data together, cleans them and keeps them running every year.</p><p class="role-tools">SQL · Python · cloud warehouses · APIs</p></article>
+      <article class="role"><h3>Economic impact analyst</h3><p>Designs the model, picks defensible inputs and explains the difference between observed, modeled and forecast.</p><p class="role-tools">Economics · statistics · Excel · survey design</p></article>
+      <article class="role"><h3>Data storyteller</h3><p>Turns a dashboard into a narrative a city council member can act on in five minutes.</p><p class="role-tools">Looker · Tableau · Power BI · writing</p></article>
+      <article class="role"><h3>Policy &amp; funding strategist</h3><p>Takes the evidence into budget conversations: tourism funds, county grants, state legislation.</p><p class="role-tools">Public finance · stakeholder work · presenting</p></article>
+      <article class="role"><h3>Community impact lead</h3><p>Makes sure the money reaches small businesses and neighborhoods, then measures whether it did.</p><p class="role-tools">Program design · evaluation · partnerships</p></article>
+      <article class="role"><h3>Sports tech &amp; analytics</h3><p>Works at teams, leagues, venues or data vendors building the products that create this data in the first place.</p><p class="role-tools">Product · analytics engineering · BI</p></article>
+    </div>
+
+    <div class="steps">
+      <h3>Start this semester</h3>
+      <ol>
+        <li><strong>Learn SQL first.</strong> It's the language every one of these sources speaks.</li>
+        <li><strong>Pick one public dataset</strong> from your city: transit ridership, hotel occupancy, sales tax. Build one chart that answers one question.</li>
+        <li><strong>Label your evidence.</strong> Practice writing "observed," "modeled" or "forecast" next to every number.</li>
+        <li><strong>Find the decision.</strong> For every analysis, ask: who would spend money differently because of this?</li>
+        <li><strong>Talk to the people who hold the data.</strong> Commissions, chambers, visitor bureaus. They need help more than you think.</li>
+      </ol>
+    </div>
+
+    <h3 class="sub">Questions for the room</h3>
+    <p class="muted">Tap a card to reveal one way to think about it. There's more than one right answer.</p>
+    <div class="qcards" id="qcards"></div>
+  </div>
+</section>
+
+<!-- SOURCES -->
+<section class="chapter sources" id="sources">
+  <div class="wrap">
+    <h2>Sources and notes</h2>
+    <div class="grid-2 align-start">
+      <div>
+        <h3>Postseason dashboard</h3>
+        <ul class="src">
+          <li>Transaction card data: Downtown Seattle Association (DSA) / Datafy</li>
+          <li>Foot traffic: Placer.ai</li>
+          <li>Hotel demand: Visit Seattle / STR</li>
+          <li>Transit: Sound Transit / King County Metro</li>
+          <li>Workforce: Washington State Employment Security Department / BLS</li>
+          <li>Game and attendance context: ESPN / Pro Football Reference</li>
+          <li>Additional: Arrivalist, Visa Insights, Streetlight Data</li>
+        </ul>
+        <p class="small muted">Category visitor shares are baseline patterns, not event-specific. The $16.6M economic impact is a modeled estimate (DSA / Datafy). Data last updated October 13, 2026.</p>
+      </div>
+      <div>
+        <h3>Model and case study</h3>
+        <ul class="src">
+          <li>Seattle Sports Commission Standardized Sports Economic Impact Model, prepared by The Data Guys™</li>
+          <li>2026 World Cup Watch Party &amp; Business Activation Economic Impact Report, review draft (October 2026), prepared for the Kent Chamber of Commerce and Seattle Metropolitan Chamber of Commerce</li>
+          <li>Regional tournament figures: <a href="https://visitseattle.org" target="_blank" rel="noopener">Visit Seattle</a> economic impact release (Sept 2026); KNKX (Sept 26, 2026)</li>
+          <li>Chamber program context: <a href="https://www.seattlechamber.com" target="_blank" rel="noopener">Seattle Metropolitan Chamber of Commerce</a> releases and the CBC Game Ready Activation Grants Report</li>
+        </ul>
+        <p class="small muted">Chamber survey figures are self-reported and unaudited. No multipliers or forecasts are applied to them. The calculator in Chapter 05 uses hypothetical inputs for teaching only.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <img src="tdg-logo.png" alt="The Data Guys" width="120" height="40">
+    <div>
+      <p><strong>DeiMarlon Scisney</strong> · President &amp; Principal Data Engineer, The Data Guys™</p>
+      <p class="muted"><a href="/cdn-cgi/l/email-protection#c4adaaa2ab84b0aca1a0a5b0a5a3b1bdb7eaabb6a3"><span class="__cf_email__" data-cfemail="ef86818980af9b878a8b8e9b8e889a969cc1809d88">[email&#160;protected]</span></a> · Seattle, WA</p>
+    </div>
+    <p class="muted small">Prepared for the ASU Sports Business Scholars, hosted by the Seattle Sports Commission, October 13, 2026.</p>
+  </div>
+</footer>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="chart.umd.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

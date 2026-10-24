@@ -1,0 +1,23 @@
+import { Store } from "../server/storage";
+import { seedDemo } from "../server/demo";
+import { runAcceptance } from "../server/acceptance";
+import * as D from "../server/dashboards";
+const s = new Store(":memory:");
+const t0 = Date.now();
+seedDemo(s);
+console.log("seeded ms", Date.now() - t0);
+console.log(s.datasetCounts(true).map((c) => `${c.dataset}:${c.n}`).join(" "));
+const ctx = { user: "x", role: "admin" as const, demo: true };
+const t1 = Date.now();
+const o = D.overview(s, ctx, {});
+console.log("overview ms", Date.now() - t1);
+for (const sec of o.sections) console.log(sec.title, sec.kpis.map((k) => `${k.label}=${k.value} [${k.status}]`).join(" | "));
+console.log(o.issues.map((i) => i.title));
+const L = D.lendingDashboard(s, ctx, {});
+console.log(L.kpis.map((k) => `${k.label}=${k.value} ${k.exclusions ?? ""}`).join("\n"));
+console.log(JSON.stringify(D.nedMigration(s, ctx).summary));
+const a = runAcceptance();
+console.log(`acceptance ${a.passed}/${a.total}`);
+a.results.filter((r) => !r.pass).forEach((r) => console.log("FAIL", r.id, r.name, r.observed));
+// invalid refs check
+const bad = s.db.prepare("SELECT dataset, COUNT(*) n FROM records GROUP BY dataset").all();

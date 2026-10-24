@@ -1,0 +1,19 @@
+version: 2
+seeds:
+  - name: status_lifecycle
+    description: >
+      Maps every status the city publishes to a lifecycle stage. If the city adds a status, the
+      relationships test on stg_permits fails until it is mapped here — new states can't slip through.
+    columns:
+      - name: status
+        data_tests: [unique, not_null]
+      - name: lifecycle_stage
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [intake, review, ready, issued, completed, terminated]
+  - name: permit_suffix_codes
+    description: Permit-number suffixes seen in the data and the permit type they map to.
+    columns:
+      - name: permit_suffix
+        data_tests: [unique, not_null]

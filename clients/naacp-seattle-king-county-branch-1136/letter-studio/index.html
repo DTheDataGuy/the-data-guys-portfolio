@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Branch 1136 Letter Studio</title>
+  <style>
+    :root { --navy:#003e7e; --gold:#d1ab36; --ink:#1c2229; --muted:#69727c; --line:#dfe3e8; --paper:#fff; --bg:#edf1f5; --danger:#b42318; }
+    * { box-sizing:border-box; }
+    body { margin:0; color:var(--ink); font:14px/1.45 Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif; background:var(--bg); }
+    button, input, textarea, select { font:inherit; }
+    button { cursor:pointer; }
+    .appbar { height:66px; padding:0 22px; display:flex; align-items:center; gap:16px; background:#fff; border-bottom:1px solid var(--line); position:sticky; top:0; z-index:10; }
+    .brand { display:flex; align-items:center; gap:11px; min-width:280px; }
+    .brand-mark { width:32px; height:32px; border-radius:50%; background:var(--navy); color:#fff; border:2px solid var(--gold); font-size:8px; font-weight:800; letter-spacing:.4px; display:grid; place-items:center; }
+    .brand strong { display:block; font-size:14px; color:var(--navy); letter-spacing:.2px; }
+    .brand small { display:block; color:var(--muted); font-size:11px; }
+    .status { margin-left:auto; color:var(--muted); font-size:12px; }
+    .toolbar { display:flex; gap:8px; }
+    .btn { padding:9px 12px; border:1px solid var(--line); background:#fff; border-radius:7px; color:var(--ink); font-weight:650; font-size:12px; }
+    .btn:hover { border-color:#aeb8c3; background:#f8fafc; }
+    .btn.primary { background:var(--navy); border-color:var(--navy); color:#fff; }
+    .layout { display:grid; grid-template-columns:350px minmax(0, 1fr); min-height:calc(100vh - 66px); }
+    .panel { padding:18px; border-right:1px solid var(--line); background:#fff; overflow:auto; }
+    .panel h2 { font-size:14px; margin:0 0 14px; color:var(--navy); }
+    .panel h3 { margin:22px 0 9px; font-size:11px; letter-spacing:.8px; text-transform:uppercase; color:var(--muted); }
+    label { display:block; font-size:11px; color:#4d5864; font-weight:700; margin:10px 0 4px; }
+    input, textarea, select { width:100%; padding:9px 10px; border:1px solid #ccd4dc; border-radius:6px; color:var(--ink); background:#fff; }
+    textarea { min-height:78px; resize:vertical; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .hint { margin:9px 0 0; color:var(--muted); font-size:11px; }
+    .upload { padding:10px; border:1px dashed #aeb8c3; border-radius:7px; background:#fbfcfd; }
+    .workspace { padding:30px; overflow:auto; }
+    .page-shell { width:8.5in; min-height:11in; margin:0 auto; background:var(--paper); box-shadow:0 5px 28px rgba(27,38,49,.18); position:relative; }
+    .letter { min-height:11in; padding:.58in .68in .55in; position:relative; }
+    .masthead { border-top:10px solid var(--navy); padding-top:14px; }
+    .masthead-grid { display:grid; grid-template-columns:minmax(0,1fr) 2.35in; gap:.15in; align-items:center; }
+    .logo-area { min-height:.78in; display:flex; align-items:center; }
+    .logo-area img { max-width:4.85in; max-height:1.18in; object-fit:contain; object-position:left center; }
+    .wordmark { display:none; color:var(--navy); font-family:Georgia,serif; font-size:32px; font-weight:800; line-height:.85; letter-spacing:-1px; }
+    .branch { margin-top:8px; color:#252a30; font-size:10px; font-weight:800; letter-spacing:1.1px; text-transform:uppercase; }
+    .tagline { margin-top:4px; color:#5e6873; font:italic 10px Georgia,serif; }
+    .contact { text-align:right; color:#4d5864; font-size:8.3px; line-height:1.48; }
+    .rules { margin-top:12px; }
+    .gold-rule { height:1.5px; background:var(--gold); }
+    .navy-rule { height:3px; margin-top:3px; background:var(--navy); }
+    .letter-body { padding-top:32px; font-family:Georgia, "Times New Roman", serif; font-size:11.5pt; line-height:1.54; }
+    .letter-body p { margin:0 0 15px; }
+    .address { white-space:pre-line; }
+    .subject-line { font-family:Arial,sans-serif; font-size:10.5pt; font-weight:700; }
+    .signature { padding-top:12px; white-space:pre-line; }
+    .footer { position:absolute; left:.68in; right:.68in; bottom:.25in; border-top:1px solid #ccd4dc; padding-top:7px; display:flex; justify-content:space-between; gap:10px; color:#69727c; font:7.6px Arial,sans-serif; }
+    .content-editable { outline:none; border-radius:2px; }
+    .content-editable:hover, .content-editable:focus { background:#fff8dc; box-shadow:0 0 0 2px rgba(209,171,54,.32); }
+    .modal { position:fixed; inset:0; background:rgba(17,24,39,.48); display:none; place-items:center; z-index:20; padding:18px; }
+    .modal.open { display:grid; }
+    .modal-card { width:min(620px,100%); padding:22px; background:#fff; border-radius:12px; box-shadow:0 18px 58px rgba(0,0,0,.25); }
+    .modal-card h2 { margin:0 0 9px; color:var(--navy); }
+    .modal-card p { color:#4d5864; }
+    .modal-card code { display:block; overflow:auto; padding:11px; border-radius:7px; background:#f4f6f8; color:#26323e; font-size:12px; }
+    .modal-actions { margin-top:16px; display:flex; justify-content:flex-end; gap:8px; }
+    @media (max-width:900px) { .layout { grid-template-columns:1fr; } .panel { border-right:0; border-bottom:1px solid var(--line); } .workspace { padding:14px; } .page-shell { transform-origin:top left; } .status { display:none; } .brand { min-width:auto; } }
+    @media print { @page { size:letter; margin:0; } body { background:#fff; } .appbar,.panel { display:none !important; } .layout { display:block; } .workspace { padding:0; } .page-shell { box-shadow:none; width:8.5in; min-height:11in; margin:0; } .content-editable:hover,.content-editable:focus { background:none; box-shadow:none; } }
+  </style>
+</head>
+<body>
+  <header class="appbar">
+    <div class="brand"><div class="brand-mark">NAACP</div><div><strong>Branch 1136 Letter Studio</strong><small>Seattle–King County • Draft workspace</small></div></div>
+    <div class="status" id="saveStatus">Saved locally on this device</div>
+    <div class="toolbar"><button class="btn" id="newBtn">New letter</button><button class="btn" id="saveBtn">Save draft</button><button class="btn" id="printBtn">Download PDF</button><button class="btn primary" id="shareBtn">Share / collaborate</button></div>
+  </header>
+
+  <main class="layout">
+    <aside class="panel">
+      <h2>Letter settings</h2>
+      <p class="hint">Edit fields here or click directly on the letter preview. This starter works in one browser and saves drafts locally.</p>
+      <h3>Branch identity</h3>
+      <label for="logoUpload">Approved masthead artwork</label>
+      <div class="upload"><input id="logoUpload" type="file" accept="image/*" /><p class="hint">Use only the branch-approved logo file.</p></div>
+      <label for="branchName">Branch name</label><input id="branchName" data-bind="branchName" value="Seattle–King County Branch 1136" />
+      <label for="tagline">Tagline</label><input id="tagline" data-bind="tagline" value="Advancing justice, equity, and civic participation." />
+      <div class="row"><div><label for="poBox">Mailing address</label><input id="poBox" data-bind="poBox" value="P.O. Box 22148" /></div><div><label for="cityState">City / ZIP</label><input id="cityState" data-bind="cityState" value="Seattle, WA 98122" /></div></div>
+      <div class="row"><div><label for="phone">Phone</label><input id="phone" data-bind="phone" value="206-324-6600" /></div><div><label for="email">Email</label><input id="email" data-bind="email" value="contact@seattlekingcountynaacp.org" /></div></div>
+      <label for="website">Website</label><input id="website" data-bind="website" value="seattlekingcountynaacp.org" />
+      <h3>Recipient and letter</h3>
+      <label for="date">Date</label><input id="date" data-bind="date" value="September 24, 2026" />
+      <label for="recipient">Recipient block</label><textarea id="recipient" data-bind="recipient">[Recipient Name]
+[Title]
+[Organization]
+[Street Address]
+[City, State ZIP]</textarea>
+      <label for="salutation">Salutation</label><input id="salutation" data-bind="salutation" value="Dear [Recipient Name]," />
+      <label for="subject">Subject line (optional)</label><input id="subject" data-bind="subject" placeholder="RE: [Subject]" />
+      <label for="body">Letter body</label><textarea id="body" data-bind="body">[Begin correspondence here.]</textarea>
+      <label for="closing">Closing</label><input id="closing" data-bind="closing" value="Sincerely," />
+      <label for="signer">Signature block</label><textarea id="signer" data-bind="signer">[Name]
+[Title]
+Seattle–King County NAACP, Branch 1136</textarea>
+      <h3>Workflow</h3>
+      <label for="documentTitle">Document title</label><input id="documentTitle" data-bind="documentTitle" value="Branch 1136 Letter" />
+      <label for="statusSelect">Approval status</label><select id="statusSelect" data-bind="approval"><option>Draft</option><option>Ready for review</option><option>Approved for release</option></select>
+      <p class="hint">Before external distribution, have the authorized Branch officer confirm final content, signer, and current contact information.</p>
+    </aside>
+
+    <section class="workspace">
+      <div class="page-shell"><article class="letter" id="letter">
+        <header class="masthead">
+          <div class="masthead-grid"><div><div class="logo-area"><img id="logo" alt="Branch logo" /><div class="wordmark" id="fallbackWordmark">NAACP</div></div><div class="branch" data-out="branchName"></div><div class="tagline" data-out="tagline"></div></div><div class="contact"><div data-out="poBox"></div><div data-out="cityState"></div><div data-out="phone"></div><div data-out="email"></div><div data-out="website"></div></div></div>
+          <div class="rules"><div class="gold-rule"></div><div class="navy-rule"></div></div>
+        </header>
+        <section class="letter-body">
+          <p class="content-editable" contenteditable="true" data-out="date"></p>
+          <p class="address content-editable" contenteditable="true" data-out="recipient"></p>
+          <p class="content-editable" contenteditable="true" data-out="salutation"></p>
+          <p class="subject-line content-editable" contenteditable="true" data-out="subject" id="subjectPreview"></p>
+          <div class="content-editable" contenteditable="true" data-out="body" id="bodyPreview"></div>
+          <p class="content-editable" contenteditable="true" data-out="closing"></p>
+          <p class="signature content-editable" contenteditable="true" data-out="signer"></p>
+        </section>
+        <footer class="footer"><span data-out="branchName"></span><span><span data-out="poBox"></span> • <span data-out="cityState"></span></span></footer>
+      </article></div>
+    </section>
+  </main>
+
+  <div class="modal" id="shareModal"><div class="modal-card"><h2>Collaboration setup</h2><p>This downloadable starter is a working letter editor with local saving and PDF download. True simultaneous editing by the Secretary, President, and communications staff needs a hosted database plus authenticated user accounts.</p><p>Recommended production build:</p><code>Next.js + Supabase (Auth, Postgres, Realtime, Storage) + TipTap editor + Playwright/Puppeteer PDF service</code><p>Include role-based permissions, version history, approval workflow, audit log, secure logo/media library, templates, and share links restricted to approved branch users.</p><div class="modal-actions"><button class="btn primary" id="closeModal">Understood</button></div></div></div>
+
+  <script>
+    const defaultLogo = 'Screenshot-2026-09-24-at-3.50.54-PM.jpg';
+    const fields = [...document.querySelectorAll('[data-bind]')];
+    const outputs = [...document.querySelectorAll('[data-out]')];
+    const storageKey = 'naacp1136-letter-studio-v1';
+    let state = JSON.parse(localStorage.getItem(storageKey) || '{}');
+    const setText = (el, value) => { el.textContent = value || ''; };
+    function apply() {
+      fields.forEach(f => { if (state[f.dataset.bind] !== undefined) f.value = state[f.dataset.bind]; else state[f.dataset.bind] = f.value; });
+      outputs.forEach(o => setText(o, state[o.dataset.out] || ''));
+      document.getElementById('subjectPreview').style.display = state.subject ? '' : 'none';
+      document.getElementById('saveStatus').textContent = `Saved locally • ${state.approval || 'Draft'}`;
+    }
+    function save() { localStorage.setItem(storageKey, JSON.stringify(state)); document.getElementById('saveStatus').textContent = `Saved locally • ${state.approval || 'Draft'}`; }
+    fields.forEach(f => f.addEventListener('input', () => { state[f.dataset.bind] = f.value; apply(); save(); }));
+    outputs.filter(o => o.contentEditable === 'true').forEach(o => o.addEventListener('input', () => { state[o.dataset.out] = o.innerText.replace(/\n$/, ''); const field = document.querySelector(`[data-bind="${o.dataset.out}"]`); if (field) field.value = state[o.dataset.out]; save(); }));
+    const logo = document.getElementById('logo');
+    logo.src = defaultLogo;
+    logo.onerror = () => { logo.style.display='none'; document.getElementById('fallbackWordmark').style.display='block'; };
+    document.getElementById('logoUpload').addEventListener('change', e => { const file=e.target.files[0]; if (!file) return; const reader=new FileReader(); reader.onload=()=>{ logo.src=reader.result; logo.style.display='block'; document.getElementById('fallbackWordmark').style.display='none'; state.logo=reader.result; save(); }; reader.readAsDataURL(file); });
+    if (state.logo) logo.src=state.logo;
+    document.getElementById('saveBtn').onclick=save;
+    document.getElementById('printBtn').onclick=()=>window.print();
+    document.getElementById('newBtn').onclick=()=>{ if(confirm('Start a new letter? Your saved draft will be cleared.')) { localStorage.removeItem(storageKey); location.reload(); } };
+    const modal=document.getElementById('shareModal'); document.getElementById('shareBtn').onclick=()=>modal.classList.add('open'); document.getElementById('closeModal').onclick=()=>modal.classList.remove('open');
+    apply();
+  </script>
+</body>
+</html>

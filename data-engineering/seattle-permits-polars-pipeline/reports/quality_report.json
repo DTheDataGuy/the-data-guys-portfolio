@@ -1,0 +1,142 @@
+{
+  "run": {
+    "extract_id": "20261020T054829Z",
+    "source": "https://data.seattle.gov/resource/76t5-zqzr.json",
+    "bronze_sha256": "d271ca14bb5243496b7ac25e10708a61f26ac3537f97f50713f5bf3f2be1e8c2",
+    "bronze_rows": 193747,
+    "silver_rows": 193725,
+    "quarantined_rows": 22,
+    "quarantine_by_rule": [
+      [
+        "completed_before_issued",
+        8
+      ],
+      [
+        "issued_before_applied",
+        14
+      ]
+    ]
+  },
+  "passed": true,
+  "checks": [
+    {
+      "name": "contract_schema_matches",
+      "severity": "error",
+      "passed": true,
+      "observed": "no drift",
+      "expectation": "columns and dtypes equal SILVER_CONTRACT"
+    },
+    {
+      "name": "permit_num_unique",
+      "severity": "error",
+      "passed": true,
+      "observed": "0 duplicates",
+      "expectation": "0 duplicates"
+    },
+    {
+      "name": "required_not_null",
+      "severity": "error",
+      "passed": true,
+      "observed": "0 nulls",
+      "expectation": "no nulls in 13 required columns"
+    },
+    {
+      "name": "bronze_rows_reconcile",
+      "severity": "error",
+      "passed": true,
+      "observed": "193,725 silver + 22 quarantined = 193,747 vs 193,747 bronze",
+      "expectation": "every bronze row is in silver or quarantine"
+    },
+    {
+      "name": "quarantine_rate",
+      "severity": "error",
+      "passed": true,
+      "observed": "0.01%",
+      "expectation": "< 1% of bronze rows quarantined"
+    },
+    {
+      "name": "permit_class_mapped_accepted_values",
+      "severity": "error",
+      "passed": true,
+      "observed": "Non-Residential, Residential, Unclassified",
+      "expectation": "subset of Non-Residential, Residential, Unclassified"
+    },
+    {
+      "name": "lifecycle_dates_ordered",
+      "severity": "error",
+      "passed": true,
+      "observed": "0 rows out of order",
+      "expectation": "applied <= issued <= completed"
+    },
+    {
+      "name": "coordinates_inside_seattle",
+      "severity": "error",
+      "passed": true,
+      "observed": "0 outside",
+      "expectation": "0 outside bbox"
+    },
+    {
+      "name": "source_freshness",
+      "severity": "warn",
+      "passed": true,
+      "observed": "newest application 2026-10-17 (3 days old)",
+      "expectation": "<= 30 days old"
+    },
+    {
+      "name": "applied_date_completeness",
+      "severity": "warn",
+      "passed": true,
+      "observed": "23.78% null",
+      "expectation": "<= 30.0% null"
+    },
+    {
+      "name": "zip_completeness",
+      "severity": "warn",
+      "passed": true,
+      "observed": "5.26% null",
+      "expectation": "<= 10.0% null"
+    },
+    {
+      "name": "latitude_completeness",
+      "severity": "warn",
+      "passed": true,
+      "observed": "0.58% null",
+      "expectation": "<= 5.0% null"
+    },
+    {
+      "name": "contractor_coverage_stable",
+      "severity": "warn",
+      "passed": false,
+      "observed": "15.1% of 2019 permits name a contractor vs 2.1% in 2023",
+      "expectation": "coverage within 50% of the 2019 level"
+    },
+    {
+      "name": "flag_sentinel_date",
+      "severity": "warn",
+      "passed": true,
+      "observed": "28 rows flagged (0.01%)",
+      "expectation": "tracked, not dropped"
+    },
+    {
+      "name": "flag_cost_outlier",
+      "severity": "warn",
+      "passed": true,
+      "observed": "3 rows flagged (0.0%)",
+      "expectation": "tracked, not dropped"
+    },
+    {
+      "name": "flag_bad_geo",
+      "severity": "warn",
+      "passed": true,
+      "observed": "1,126 rows flagged (0.58%)",
+      "expectation": "tracked, not dropped"
+    },
+    {
+      "name": "flag_bad_zip",
+      "severity": "warn",
+      "passed": true,
+      "observed": "10,195 rows flagged (5.26%)",
+      "expectation": "tracked, not dropped"
+    }
+  ]
+}

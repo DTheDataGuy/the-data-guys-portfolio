@@ -1,0 +1,16 @@
+version: 2
+sources:
+  - name: silver
+    description: Contract-checked silver layer produced by the Polars pipeline.
+    meta:
+      external_location: "read_parquet('{{ var(\"silver_path\") }}')"
+    tables:
+      - name: permits
+        description: One row per Seattle building permit (City of Seattle open data, public domain).
+        loaded_at_field: "applied_date::timestamp"
+        freshness:
+          warn_after: {count: 30, period: day}
+          error_after: {count: 90, period: day}
+        columns:
+          - name: permit_num
+            data_tests: [unique, not_null]

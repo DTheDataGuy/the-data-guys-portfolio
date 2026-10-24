@@ -1,0 +1,40 @@
+version: 2
+models:
+  - name: stg_permits
+    description: Typed, renamed view over the silver permits table. Cost outliers are nulled in `declared_value_usd` but kept in `declared_value_raw_usd`.
+    columns:
+      - name: permit_num
+        description: Primary key.
+        data_tests: [unique, not_null]
+      - name: status
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('status_lifecycle')
+                field: status
+      - name: permit_suffix
+        data_tests:
+          - relationships:
+              arguments:
+                to: ref('permit_suffix_codes')
+                field: permit_suffix
+      - name: permit_class_mapped
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: [Residential, Non-Residential, Unclassified]
+      - name: declared_value_usd
+        data_tests: [not_negative]
+      - name: days_to_issue
+        data_tests: [not_negative]
+      - name: issued_date
+        data_tests:
+          - date_not_before:
+              arguments:
+                other_column: applied_date
+      - name: completed_date
+        data_tests:
+          - date_not_before:
+              arguments:
+                other_column: issued_date

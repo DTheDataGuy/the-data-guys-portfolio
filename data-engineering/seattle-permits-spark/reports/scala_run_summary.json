@@ -1,0 +1,1 @@
+{"engine": "scala 2.12.18 / spark 3.5.9", "input_rows": 193725, "outputs": {"cycle_times": 124, "housing_production": 620}, "seconds": 10.9}
