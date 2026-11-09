@@ -1,0 +1,28 @@
+version: 2
+models:
+  - name: mart_monthly_pipeline
+    description: Monthly applications, issuances and completions on a gap-free month spine.
+    columns:
+      - name: month
+        data_tests: [unique, not_null]
+      - name: applications
+        data_tests: [not_negative]
+  - name: mart_cycle_time_trends
+    description: Days from application to issue (p50/p90) by permit type, work class and year.
+    columns:
+      - name: p50_days_to_issue
+        data_tests: [not_null, not_negative]
+  - name: mart_housing_production
+    description: Units added/removed by ZIP and issue year, with cumulative net units.
+    columns:
+      - name: zip
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_zip'), field: zip}
+  - name: mart_contractor_concentration
+    description: Yearly contractor-market concentration (top-N share and HHI).
+    columns:
+      - name: applied_year
+        data_tests: [unique, not_null]
+  - name: mart_active_pipeline
+    description: Open permits by lifecycle stage and status, with age in days.

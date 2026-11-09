@@ -1,0 +1,43 @@
+{
+  "extract_id": "20261020T054829Z",
+  "source": "https://data.seattle.gov/resource/76t5-zqzr.json",
+  "bronze_sha256": "d271ca14bb5243496b7ac25e10708a61f26ac3537f97f50713f5bf3f2be1e8c2",
+  "bronze_rows": 193747,
+  "silver_rows": 193725,
+  "quarantined_rows": 22,
+  "quarantine_by_rule": [
+    [
+      "completed_before_issued",
+      8
+    ],
+    [
+      "issued_before_applied",
+      14
+    ]
+  ],
+  "gold_tables": {
+    "monthly_pipeline": 825,
+    "cycle_times": 124,
+    "housing_production": 620,
+    "contractor_concentration": 27,
+    "status_funnel": 74,
+    "reconciliation": {
+      "monthly_pipeline_vs_dated_silver": [
+        147650,
+        147650
+      ],
+      "status_funnel_vs_silver": [
+        193725,
+        193725
+      ],
+      "ok": true
+    }
+  },
+  "timings": {
+    "bronze_s": 37.13,
+    "silver_s": 1.95,
+    "gold_s": 0.05,
+    "total_s": 39.2
+  },
+  "polars_version": "2.0.0"
+}

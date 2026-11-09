@@ -1,0 +1,69 @@
+[
+  {
+    "ticket_id": "DEMO-T001",
+    "version": 1,
+    "mode": "demo",
+    "project_id": "DEMO-P001",
+    "vendor_id": "DEMO-V001",
+    "ticket_number": "000123",
+    "service_date": "2026-10-11",
+    "truck_number": "DEMO-TR12",
+    "truck_type_raw": "super solo",
+    "review_status": "needs_review",
+    "gross_weight": null,
+    "tare_weight": null,
+    "net_weight": null,
+    "lines": [
+      {
+        "line_id": "DEMO-L001",
+        "material_raw": "Demo aggregate",
+        "quantity": "18.50",
+        "unit": "short_ton",
+        "quantity_basis": "delivered",
+        "load_count": 1,
+        "cost_code": null,
+        "origin": "synthetic_fixture"
+      }
+    ],
+    "exceptions": [
+      "COST_CODE_UNRESOLVED",
+      "QUANTITY_BASIS_MAPPING_PENDING"
+    ],
+    "delivery_status": "not_requested"
+  },
+  {
+    "ticket_id": "DEMO-T002",
+    "version": 1,
+    "mode": "demo",
+    "project_id": "DEMO-P002",
+    "vendor_id": "DEMO-V002",
+    "ticket_number": "000123",
+    "service_date": "2026-10-11",
+    "truck_number": "DEMO-TR20",
+    "review_status": "needs_review",
+    "lines": [
+      {
+        "line_id": "DEMO-L002",
+        "material_raw": "Demo haul",
+        "quantity": "6",
+        "unit": "loads",
+        "quantity_basis": "hauled",
+        "cost_code": null,
+        "allocations": [
+          {
+            "cost_code": "DEMO-CC01",
+            "quantity": "4"
+          },
+          {
+            "cost_code": "DEMO-CC02",
+            "quantity": "2"
+          }
+        ]
+      }
+    ],
+    "exceptions": [
+      "CODE_REGISTRY_NOT_VALIDATED"
+    ],
+    "delivery_status": "not_requested"
+  }
+]

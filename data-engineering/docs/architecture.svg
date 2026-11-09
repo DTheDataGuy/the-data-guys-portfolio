@@ -1,0 +1,106 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750" font-family="Inter, Helvetica, Arial, sans-serif" role="img" aria-label="Seattle permits data platform architecture">
+  <defs>
+    <marker id="a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" fill="#64748B"/></marker>
+  </defs>
+  <rect width="1200" height="750" fill="#0B1220"/>
+  <text x="48" y="62" fill="#F1F5F9" font-size="28" font-weight="700">Seattle Permits Data Platform · Architecture</text>
+  <text x="48" y="92" fill="#94A3B8" font-size="15">193,747 public permits · Polars medallion pipeline → dbt + DuckDB warehouse → PySpark &amp; Scala Spark · four-engine parity check</text>
+
+  <!-- column labels -->
+  <g font-size="12" font-weight="700" letter-spacing="1.5" fill="#5EEAD4">
+    <text x="48" y="138">SOURCE</text><text x="268" y="138">BRONZE · SILVER · GOLD (POLARS)</text>
+    <text x="668" y="138">WAREHOUSE (DBT + DUCKDB)</text><text x="968" y="138">SCALE-OUT (SPARK)</text>
+  </g>
+
+  <!-- source -->
+  <rect x="48" y="156" width="190" height="150" rx="10" fill="#111A2E" stroke="#334155"/>
+  <text x="64" y="186" fill="#F1F5F9" font-size="15" font-weight="700">Socrata API</text>
+  <text x="64" y="208" fill="#94A3B8" font-size="12">data.seattle.gov</text>
+  <text x="64" y="226" fill="#94A3B8" font-size="12">Building Permits 76t5-zqzr</text>
+  <text x="64" y="252" fill="#CBD5E1" font-size="12">• stable-sort paging</text>
+  <text x="64" y="270" fill="#CBD5E1" font-size="12">• retry + backoff</text>
+  <text x="64" y="288" fill="#CBD5E1" font-size="12">• public domain</text>
+
+  <!-- polars -->
+  <rect x="268" y="156" width="370" height="420" rx="12" fill="#0F1A2B" stroke="#1E3A5F"/>
+  <rect x="286" y="174" width="334" height="92" rx="9" fill="#132036" stroke="#334155"/>
+  <text x="302" y="200" fill="#F1F5F9" font-size="15" font-weight="700">ingest.py → bronze</text>
+  <text x="302" y="222" fill="#CBD5E1" font-size="12">Immutable timestamped Parquet, all strings</text>
+  <text x="302" y="240" fill="#CBD5E1" font-size="12">Manifest: rows · SHA-256 · source · pages</text>
+  <text x="302" y="256" fill="#94A3B8" font-size="12">Replay mode re-verifies the hash first</text>
+
+  <rect x="286" y="280" width="334" height="128" rx="9" fill="#0F2A28" stroke="#115E59"/>
+  <text x="302" y="306" fill="#F1F5F9" font-size="15" font-weight="700">transform.py → silver (LazyFrame)</text>
+  <text x="302" y="328" fill="#CCFBF1" font-size="12">Typed to contracts.py (41 columns)</text>
+  <text x="302" y="346" fill="#CCFBF1" font-size="12">1900 sentinel dates nulled · ZIP / geo validated</text>
+  <text x="302" y="364" fill="#CCFBF1" font-size="12">Dedupe on permit_num · flags kept, not dropped</text>
+  <text x="302" y="382" fill="#CCFBF1" font-size="12">Hard-rule breaks → quarantine with reasons</text>
+  <text x="302" y="400" fill="#5EEAD4" font-size="12">193,725 silver + 22 quarantined = 193,747</text>
+
+  <rect x="286" y="422" width="160" height="136" rx="9" fill="#2A1F0B" stroke="#854D0E"/>
+  <text x="300" y="448" fill="#F1F5F9" font-size="15" font-weight="700">quality.py</text>
+  <text x="300" y="470" fill="#FDE68A" font-size="12">17 checks</text>
+  <text x="300" y="488" fill="#FDE68A" font-size="12">error → stop run</text>
+  <text x="300" y="506" fill="#FDE68A" font-size="12">warn → reported</text>
+  <text x="300" y="530" fill="#FDE68A" font-size="12">JSON + Markdown</text>
+
+  <rect x="460" y="422" width="160" height="136" rx="9" fill="#132036" stroke="#334155"/>
+  <text x="474" y="448" fill="#F1F5F9" font-size="15" font-weight="700">gold.py</text>
+  <text x="474" y="470" fill="#CBD5E1" font-size="12">5 tables</text>
+  <text x="474" y="488" fill="#CBD5E1" font-size="12">collect_all()</text>
+  <text x="474" y="506" fill="#CBD5E1" font-size="12">reconciled to silver</text>
+  <text x="474" y="530" fill="#CBD5E1" font-size="12">2.0 s end to end</text>
+
+  <!-- dbt -->
+  <rect x="668" y="156" width="270" height="420" rx="12" fill="#1A1430" stroke="#4C1D95"/>
+  <text x="686" y="188" fill="#F1F5F9" font-size="15" font-weight="700">sources → staging</text>
+  <text x="686" y="208" fill="#DDD6FE" font-size="12">read_parquet(silver) · freshness SLA</text>
+  <text x="686" y="244" fill="#F1F5F9" font-size="15" font-weight="700">intermediate</text>
+  <text x="686" y="264" fill="#DDD6FE" font-size="12">lifecycle seed · lag() site history</text>
+  <text x="686" y="300" fill="#F1F5F9" font-size="15" font-weight="700">core</text>
+  <text x="686" y="320" fill="#DDD6FE" font-size="12">fct_permits: incremental, contract-</text>
+  <text x="686" y="338" fill="#DDD6FE" font-size="12">enforced · dim_permit_type · dim_zip</text>
+  <text x="686" y="374" fill="#F1F5F9" font-size="15" font-weight="700">analytics marts (5)</text>
+  <text x="686" y="394" fill="#DDD6FE" font-size="12">month spine · quantile_cont · HHI</text>
+  <text x="686" y="412" fill="#DDD6FE" font-size="12">cumulative windows · active pipeline</text>
+  <text x="686" y="448" fill="#F1F5F9" font-size="15" font-weight="700">snapshot (SCD2)</text>
+  <text x="686" y="468" fill="#DDD6FE" font-size="12">permit status history</text>
+  <rect x="686" y="494" width="234" height="62" rx="8" fill="#241A45" stroke="#6D28D9"/>
+  <text x="700" y="520" fill="#F1F5F9" font-size="14" font-weight="700">48 tests · 61/61 pass</text>
+  <text x="700" y="540" fill="#DDD6FE" font-size="12">generic · relationships · reconciliations</text>
+
+  <!-- spark -->
+  <rect x="968" y="156" width="190" height="196" rx="12" fill="#2A140E" stroke="#9A3412"/>
+  <text x="984" y="188" fill="#F1F5F9" font-size="15" font-weight="700">PySpark 3.5</text>
+  <text x="984" y="210" fill="#FED7AA" font-size="12">hive-partitioned input</text>
+  <text x="984" y="228" fill="#FED7AA" font-size="12">exact percentile()</text>
+  <text x="984" y="246" fill="#FED7AA" font-size="12">range windows · lag()</text>
+  <text x="984" y="264" fill="#FED7AA" font-size="12">broadcast join (seed)</text>
+  <text x="984" y="282" fill="#FED7AA" font-size="12">AQE · partitioned output</text>
+  <text x="984" y="310" fill="#FB923C" font-size="12">193,725 rows · 15.5 s</text>
+  <text x="984" y="328" fill="#FB923C" font-size="12">local[2]</text>
+
+  <rect x="968" y="366" width="190" height="210" rx="12" fill="#2A140E" stroke="#9A3412"/>
+  <text x="984" y="398" fill="#F1F5F9" font-size="15" font-weight="700">Scala 2.12 Spark</text>
+  <text x="984" y="420" fill="#FED7AA" font-size="12">typed Dataset[Permit]</text>
+  <text x="984" y="438" fill="#FED7AA" font-size="12">groupByKey + mapGroups</text>
+  <text x="984" y="456" fill="#FED7AA" font-size="12">hand-written percentile</text>
+  <text x="984" y="474" fill="#FED7AA" font-size="12">ScalaTest suite</text>
+  <text x="984" y="492" fill="#FED7AA" font-size="12">sbt build · spark-submit</text>
+  <text x="984" y="520" fill="#FB923C" font-size="12">193,725 rows · 11.1 s</text>
+
+  <!-- arrows -->
+  <g stroke="#64748B" stroke-width="2" fill="none" marker-end="url(#a)">
+    <path d="M238 220 H282"/>
+    <path d="M600 266 V276"/>
+    <path d="M638 330 H664"/>
+    <path d="M453 576 V591 H1178 V254 H1162"/>
+    <path d="M1063 591 V580"/>
+  </g>
+
+  <!-- parity bar -->
+  <rect x="48" y="606" width="1110" height="96" rx="12" fill="#0F2A28" stroke="#14B8A6"/>
+  <text x="72" y="640" fill="#F1F5F9" font-size="17" font-weight="700">parity_check.py — the same metrics, four independent engines, compared value by value</text>
+  <text x="72" y="668" fill="#CCFBF1" font-size="14">cycle_times (124 rows) and housing_production (620 rows): Polars = DuckDB/dbt = PySpark = Scala · 0 missing rows · 0 mismatched values · max |diff| 5.7e-14</text>
+  <text x="72" y="690" fill="#5EEAD4" font-size="13">CI: GitHub Actions runs pytest, dbt build on fixtures, PySpark tests and ScalaTest on every push</text>
+</svg>

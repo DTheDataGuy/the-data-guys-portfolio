@@ -1,0 +1,75 @@
+permit_type,status,permits,share_of_type_pct
+Building,Completed,105897,68.11
+Building,Expired,11918,7.67
+Building,Additional Info Requested,8210,5.28
+Building,Closed,7954,5.12
+Building,Issued,7310,4.7
+Building,Withdrawn,3891,2.5
+Building,Canceled,3817,2.46
+Building,Corrections Required,1719,1.11
+Building,Scheduled,1628,1.05
+Building,Application Completed,638,0.41
+Building,Ready for Issuance,562,0.36
+Building,Reviews In Process,560,0.36
+Building,Awaiting Information,416,0.27
+Building,Active,268,0.17
+Building,Ready for Intake,257,0.17
+Building,Inspections Completed,140,0.09
+Building,Initiated,128,0.08
+Building,Reviews Completed,66,0.04
+Building,Scheduled and Submitted,45,0.03
+Building,Approved to Occupy,25,0.02
+Building,Phase Issued,12,0.01
+Building,Corrections Submitted,8,0.01
+Building,Pending,2,0.0
+Building,Denied,1,0.0
+Demolition,Completed,9931,61.51
+Demolition,Additional Info Requested,1762,10.91
+Demolition,Expired,935,5.79
+Demolition,Closed,895,5.54
+Demolition,Withdrawn,810,5.02
+Demolition,Issued,609,3.77
+Demolition,Scheduled,238,1.47
+Demolition,Reviews Completed,215,1.33
+Demolition,Canceled,206,1.28
+Demolition,Ready for Issuance,150,0.93
+Demolition,Corrections Required,146,0.9
+Demolition,Awaiting Information,102,0.63
+Demolition,Application Completed,51,0.32
+Demolition,Initiated,35,0.22
+Demolition,Ready for Intake,29,0.18
+Demolition,Reviews In Process,27,0.17
+Demolition,Scheduled and Submitted,4,0.02
+ECA and Shoreline Exemption/Street Improvement Exception Request,Completed,17455,92.4
+ECA and Shoreline Exemption/Street Improvement Exception Request,Canceled,531,2.81
+ECA and Shoreline Exemption/Street Improvement Exception Request,Withdrawn,255,1.35
+ECA and Shoreline Exemption/Street Improvement Exception Request,Corrections Required,210,1.11
+ECA and Shoreline Exemption/Street Improvement Exception Request,Reviews Completed,188,1.0
+ECA and Shoreline Exemption/Street Improvement Exception Request,Additional Info Requested,104,0.55
+ECA and Shoreline Exemption/Street Improvement Exception Request,Closed,57,0.3
+ECA and Shoreline Exemption/Street Improvement Exception Request,Reviews In Process,49,0.26
+ECA and Shoreline Exemption/Street Improvement Exception Request,Initiated,28,0.15
+ECA and Shoreline Exemption/Street Improvement Exception Request,Application Completed,12,0.06
+ECA and Shoreline Exemption/Street Improvement Exception Request,Corrections Submitted,1,0.01
+Grading,Completed,260,23.59
+Grading,Withdrawn,224,20.33
+Grading,Additional Info Requested,195,17.7
+Grading,Expired,190,17.24
+Grading,Closed,61,5.54
+Grading,Corrections Required,45,4.08
+Grading,Issued,44,3.99
+Grading,Initiated,23,2.09
+Grading,Canceled,22,2.0
+Grading,Scheduled,20,1.81
+Grading,Ready for Issuance,5,0.45
+Grading,Ready for Intake,3,0.27
+Grading,Scheduled and Submitted,3,0.27
+Grading,Application Completed,2,0.18
+Grading,Reviews Completed,2,0.18
+Grading,Reviews In Process,2,0.18
+Grading,Awaiting Information,1,0.09
+Roof,Completed,1019,48.16
+Roof,Expired,754,35.63
+Roof,Issued,304,14.37
+Roof,Withdrawn,36,1.7
+Roof,Initiated,3,0.14

@@ -1,0 +1,55 @@
+version: 2
+models:
+  - name: fct_permits
+    description: One row per permit. Contract-enforced, incremental with a look-back window.
+    config:
+      contract: {enforced: true}
+    columns:
+      - {name: permit_num, data_type: varchar, constraints: [{type: not_null}, {type: primary_key}], data_tests: [unique, not_null]}
+      - name: permit_type_key
+        data_type: varchar
+        data_tests:
+          - not_null
+          - relationships:
+              arguments: {to: ref('dim_permit_type'), field: permit_type_key}
+      - name: zip
+        data_type: varchar
+        data_tests:
+          - relationships:
+              arguments: {to: ref('dim_zip'), field: zip}
+      - {name: applied_month, data_type: date}
+      - {name: applied_year, data_type: integer}
+      - {name: issued_year, data_type: bigint}
+      - {name: permit_class, data_type: varchar}
+      - {name: permit_class_mapped, data_type: varchar}
+      - {name: status, data_type: varchar}
+      - {name: lifecycle_stage, data_type: varchar, data_tests: [not_null]}
+      - {name: is_terminal, data_type: boolean}
+      - {name: applied_date, data_type: date}
+      - {name: issued_date, data_type: date}
+      - {name: completed_date, data_type: date}
+      - {name: last_activity_date, data_type: date}
+      - {name: days_to_issue, data_type: bigint, data_tests: [not_negative]}
+      - {name: days_to_complete, data_type: bigint, data_tests: [not_negative]}
+      - {name: plan_review_days, data_type: bigint}
+      - {name: review_cycles, data_type: bigint}
+      - {name: declared_value_usd, data_type: double, data_tests: [not_negative]}
+      - {name: housing_units_added, data_type: bigint, data_tests: [not_negative]}
+      - {name: housing_units_removed, data_type: bigint, data_tests: [not_negative]}
+      - {name: housing_units_net, data_type: bigint}
+      - {name: contractor, data_type: varchar}
+      - {name: site_permit_seq, data_type: bigint}
+      - {name: days_since_prior_site_permit, data_type: bigint}
+      - {name: flag_cost_outlier, data_type: boolean}
+      - {name: flag_bad_geo, data_type: boolean}
+      - {name: extract_id, data_type: varchar}
+  - name: dim_permit_type
+    description: Permit type × work class.
+    columns:
+      - name: permit_type_key
+        data_tests: [unique, not_null]
+  - name: dim_zip
+    description: Seattle ZIP codes seen in permits, with permit-weighted centroids.
+    columns:
+      - name: zip
+        data_tests: [unique, not_null]

@@ -1,0 +1,12 @@
+version: 2
+models:
+  - name: int_permit_lifecycle
+    description: Permits joined to their lifecycle stage, with per-address sequence and gap features.
+    columns:
+      - name: permit_num
+        data_tests: [unique, not_null]
+      - name: lifecycle_stage
+        description: Null here would mean an unmapped status; the staging relationships test prevents it.
+        data_tests: [not_null]
+      - name: days_since_prior_site_permit
+        data_tests: [not_negative]

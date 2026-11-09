@@ -1,0 +1,8 @@
+# Local, file-based warehouse. Run with: DBT_PROFILES_DIR=. dbt build
+seattle_permits:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "target/permits.duckdb"
+      threads: 4

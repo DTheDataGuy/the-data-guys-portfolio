@@ -1,0 +1,10 @@
+capability,status,evidence,owner,blocking_gate
+Public publishing,UNVERIFIED,,IT / Dei,Actual workspace publish support
+Database,UNVERIFIED,,IT / Dei,Persistence and migration
+Private files,UNVERIFIED,,IT / Dei,Auth-scoped download
+Identity,UNVERIFIED,,IT / Dei,Named users / project scope
+Jobs / outbox,UNVERIFIED,,IT / Dei,Durable processing
+Mailbox / Power Automate,UNVERIFIED,,IT / Dei,Mailbox access / completeness tests
+OCR,UNVERIFIED,,IT / Dei,Provider approval / field accuracy
+Procore,UNVERIFIED,,IT / Dei,Screenshots / API mapping / test project
+OnBase,UNVERIFIED,,IT / Dei,Deferred source access
