@@ -54,7 +54,10 @@ jobs:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
         with: {distribution: temurin, java-version: "17", cache: sbt}
-      - uses: sbt/setup-sbt@v1
+      - name: Install sbt
+        run: |
+          curl -fsSL https://github.com/sbt/sbt/releases/download/v1.10.2/sbt-1.10.2.tgz | tar xz -C "$HOME"
+          echo "$HOME/sbt/bin" >> "$GITHUB_PATH"
       - run: sbt -batch test package
 
   rfq-matcher:
