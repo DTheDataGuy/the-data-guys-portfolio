@@ -1,0 +1,19 @@
+{
+  "schema_version": "1.0",
+  "channel": "email",
+  "source": {
+    "mailbox_key": "DEMO-MAILBOX",
+    "message_key": "DEMO-MESSAGE-001",
+    "attachment_key": "DEMO-ATTACHMENT-001"
+  },
+  "received_at": "2026-10-12T15:00:00Z",
+  "original_filename": "DEMO-tickets.pdf",
+  "claimed_content_type": "application/pdf",
+  "defaults": {
+    "project_external_id": "DEMO-P001",
+    "service_date": "2026-10-11",
+    "vendor_external_id": null,
+    "cost_code": null
+  },
+  "mode": "demo"
+}

@@ -1,0 +1,25 @@
+status,lifecycle_stage,stage_order,is_terminal,is_active_pipeline
+Ready for Intake,intake,1,false,true
+Initiated,intake,1,false,true
+Pending,intake,1,false,true
+Application Completed,intake,1,false,true
+Scheduled,intake,1,false,true
+Scheduled and Submitted,intake,1,false,true
+Reviews In Process,review,2,false,true
+Corrections Required,review,2,false,true
+Corrections Submitted,review,2,false,true
+Awaiting Information,review,2,false,true
+Additional Info Requested,review,2,false,true
+Reviews Completed,review,2,false,true
+Ready for Issuance,ready,3,false,true
+Issued,issued,4,false,true
+Phase Issued,issued,4,false,true
+Active,issued,4,false,true
+Inspections Completed,issued,4,false,true
+Approved to Occupy,completed,5,true,false
+Completed,completed,5,true,false
+Closed,completed,5,true,false
+Expired,terminated,9,true,false
+Withdrawn,terminated,9,true,false
+Canceled,terminated,9,true,false
+Denied,terminated,9,true,false

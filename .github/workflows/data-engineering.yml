@@ -1,0 +1,72 @@
+name: data-engineering
+
+on:
+  push:
+    paths: ["data-engineering/**", "clients/aerospace-ndt-distributor/**", ".github/workflows/data-engineering.yml"]
+  pull_request:
+    paths: ["data-engineering/**", "clients/aerospace-ndt-distributor/**"]
+  workflow_dispatch:
+
+jobs:
+  polars-and-dbt:
+    name: Polars pipeline + dbt build (fixture data)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: data-engineering
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.12", cache: pip, cache-dependency-path: data-engineering/requirements.txt}
+      - run: pip install -r requirements.txt
+      - name: Unit tests (Polars pipeline)
+        run: cd seattle-permits-polars-pipeline && PYTHONPATH=src python -m pytest -q
+      - name: Pipeline on committed fixture (bronze -> silver -> quality gate -> gold)
+        run: |
+          cd seattle-permits-polars-pipeline
+          PYTHONPATH=src python -m permits_pipeline run --source file \
+            --file tests/fixtures/permits_sample.json --as-of 2026-10-20 --reports /tmp/ci-reports
+      - name: dbt build (models, seeds, snapshot, 48 tests)
+        run: cd seattle-permits-dbt-duckdb && DBT_PROFILES_DIR=. dbt build
+
+  pyspark:
+    name: PySpark unit tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: data-engineering/seattle-permits-spark
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with: {distribution: temurin, java-version: "17"}
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.12"}
+      - run: pip install "pyspark==3.5.9" "polars==2.0.0" "duckdb==1.5.6" pytest
+      - run: python -m pytest -q pyspark_job/tests
+
+  scala:
+    name: Scala build + ScalaTest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: data-engineering/seattle-permits-spark/scala_job
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with: {distribution: temurin, java-version: "17", cache: sbt}
+      - uses: sbt/setup-sbt@v1
+      - run: sbt -batch test package
+
+  rfq-matcher:
+    name: RFQ matching engine tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: clients/aerospace-ndt-distributor/rfq-item-matching-engine
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements.txt
+      - run: python -m pytest -q
+      - run: cd src && python rfq_matcher.py ../sample_data/catalog_sample.csv -o /tmp/rfq_out.csv

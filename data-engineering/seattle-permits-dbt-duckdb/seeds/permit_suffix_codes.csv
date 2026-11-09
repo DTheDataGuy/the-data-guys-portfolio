@@ -1,0 +1,9 @@
+permit_suffix,suffix_label,observed_permit_type
+CN,Construction,Building
+BK,Building (BK series),Building
+CC,Building (CC series),Building
+PH,Building (PH series),Building
+DM,Demolition,Demolition
+RR,Roof,Roof
+GR,Grading,Grading
+EX,ECA and shoreline exemption,ECA and Shoreline Exemption/Street Improvement Exception Request

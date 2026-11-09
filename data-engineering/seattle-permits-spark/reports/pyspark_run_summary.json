@@ -1,0 +1,11 @@
+{
+  "engine": "pyspark 3.5.9",
+  "input_rows": 193725,
+  "outputs": {
+    "cycle_times": 124,
+    "housing_production": 620,
+    "rolling_applications": 825,
+    "repeat_site_activity": 16
+  },
+  "seconds": 15.1
+}

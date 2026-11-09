@@ -1,0 +1,297 @@
+@font-face{font-family:'General Sans';src:url('/fonts/general-sans-400.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap;}
+@font-face{font-family:'General Sans';src:url('/fonts/general-sans-500.woff2') format('woff2');font-weight:500;font-style:normal;font-display:swap;}
+@font-face{font-family:'General Sans';src:url('/fonts/general-sans-600.woff2') format('woff2');font-weight:600;font-style:normal;font-display:swap;}
+@font-face{font-family:'General Sans';src:url('/fonts/general-sans-700.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap;}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --button-outline: rgba(0,0,0,.10); --badge-outline: rgba(0,0,0,.05); --opaque-button-border-intensity: -8;
+  --elevate-1: rgba(10,25,50,.035); --elevate-2: rgba(10,25,50,.08);
+  --background: 220 27% 97%;
+  --foreground: 218 35% 12%;
+  --border: 218 20% 88%;
+  --card: 0 0% 100%;
+  --card-foreground: 218 35% 12%;
+  --card-border: 216 18% 88%;
+  --sidebar: 212 100% 17%;
+  --sidebar-foreground: 214 40% 90%;
+  --sidebar-border: 212 70% 24%;
+  --sidebar-primary: 45 66% 49%;
+  --sidebar-primary-foreground: 212 100% 12%;
+  --sidebar-accent: 212 75% 24%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-ring: 45 66% 49%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 218 35% 12%;
+  --popover-border: 216 18% 86%;
+  --primary: 210 100% 25%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 216 22% 92%;
+  --secondary-foreground: 218 35% 15%;
+  --muted: 216 20% 93%;
+  --muted-foreground: 217 12% 38%;
+  --accent: 45 70% 92%;
+  --accent-foreground: 38 70% 24%;
+  --destructive: 356 62% 40%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 216 14% 76%;
+  --ring: 210 100% 35%;
+  --gold: 45 66% 49%;
+  --terra: 16 58% 44%;
+  --ok: 146 50% 28%;
+  --warn: 32 85% 34%;
+  --chart-1: 210 100% 25%; --chart-2: 45 66% 49%; --chart-3: 146 45% 32%; --chart-4: 16 58% 44%; --chart-5: 260 30% 45%;
+  --font-sans: 'General Sans', 'Inter', system-ui, sans-serif;
+  --font-serif: 'General Sans', system-ui, sans-serif;
+  --font-mono: ui-monospace, Menlo, monospace;
+  --radius: .6rem;
+  --shadow-2xs: none; --shadow-xs: none; --shadow-sm: none; --shadow-md: none; --shadow-lg: none; --shadow-xl: none; --shadow-2xl: none; --shadow: none;
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --primary-border: hsl(var(--primary));
+  --secondary-border: hsl(var(--secondary));
+  --muted-border: hsl(var(--muted));
+  --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
+}
+.dark {
+  --button-outline: rgba(255,255,255,.10); --badge-outline: rgba(255,255,255,.05); --opaque-button-border-intensity: 9;
+  --elevate-1: rgba(255,255,255,.04); --elevate-2: rgba(255,255,255,.09);
+  --background: 218 30% 8%;
+  --foreground: 214 25% 90%;
+  --border: 217 20% 20%;
+  --card: 218 28% 11%;
+  --card-foreground: 214 25% 90%;
+  --card-border: 217 20% 18%;
+  --sidebar: 214 60% 9%;
+  --sidebar-foreground: 214 30% 86%;
+  --sidebar-border: 214 40% 15%;
+  --sidebar-primary: 45 70% 56%;
+  --sidebar-primary-foreground: 214 60% 9%;
+  --sidebar-accent: 214 45% 16%;
+  --sidebar-accent-foreground: 0 0% 100%;
+  --sidebar-ring: 45 70% 56%;
+  --popover: 218 28% 11%;
+  --popover-foreground: 214 25% 90%;
+  --popover-border: 217 20% 20%;
+  --primary: 210 80% 62%;
+  --primary-foreground: 214 60% 8%;
+  --secondary: 217 22% 17%;
+  --secondary-foreground: 214 25% 90%;
+  --muted: 217 22% 15%;
+  --muted-foreground: 215 14% 64%;
+  --accent: 45 40% 18%;
+  --accent-foreground: 45 70% 72%;
+  --destructive: 356 60% 58%;
+  --destructive-foreground: 0 0% 100%;
+  --input: 217 16% 30%;
+  --ring: 210 80% 62%;
+  --gold: 45 70% 56%;
+  --terra: 16 60% 60%;
+  --ok: 146 45% 55%;
+  --warn: 32 85% 62%;
+  --sidebar-primary-border: hsl(var(--sidebar-primary));
+  --sidebar-accent-border: hsl(var(--sidebar-accent));
+  --primary-border: hsl(var(--primary));
+  --secondary-border: hsl(var(--secondary));
+  --muted-border: hsl(var(--muted));
+  --accent-border: hsl(var(--accent));
+  --destructive-border: hsl(var(--destructive));
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/**
+ * Using the elevate system.
+ * Automatic contrast adjustment.
+ *
+ * <element className="hover-elevate" />
+ * <element className="active-elevate-2" />
+ *
+ * // Using the tailwind utility when a data attribute is "on"
+ * <element className="toggle-elevate data-[state=on]:toggle-elevated" />
+ * // Or manually controlling the toggle state
+ * <element className="toggle-elevate toggle-elevated" />
+ *
+ * Elevation systems have to handle many states.
+ * - not-hovered, vs. hovered vs. active  (three mutually exclusive states)
+ * - toggled or not
+ * - focused or not (this is not handled with these utilities)
+ *
+ * Even without handling focused or not, this is six possible combinations that
+ * need to be distinguished from eachother visually.
+ */
+@layer utilities {
+  /* Hide ugly search cancel button in Chrome until we can style it properly */
+  input[type='search']::-webkit-search-cancel-button {
+    @apply hidden;
+  }
+
+  /* Placeholder styling for contentEditable div */
+  [contenteditable][data-placeholder]:empty::before {
+    content: attr(data-placeholder);
+    color: hsl(var(--muted-foreground));
+    pointer-events: none;
+  }
+
+  /* .no-default-hover-elevate/no-default-active-elevate is an escape hatch so consumers of
+   * buttons/badges can remove the automatic brightness adjustment on interactions
+   * and program their own. */
+  .no-default-hover-elevate {
+  }
+
+  .no-default-active-elevate {
+  }
+
+  /**
+   * Toggleable backgrounds go behind the content. Hoverable/active goes on top.
+   * This way they can stack/compound. Both will overlap the parent's borders!
+   * So borders will be automatically adjusted both on toggle, and hover/active,
+   * and they will be compounded.
+   */
+  .toggle-elevate::before,
+  .toggle-elevate-2::before {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: -1;
+    /* sits behind content but above backdrop */
+  }
+
+  .toggle-elevate.toggle-elevated::before {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.toggle-elevate::before {
+    inset: -1px;
+  }
+
+  /* Does not work on elements with overflow:hidden! */
+  .hover-elevate:not(.no-default-hover-elevate),
+  .active-elevate:not(.no-default-active-elevate),
+  .hover-elevate-2:not(.no-default-hover-elevate),
+  .active-elevate-2:not(.no-default-active-elevate) {
+    position: relative;
+    z-index: 0;
+  }
+
+  .hover-elevate:not(.no-default-hover-elevate)::after,
+  .active-elevate:not(.no-default-active-elevate)::after,
+  .hover-elevate-2:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:not(.no-default-active-elevate)::after {
+    content: '';
+    pointer-events: none;
+    position: absolute;
+    inset: 0px;
+    /*border-radius: inherit;   match rounded corners */
+    border-radius: inherit;
+    z-index: 999;
+    /* sits in front of content */
+  }
+
+  .hover-elevate:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-1);
+  }
+
+  .hover-elevate-2:hover:not(.no-default-hover-elevate)::after,
+  .active-elevate-2:active:not(.no-default-active-elevate)::after {
+    background-color: var(--elevate-2);
+  }
+
+  /* If there's a 1px border, adjust the inset so that it covers that parent's border */
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate-2:not(.no-hover-interaction-elevate)::after,
+  .border.active-elevate-2:not(.no-active-interaction-elevate)::after,
+  .border.hover-elevate:not(.no-hover-interaction-elevate)::after {
+    inset: -1px;
+  }
+}
+
+
+.tnum{font-variant-numeric:tabular-nums lining-nums;}
+.font-display{font-family:var(--font-serif);letter-spacing:-0.01em;font-weight:700;}
+.eyebrow{font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:hsl(var(--muted-foreground));}
+.text-gold{color:hsl(var(--gold));} .bg-gold{background:hsl(var(--gold));}
+:focus-visible{outline:2px solid hsl(var(--ring));outline-offset:2px;}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important;}}
+
+/* ---------- Letter page: US Letter at 96px/in, geometry mirrors the official letterhead ---------- */
+.lp-wrap{--s:1;}
+.lp{position:relative;width:816px;min-height:1056px;background:#fff;color:#111;font-family:Helvetica,Arial,"Liberation Sans",sans-serif;box-shadow:0 1px 2px rgba(0,20,50,.06),0 12px 40px -12px rgba(0,20,50,.22);transform-origin:top left;}
+.lp .bar{position:absolute;left:0;right:0;top:0;height:11.5px;background:#003E7E;}
+.lp .mast{position:absolute;top:45px;left:0;right:0;display:flex;justify-content:center;height:158px;align-items:center;}
+.lp .mast img{width:504px;max-height:170px;object-fit:contain;}
+.lp .rules{position:absolute;left:60px;right:60px;top:244px;}
+.lp .rules .g{height:2px;background:#D2A929;} .lp .rules .n{height:1px;background:#003E7E;margin-top:3px;}
+.lp .contact{position:absolute;left:60px;right:60px;top:268px;display:flex;justify-content:space-between;font-size:10.4px;color:#55595E;white-space:nowrap;}
+.lp .lock{cursor:not-allowed;}
+.lp .content{padding:326px 60px 110px;font-size:15px;line-height:21px;}
+.lp .blk{margin:0 0 32px;white-space:pre-wrap;}
+.lp .blk.subject{font-weight:700;}
+.lp .body p{margin:0 0 21px;} .lp .body ul,.lp .body ol{margin:0 0 21px;padding-left:24px;} .lp .body ul{list-style:disc;} .lp .body ol{list-style:decimal;} .lp .body li{margin:0 0 4px;}
+.lp .body{margin-bottom:32px;}
+.lp .closing{margin:0 0 50px;white-space:pre-wrap;}
+.lp .foot{position:absolute;left:60px;right:60px;bottom:30px;border-top:1px solid #C7CDD2;padding-top:9px;text-align:center;font-size:9.9px;color:#55595E;}
+.lp .fld{position:relative;border-radius:3px;outline:1px dashed transparent;outline-offset:3px;transition:outline-color .15s,background-color .15s;}
+.lp .fld.editable:hover{outline-color:#9fb6d3;}
+.lp .fld.editable:focus-within,.lp .fld.editable:focus{outline:2px solid #1d5fae;background:#f5f9ff;}
+.lp .fld.locked-by{outline:2px solid var(--pc,#b7791f);background:color-mix(in srgb,var(--pc,#b7791f) 7%,white);}
+.lp .fld .who{position:absolute;top:-19px;right:-3px;font:600 10.5px/1 var(--font-sans);color:#fff;background:var(--pc,#b7791f);padding:3px 6px;border-radius:4px 4px 0 0;white-space:nowrap;pointer-events:none;}
+.lp .fld .empty-hint{color:#9aa3ad;font-style:italic;}
+.lp textarea.ta{display:block;width:100%;resize:none;border:0;background:transparent;font:inherit;color:inherit;line-height:inherit;padding:0;margin:0;overflow:hidden;outline:none;white-space:pre-wrap;}
+.lp textarea.ta.bold{font-weight:700;}
+.lp .rte{outline:none;min-height:21px;}
+.lp .rte:empty:before{content:attr(data-placeholder);color:#9aa3ad;font-style:italic;}
+.lp .wm{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;overflow:hidden;}
+.lp .wm span{transform:rotate(-35deg);font:700 104px/1 Helvetica,Arial,sans-serif;color:rgba(120,135,150,.13);letter-spacing:.05em;}
+.pchip{--pc:#b7791f;background:var(--pc);}
+
+.tnum { font-variant-numeric: tabular-nums lining-nums; }
+.scroll-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+.scroll-thin::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 8px; }
+@media (prefers-reduced-motion: reduce) { * { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+
+/* ---------- refined surface system ---------- */
+:root{--shadow-card:0 1px 2px rgba(16,32,64,.04),0 6px 20px -12px rgba(16,32,64,.14);--shadow-lift:0 2px 4px rgba(16,32,64,.05),0 14px 32px -14px rgba(16,32,64,.22);}
+.dark{--shadow-card:0 1px 2px rgba(0,0,0,.3),0 8px 24px -14px rgba(0,0,0,.6);--shadow-lift:0 2px 6px rgba(0,0,0,.35),0 16px 36px -14px rgba(0,0,0,.7);}
+.card-soft{box-shadow:var(--shadow-card);}
+.card-lift{transition:box-shadow .2s ease,transform .2s ease,border-color .2s ease;}
+.card-lift:hover{box-shadow:var(--shadow-lift);transform:translateY(-1px);border-color:hsl(var(--primary)/.35);}
+.page-in{animation:pageIn .32s cubic-bezier(.2,.7,.2,1) both;}
+@keyframes pageIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:none;}}
+.hero{position:relative;overflow:hidden;color:#fff;background:
+  radial-gradient(900px 320px at 88% -30%,hsl(45 70% 55%/.22),transparent 60%),
+  radial-gradient(700px 300px at -10% 120%,hsl(205 90% 55%/.25),transparent 60%),
+  linear-gradient(135deg,hsl(212 100% 17%),hsl(214 80% 23%) 55%,hsl(210 70% 28%));}
+.dark .hero{background:
+  radial-gradient(900px 320px at 88% -30%,hsl(45 70% 55%/.16),transparent 60%),
+  radial-gradient(700px 300px at -10% 120%,hsl(205 90% 55%/.16),transparent 60%),
+  linear-gradient(135deg,hsl(214 60% 11%),hsl(214 55% 15%) 55%,hsl(212 50% 19%));border:1px solid hsl(var(--border));}
+.hero::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.07;background-image:linear-gradient(rgba(255,255,255,.9) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.9) 1px,transparent 1px);background-size:44px 44px;mask-image:linear-gradient(90deg,transparent,#000 60%);}
+.chain-step{position:relative;}
+.sidebar-active::before{content:"";position:absolute;left:-8px;top:8px;bottom:8px;width:3px;border-radius:3px;background:hsl(var(--sidebar-primary));}
+tbody tr{transition:background-color .12s ease;}
+
+@media print {
+  @page { size: letter; margin: 0.45in; }
+  html, body { background: #fff !important; }
+  main { padding: 0 !important; max-width: none !important; }
+  .brief-sheet { color: #111; zoom: 0.9; }
+  [data-radix-toast-viewport], .toaster { display: none !important; }
+}
