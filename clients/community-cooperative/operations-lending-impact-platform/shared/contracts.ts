@@ -312,7 +312,7 @@ export const DATASETS: DatasetDef[] = [
     grain: "One row per metric version",
     uniqueKey: ["Metric_ID", "Version"],
     source: "Program administrator",
-    owner: "Program administrator / program administrator",
+    owner: "Program administrator",
     cadence: "Per funder template",
     fields: [
       f("Metric_ID", "Metric ID", "id", { required: true }),
@@ -530,7 +530,7 @@ export const DATASETS: DatasetDef[] = [
     grain: "One row per migrated loan",
     uniqueKey: ["Canonical_Loan_ID"],
     source: "Migration reconciliation (LoanWell ↔ NED)",
-    owner: "Program administrator, Vendor contact, NED technical contact",
+    owner: "Program administrator, NED technical contact",
     cadence: "During migration",
     fields: [
       f("Canonical_Loan_ID", "Canonical loan", "id", { required: true, ref: { dataset: "loan", field: "Loan_ID" } }),
@@ -575,7 +575,7 @@ export const DATASETS: DatasetDef[] = [
     uniqueKey: ["Reporting_Period", "Funding_Area"],
     dateField: "Period_End",
     source: "CRP Smartsheet confirmations (PDF-derived, reviewed) and future entry",
-    owner: "Programs lead / program owner",
+    owner: "Programs lead",
     cadence: "Per CRP reporting period",
     legacyTable: "CRP Data",
     notes: "Missing periods are gaps, not zeros. Baseline and cumulative values never become monthly activity.",
@@ -773,8 +773,8 @@ export const DATASETS: DatasetDef[] = [
     uniqueKey: ["Statement_Type", "Entity", "Period", "Line_Code"],
     snapshotKey: ["Statement_Type", "Entity", "Period", "Line_Code"],
     dateField: "Period",
-    source: "the finance lead's finalized month-end Excel statements via SharePoint (YYYY MM Profit-Loss / YYYY MM Balance Sheet)",
-    owner: "Finance lead / finance owner",
+    source: "The finance lead's finalized month-end Excel statements via SharePoint (YYYY MM Profit-Loss / YYYY MM Balance Sheet)",
+    owner: "Finance lead",
     cadence: "Month-end close (generally 10th–20th of following month)",
     legacyTable: "Finance P&L / Finance Balance Sheet",
     fields: [
@@ -801,7 +801,7 @@ export const DATASETS: DatasetDef[] = [
     uniqueKey: ["Note_ID"],
     dateField: "Maturity_Date",
     source: "Approved master tracker + note documents",
-    owner: "Finance lead / finance",
+    owner: "Finance lead",
     cadence: "Monthly",
     fields: [
       f("Note_ID", "Note ID", "id", { required: true }),
@@ -828,7 +828,7 @@ export const DATASETS: DatasetDef[] = [
     uniqueKey: ["Instrument_ID", "Service_Category", "Period"],
     dateField: "Period_End",
     source: "Typeform / form exports + scoring rubric",
-    owner: "Programs lead / program owner",
+    owner: "Programs lead",
     cadence: "Quarterly",
     fields: [
       f("Instrument_ID", "Instrument ID", "id", { required: true }),

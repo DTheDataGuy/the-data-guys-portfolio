@@ -128,7 +128,7 @@ export default function Overview() {
                   </ChartBox>
                 </>
               ) : (
-                <Empty>Import the finance lead's finalized P&amp;L and Balance Sheet.</Empty>
+                <Empty>Import The finance lead's finalized P&amp;L and Balance Sheet.</Empty>
               )}
             </Card>
           </div>

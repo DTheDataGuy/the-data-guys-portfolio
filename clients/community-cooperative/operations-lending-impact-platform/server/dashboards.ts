@@ -754,7 +754,7 @@ export function financeDashboard(store: Store, ctx: Ctx, f: Filters & { basis?: 
   const meta = pl[0] ?? bs[0];
   const label = sel ? `${basis === "YTD_Amount" ? "YTD through" : "Month of"} ${sel}` : "No statement";
   const kpis = [
-    M.mk({ id: "income", label: basis === "YTD_Amount" ? "Income (YTD)" : "Income (month)", value: inc.value, unit: "money", definition: `Total income from the finalized P&L. ${inc.from}. Monthly and YTD are separate; YTD is never added across months.`, source: "the finance lead's finalized month-end P&L", period: label, lastImport: lastOf(fr, "finance_line"), reason: sel ? undefined : "No approved statement" }, ctx.demo),
+    M.mk({ id: "income", label: basis === "YTD_Amount" ? "Income (YTD)" : "Income (month)", value: inc.value, unit: "money", definition: `Total income from the finalized P&L. ${inc.from}. Monthly and YTD are separate; YTD is never added across months.`, source: "The finance lead's finalized month-end P&L", period: label, lastImport: lastOf(fr, "finance_line"), reason: sel ? undefined : "No approved statement" }, ctx.demo),
     M.mk({ id: "expenses", label: basis === "YTD_Amount" ? "Expenses (YTD)" : "Expenses (month)", value: exp.value, unit: "money", definition: `Total expenses. ${exp.from}.`, source: "Finalized P&L", period: label, lastImport: lastOf(fr, "finance_line") }, ctx.demo),
     M.mk({ id: "noi", label: "Net operating income", value: noi, unit: "money",
       definition: "Reported net operating income; independently reconciled as income − cost of goods sold − operating expenses on the same statement and basis.",

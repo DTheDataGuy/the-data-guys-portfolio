@@ -10,16 +10,16 @@ const REFRESH = [
   ["CRSP service log", "Program staff", "Monthly", "Import the CRSP workbook. Business IDs, not names, drive distinct counts."],
   ["Mighty Networks membership & ActiveCampaign campaigns", "Engagement owner", "Monthly", "Import period-end membership and campaign exports."],
   ["Fundraising pipeline & receipts", "Development / finance", "Bi-weekly", "Import the fundraising workbook; receipts come from finance."],
-  ["Month-end P&L, Balance Sheet & promissory notes", "Finance lead (finance)", "Monthly after close", "Import finalized statements only. Close the period in Administration when done."],
+  ["Month-end P&L, Balance Sheet & promissory notes", "Finance lead", "Monthly after close", "Import finalized statements only. Close the period in Administration when done."],
 ];
 
 const NEEDS = [
-  ["NED", "The manual names the exports. Still need one sample of each (Active Loan Report, Aging Report: Days Range, Payment History, Fund Transfers), the migration file for the ~130 legacy loans, and the cutover date.", "Program administrator · Lending team · Ned support"],
+  ["NED", "The manual names the exports. Still need one sample of each (Active Loan Report, Aging Report: Days Range, Payment History, Fund Transfers), the migration file for the ~130 legacy loans, and the cutover date.", "Program administrator · Lending team · NED vendor support"],
   ["Lending rules", "Approve the loan status mapping, transaction status matrix and transaction IDs, plus delinquency and revenue-based repayment rules.", "Lending team"],
   ["Industry review", "Confirm NAICS / industry categories for borrowers and CRSP businesses.", "Lending & program"],
   ["Fundraising", "July fundraising workbook to confirm column meanings and stages.", "Development"],
-  ["Finance", "the finance lead's finalized P&L and Balance Sheet by month, plus the promissory-note master list.", "Finance lead"],
-  ["Impact counting", "Unique-population methodology across programs (who counts as one person).", "Programs lead · program"],
+  ["Finance", "The finance lead's finalized P&L and Balance Sheet by month, plus the promissory-note master list.", "Finance lead"],
+  ["Impact counting", "Unique-population methodology across programs (who counts as one person).", "Programs lead"],
   ["CRP history", "Prior CRP reports and source confirmations to fill the coverage gaps.", "Program staff"],
   ["Surveys & membership", "Survey instruments, event check-in method and membership tier definitions.", "Programs lead"],
   ["Access & release", "Named access owners per role and the external aggregation / release policy.", "Leadership"],

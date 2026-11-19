@@ -81,7 +81,7 @@ export default function Surveys() {
             )}
           </div>
           <div className="mt-4">
-            <Callout>Survey forms, event check-in and membership definitions are still to be confirmed with Programs lead. Until they are, completion uses survey starts as the denominator and engagement ratios stay unavailable.</Callout>
+            <Callout>Survey forms, event check-in and membership definitions are still to be confirmed with the programs lead. Until they are, completion uses survey starts as the denominator and engagement ratios stay unavailable.</Callout>
           </div>
           <div className="mt-6">
             <Freshness items={d.freshness} />
